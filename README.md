@@ -1,0 +1,3 @@
+# Banking App 2.0
+This is a revised version of the banking app for CST-135 that implements a Customer class and a Transaction interface.
+Work in progress......
