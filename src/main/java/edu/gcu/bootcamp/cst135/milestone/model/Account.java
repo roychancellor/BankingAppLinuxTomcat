@@ -3,8 +3,9 @@
  * Future versions may declare this class abstract since it will not be instantiated
  */
 package edu.gcu.bootcamp.cst135.milestone.model;
+import edu.gcu.bootcamp.cst135.milestone.model.iActions;
 
-public class Account {
+public abstract class Account implements iActions {
 
 	//Class data
 	private String accountNumber;
@@ -41,5 +42,24 @@ public class Account {
 
 		this.accountNumber = accountNumber;
 		this.accountBalance = accountBalance;
-	}	
+	}
+	
+	/**
+	 * Implements iAction interface
+	 * @param message
+	 * @return double value representing a dollar amount
+	 */
+	public double getTransactionValue(String message) {
+		System.out.println("Int getTransactionValue");
+		return 1;
+		//This method will throw an exception for invalid input and call itself over and over and over until
+		//the user gets it right, at which point it returns the user's value
+		//Validate that input is positive or zero
+	}
+	
+	/**
+	 * Leave abstract so the subclasses (Checking, Saving, Loan) can implement
+	 * unique to those account types
+	 */
+	public abstract void processTransaction(final int transType, double amount);
 }

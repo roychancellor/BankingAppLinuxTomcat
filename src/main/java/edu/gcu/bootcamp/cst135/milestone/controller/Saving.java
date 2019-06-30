@@ -53,4 +53,12 @@ public class Saving extends Account {
 		this.serviceFee = serviceFee;
 		this.interest = interest/12;		
 	}
+	
+	/**
+	 * Implements processTransaction that was left abstract in the superclass
+	 * unique to Saving accounts
+	 */
+	public void processTransaction(final int transType, double amount) {
+		System.out.println("in processTransaction");
+	}
 }

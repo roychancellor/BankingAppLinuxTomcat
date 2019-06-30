@@ -30,4 +30,12 @@ public class Checking extends Account {
 		//Unique to Checking objects
 		this.overdraft = overdraft;
 	}
+	
+	/**
+	 * Implements processTransaction that was left abstract in the superclass
+	 * unique to Checking accounts
+	 */
+	public void processTransaction(final int transType, double amount) {
+		System.out.println("in processTransaction");
+	}
 }
