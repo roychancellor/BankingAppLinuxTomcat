@@ -19,5 +19,5 @@ public interface iActions {
 	 * @param transType
 	 * @param amount
 	 */
-	public abstract void processTransaction(final int transType, double amount);
+	public abstract void doTransaction(final int transType, double amount);
 }

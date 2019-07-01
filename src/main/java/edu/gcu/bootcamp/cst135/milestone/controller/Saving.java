@@ -51,14 +51,30 @@ public class Saving extends Account {
 		//Unique to Saving objects
 		this.minBalance = minBalance;
 		this.serviceFee = serviceFee;
-		this.interest = interest/12;		
+		
+		//MONTHLY interest rate
+		this.interest = interest / 12;		
 	}
 	
 	/**
 	 * Implements processTransaction that was left abstract in the superclass
-	 * unique to Saving accounts
+	 * unique to Saving accounts (logic for withdraw > available balance)
+	 * @param transType a multiplier for withdrawals (-1) or deposits (+1)
+	 * @param amount the amount to withdraw or deposit
 	 */
-	public void processTransaction(final int transType, double amount) {
-		System.out.println("in processTransaction");
+	public void doTransaction(final int transType, double amount) {
+		//WITHDRAWAL: Determine if the account will be overdrawn; if so, alert the user and try again
+		while(transType == Account.WITHDRAWAL && amount > getAccountBalance()) {
+			System.out.println(
+				"\n\t"
+				+ amount
+				+ " is greater than your balance of "
+				+ getAccountBalance()
+				+ ". Enter a new value or 0 to void transaction.\n"
+			);			
+			amount = getTransactionValue(Account.AMOUNT_MESSAGE + "withdraw: ");
+		}
+		//Process the transaction
+		setAccountBalance(getAccountBalance() + transType * amount);
 	}
 }

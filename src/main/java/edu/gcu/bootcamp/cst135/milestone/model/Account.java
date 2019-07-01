@@ -3,13 +3,21 @@
  * Future versions may declare this class abstract since it will not be instantiated
  */
 package edu.gcu.bootcamp.cst135.milestone.model;
+
 import edu.gcu.bootcamp.cst135.milestone.model.iActions;
+import edu.gcu.bootcamp.cst135.milestone.controller.Bank;
 
 public abstract class Account implements iActions {
+	
+	//Class Constants
+	//Multipliers for a common doTransaction method
+	public static final int DEPOSIT = 1;
+	public static final int WITHDRAW = -1;
 
 	//Class data
 	private String accountNumber;
 	private double accountBalance;
+	public static final String AMOUNT_MESSAGE = "Enter dollar amount you would like to ";
 
 	//Getters and setters
 	public String getAccountNumber() {
@@ -46,20 +54,43 @@ public abstract class Account implements iActions {
 	
 	/**
 	 * Implements iAction interface
+	 * This method will throw an exception for invalid input and call itself over and over and over until
+	 * the user gets it right, at which point it returns the user's value.
+	 * The method will also validate that input is positive or zero.
 	 * @param message
 	 * @return double value representing a dollar amount
 	 */
 	public double getTransactionValue(String message) {
-		System.out.println("Int getTransactionValue");
-		return 1;
-		//This method will throw an exception for invalid input and call itself over and over and over until
-		//the user gets it right, at which point it returns the user's value
-		//Validate that input is positive or zero
+		double value = 0;
+		boolean isValid;
+		String invalidMessage = "Invalid input: Enter a positive number such as 123.45\n";
+		do {
+			isValid = true;
+			try {
+				System.out.println(message);
+				value = Bank.scanner.nextDouble();
+				if(value < 0) {
+					System.out.println(invalidMessage);
+					isValid = false;
+				}
+			}
+			catch(Exception e) {
+				System.out.println(invalidMessage);
+				isValid = false;
+			}
+			finally {
+				//value is now validated to be a double >= 0
+				//so, read the newline token that is remaining
+				Bank.scanner.nextLine();				
+			}
+		} while(!isValid);
+
+		return value;
 	}
 	
 	/**
 	 * Leave abstract so the subclasses (Checking, Saving, Loan) can implement
 	 * unique to those account types
 	 */
-	public abstract void processTransaction(final int transType, double amount);
+	public abstract void doTransaction(final int transType, double amount);
 }

@@ -33,9 +33,25 @@ public class Checking extends Account {
 	
 	/**
 	 * Implements processTransaction that was left abstract in the superclass
-	 * unique to Checking accounts
+	 * unique to Checking accounts (logic for overdraft fee)
+	 * @param transType a multiplier for withdrawals (-1) or deposits (+1)
+	 * @param amount the amount to withdraw or deposit
 	 */
-	public void processTransaction(final int transType, double amount) {
-		System.out.println("in processTransaction");
+	public void doTransaction(final int transType, double amount) {
+		double feeAmount = 0;
+		//WITHDRAWAL: Determine if the account will be overdrawn; if so, alert the user and give choice to exit
+		if(transType == Account.WITHDRAWAL && amount > getAccountBalance()) {
+			System.out.println("A $" + getOverdraft() + " overdraft fee will be assessed if you continue. Continue Y or N?");
+			//If the user chooses to continue, assess the overdraft fee; if not, return to the checking withdrawal screen
+			if(Bank.scanner.nextLine().toLowerCase().equals("y")) {
+				feeAmount = getOverdraft();
+			}
+			else {
+				doTransaction(Account.WITHDRAWAL, getTransactionValue(Account.AMOUNT_MESSAGE + "withdraw: "));
+			}
+		}
+		
+		//Process the transaction
+		setAccountBalance(getAccountBalance() + transType * (amount + feeAmount));
 	}
 }
