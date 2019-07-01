@@ -10,14 +10,14 @@ public interface iActions {
 	
 	/**
 	 * interface method for getting a double value from a Scanner
-	 * @param message
-	 * @return
+	 * @param message is a string prompt for the user
+	 * @return double value representing the transaction amount
 	 */
 	public abstract double getTransactionValue(String message);
 	/**
 	 * interface method for processing a transaction as a deposit (or loan payment) or withdrawal
-	 * @param transType
-	 * @param amount
+	 * @param transType multiplier so doTransaction can process deposits and withdrawals (-1 for withdrawal or +1 for deposit)
+	 * @param amount the amount of the attempted transaction
 	 */
 	public abstract void doTransaction(final int transType, double amount);
 }

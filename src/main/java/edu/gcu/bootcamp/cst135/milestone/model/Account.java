@@ -57,7 +57,7 @@ public abstract class Account implements iActions {
 	 * This method will throw an exception for invalid input and call itself over and over and over until
 	 * the user gets it right, at which point it returns the user's value.
 	 * The method will also validate that input is positive or zero.
-	 * @param message
+	 * @param message is a string prompt for the user
 	 * @return double value representing a dollar amount
 	 */
 	public double getTransactionValue(String message) {
