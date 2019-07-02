@@ -9,6 +9,8 @@ public class Checking extends Account {
 
 	//Unique child class data and getters/setters
 	private double overdraft;
+	//Account fees and minimum balances
+	public static final double OVERDRAFT_FEE = 25.0;
 	
 	public double getOverdraft() {
 		return overdraft;
