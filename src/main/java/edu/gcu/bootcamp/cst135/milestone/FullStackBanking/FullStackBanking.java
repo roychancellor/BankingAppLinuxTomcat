@@ -15,7 +15,7 @@ public class FullStackBanking {
 	 */
 	public static void main(String[] args) {
 		//Open the bank
-		Bank bank = new Bank();
+		Bank bank = new Bank("GCU BANK");
 		
 		//Call the primary user interface
 		bank.viewCustomerMenu();

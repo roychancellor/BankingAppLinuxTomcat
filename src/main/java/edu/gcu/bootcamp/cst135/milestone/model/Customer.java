@@ -13,6 +13,10 @@ public class Customer {
 	private String firstName;
 	private String lastName;
 	private Date dateOpened;
+	private String custID;
+	private Checking checking;
+	private Saving saving;
+	private Loan loan;
 	
 	/**
 	 * Constructor for Customers requires all three parameters to create a new Customer object
@@ -20,11 +24,18 @@ public class Customer {
 	 * @param firstName customer first name
 	 * @param lastName customer last name
 	 * @param dateOpened date the customer opened the account
+	 * @param custID unique 9-character string ID for customer
 	 */
-	public Customer(String firstName, String lastName, Date dateOpened) {
+	public Customer(String firstName, String lastName, Date dateOpened, String custID) {
 		this.firstName = firstName;
 		this.lastName = lastName;
 		this.dateOpened = dateOpened;
+		this.custID = custID;
+		
+		//Make Checking, Saving, and Loan accounts (in the future, create a menu to do this manually)
+		this.checking = createCheckingAccount();
+		this.saving = createSavingAccount();
+		this.loan = createLoanAccount();
 	}
 
 	//Accessors (no mutators provided - Customers are immutable objects)
@@ -50,14 +61,50 @@ public class Customer {
 	}
 	
 	/**
+	 * @return the checking account object
+	 */
+	public Checking getChecking() {
+		return checking;
+	}
+
+	/**
+	 * @return the saving account object
+	 */
+	public Saving getSaving() {
+		return saving;
+	}
+
+	/**
+	 * @return the loan account object
+	 */
+	public Loan getLoan() {
+		return loan;
+	}
+
+	/**
+	 * @return the custID
+	 */
+	public String getCustomerID() {
+		return custID;
+	}
+
+	/**
 	 *@return lastName, firstName
 	 */
 	@Override
 	public String toString() {
-		return "Customer last, first, dateOpened: "
-			+ this.lastName
-			+ ", " + this.firstName
-			+ ", " + this.dateOpened;
+		return "-------------------------------------------------------------"
+			+ "\nAccount details for " + this.firstName + " " + this.lastName + ", "
+			+ "customer ID XXX-XX-" + this.custID.substring(this.custID.length() - 4, this.custID.length())
+			+ "\n-------------------------------------------------------------"
+			+ "\n* Customer since " + this.dateOpened
+			+ "\n* " + this.checking.getAccountNumber() + "\tBalance: " + this.checking.getAccountBalance()
+			+ "\n* " + this.saving.getAccountNumber() + "\tBalance: " + this.saving.getAccountBalance()
+			+ "\n* " + this.loan.getAccountNumber() + "\tBalance: " + this.loan.getAccountBalance()
+			+ "\n   * principal borrowed: " + (-this.loan.getPrincipal())
+			+ "\n   * annual interest rate: " + this.loan.getInterestRate() * 12
+			+ "\n   * monthly payment: " + this.loan.getMonthlyPayment()
+			+ "\n   * term years: " + this.loan.getTermYears();
 	}
 	
 	//Class methods
@@ -67,7 +114,7 @@ public class Customer {
 	 * @return Checking account object
 	 */
 	public Checking createCheckingAccount() {
-		String accountNumber = "C" + ((Long)System.currentTimeMillis()).toString().substring(0, 9);
+		String accountNumber = "CHK" + ((Long)System.currentTimeMillis()).toString().substring(0, 9);
 		return new Checking(
 			accountNumber,
 			2500,
@@ -80,7 +127,7 @@ public class Customer {
 	 * @return Saving account object
 	 */
 	public Saving createSavingAccount() {
-		String accountNumber = "S" + ((Long)System.currentTimeMillis()).toString().substring(0, 9);
+		String accountNumber = "SAV" + ((Long)System.currentTimeMillis()).toString().substring(0, 9);
 		return new Saving(
 			accountNumber,
 			500,
@@ -95,12 +142,13 @@ public class Customer {
 	 * @return Saving account object
 	 */
 	public Loan createLoanAccount() {
-		String accountNumber = "L" + ((Long)System.currentTimeMillis()).toString().substring(0, 9);
+		String accountNumber = "LOA" + ((Long)System.currentTimeMillis()).toString().substring(0, 9);
 		return new Loan(
 			accountNumber,
 			-5000,
 			Loan.LATE_FEE,
-			Loan.INTEREST_RATE
+			Loan.INTEREST_RATE,
+			10
 		);
 	}
 

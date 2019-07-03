@@ -19,7 +19,18 @@ public abstract class Account implements iActions {
 	private double accountBalance;
 	public static final String AMOUNT_MESSAGE = "Enter dollar amount you would like to ";
 
-	//Getters and setters
+	/**
+	 * Constructor gets called when making child objects
+	 * @param accountNumber random account number
+	 * @param accountBalance opening account balance
+	 */
+	public Account(String accountNumber, double accountBalance) {
+
+		this.accountNumber = accountNumber;
+		this.accountBalance = accountBalance;
+	}
+	
+//Getters and setters
 	public String getAccountNumber() {
 		return accountNumber;
 	}
@@ -38,20 +49,9 @@ public abstract class Account implements iActions {
 
 	@Override
 	public String toString() {
-		return accountNumber + " $" + accountBalance;
+		return accountNumber + "\t$" + accountBalance;
 	}
 
-	/**
-	 * Constructor gets called when making child objects
-	 * @param accountNumber the random account number
-	 * @param accountBalance the opening account balance
-	 */
-	public Account(String accountNumber, double accountBalance) {
-
-		this.accountNumber = accountNumber;
-		this.accountBalance = accountBalance;
-	}
-	
 	/**
 	 * Implements iAction interface
 	 * This method will throw an exception for invalid input and call itself over and over and over until
