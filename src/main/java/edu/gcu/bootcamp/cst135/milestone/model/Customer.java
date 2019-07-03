@@ -93,18 +93,32 @@ public class Customer {
 	 */
 	@Override
 	public String toString() {
-		return "-------------------------------------------------------------"
+		return "\n-------------------------------------------------------------"
 			+ "\nAccount details for " + this.firstName + " " + this.lastName + ", "
 			+ "customer ID XXX-XX-" + this.custID.substring(this.custID.length() - 4, this.custID.length())
 			+ "\n-------------------------------------------------------------"
 			+ "\n* Customer since " + this.dateOpened
 			+ "\n* " + this.checking.getAccountNumber() + "\tBalance: " + this.checking.getAccountBalance()
 			+ "\n* " + this.saving.getAccountNumber() + "\tBalance: " + this.saving.getAccountBalance()
-			+ "\n* " + this.loan.getAccountNumber() + "\tBalance: " + this.loan.getAccountBalance()
-			+ "\n   * principal borrowed: " + (-this.loan.getPrincipal())
+			+ "\n* " + this.loan.getAccountNumber() + "\tBalance: " + this.loan.getAccountBalance();
+	}
+	/**
+	 * overloaded toString to allow a boolean parameter for controlling whether loan details show or not
+	 * @param verbose boolean value to print details or not
+	 * @return message string
+	 */
+	public String toString(boolean verbose) {
+		String message = this.toString();
+		
+		//Add the loan details
+		if(verbose) {
+			message += "\n   * principal borrowed: " + (-this.loan.getPrincipal())
 			+ "\n   * annual interest rate: " + this.loan.getInterestRate() * 12
 			+ "\n   * monthly payment: " + this.loan.getMonthlyPayment()
 			+ "\n   * term years: " + this.loan.getTermYears();
+		}
+
+		return message;
 	}
 	
 	//Class methods

@@ -35,7 +35,7 @@ public class Bank {
 	
 	//Class methods
 	private void welcomeCustomer() {
-		System.out.println(customers.get(0));
+		System.out.println(customers.get(0).toString(true));
 	}
 	
 	/**
@@ -147,7 +147,7 @@ public class Bank {
 	 * Displays all account balances
 	 */
 	private void viewBalances() {
-		System.out.println(customers.get(0));
+		System.out.println(customers.get(0).toString(false));
 	}
 	
 	/**
