@@ -8,7 +8,7 @@ import edu.gcu.bootcamp.cst135.milestone.controller.Checking;
 import edu.gcu.bootcamp.cst135.milestone.controller.Saving;
 import edu.gcu.bootcamp.cst135.milestone.controller.Loan;
 
-public class Customer {
+public class Customer implements Comparable<Customer> {
 	//Class data
 	private String firstName;
 	private String lastName;
@@ -123,6 +123,20 @@ public class Customer {
 	
 	//Class methods
 
+	/**
+	 * Implementation of compareTo for comparing two Customer objects
+	 * Allows sorting by lastName, firstName
+	 */
+	public int compareTo(Customer c) {
+		int valueLastName = this.lastName.compareTo(c.lastName);
+		if(valueLastName == 0) {  //last names same
+			return this.firstName.compareTo(c.firstName);
+		}
+		else {
+			return valueLastName;
+		}
+	}
+	
 	/**
 	 * Creates a checking account
 	 * @return Checking account object

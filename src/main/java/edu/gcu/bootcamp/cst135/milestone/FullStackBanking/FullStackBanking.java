@@ -18,6 +18,7 @@ public class FullStackBanking {
 		Bank bank = new Bank("GCU BANK");
 		
 		//Call the primary user interface
-		bank.viewCustomerMenu();
+		//bank.viewCustomerActionMenu();
+		bank.viewCustomerSelectionMenu();
 	}
 }

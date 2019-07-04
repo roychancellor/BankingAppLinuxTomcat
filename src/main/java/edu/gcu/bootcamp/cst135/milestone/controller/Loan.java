@@ -100,7 +100,7 @@ public class Loan extends Account {
 	}
 
 	/**
-	 * Computes the monthly payment of a loan based on principal, term, and annual intreest rate
+	 * Computes the monthly payment of a loan based on principal, term, and annual interest rate
 	 */
 	private double computeMonthlyPayment() {
 		return (-this.interestRate * this.principal / (1 - Math.pow(1 + this.interestRate, -this.termYears * 12)));
