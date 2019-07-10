@@ -12,7 +12,7 @@ public class Saving extends Account {
 	private double interestRate;
 	private double serviceFee;
 	public static final double MINIMUM_BALANCE = 200.0;
-	public static final double INTEREST_RATE = 0.06;
+	public static final double ANNUAL_INTEREST_RATE = 0.06;
 	public static final double BELOW_MIN_BALANCE_FEE = 40.0;
 	
 	/**
@@ -44,11 +44,11 @@ public class Saving extends Account {
 		this.minBalance = minBalance;
 	}
 
-	public double getInterest() {
+	public double getInterestRate() {
 		return interestRate;
 	}
 
-	public void setInterest(double interestRate) {
+	public void setInterestRate(double interestRate) {
 		this.interestRate = interestRate / 12;
 	}
 

@@ -5,13 +5,14 @@ import edu.gcu.bootcamp.cst135.milestone.model.Account;
 public class Loan extends Account {
 
 	//Class data
-	private double interestRate;
+	private double monthlyInterestRate;
 	private double lateFee;
 	private int termYears;
-	private double monthlyPayment;
+	private double monthlyPaymentAmount;
 	private double principal;
+	private double amountPaidThisMonth;
 	public static final double LATE_FEE = 25.0;
-	public static final double INTEREST_RATE = 0.08;
+	public static final double ANNUAL_INTEREST_RATE = 0.08;
 	
 	//Constructor
 	public Loan(String accountNumber, double principal, double lateFee, double annualInterestRate, int termYears) {
@@ -21,19 +22,20 @@ public class Loan extends Account {
 		//Unique to Loan objects
 		this.lateFee = lateFee;
 		
-		//MONTHLY interest rate (no setter provided, so interest rate is immutable for Loan objects
-		this.interestRate = annualInterestRate / 12;
+		//MONTHLY interest rate (no setter provided, so interest rate is immutable for Loan objects)
+		this.monthlyInterestRate = annualInterestRate / 12;
 		
 		this.termYears = termYears;
 		this.principal = principal;
-		this.monthlyPayment = computeMonthlyPayment();
+		this.monthlyPaymentAmount = computeMonthlyPayment();
+		this.amountPaidThisMonth = 0;
 	}
 
 	/**
-	 * @return the monthly interestRate
+	 * @return the monthly monthlyInterestRate
 	 */
-	public double getInterestRate() {
-		return interestRate;
+	public double getAnnualInterestRate() {
+		return monthlyInterestRate;
 	}
 
 	/**
@@ -72,26 +74,52 @@ public class Loan extends Account {
 	}
 
 	/**
-	 * @return the monthlyPayment
+	 * @return the monthlyPaymentAmount
 	 */
-	public double getMonthlyPayment() {
-		return monthlyPayment;
+	public double getMonthlyPaymentAmount() {
+		return monthlyPaymentAmount;
+	}
+
+	/**
+	 * @return the amountPaidThisMonth
+	 */
+	public double getAmountPaidThisMonth() {
+		return amountPaidThisMonth;
+	}
+
+	/**
+	 * @param amountPaidThisMonth the amountPaidThisMonth to set
+	 */
+	public void setAmountPaidThisMonth(double amountPaidThisMonth) {
+		this.amountPaidThisMonth = amountPaidThisMonth;
 	}
 
 	@Override
 	/**
-	 * @param transType a value that is -1 for withdrawals and +1 for deposits
-	 * @param amount the dollar amount of the transaction
+	 * Implements doTransaction that was left abstract in the superclass
+	 * unique to Loan accounts (logic for payment greater than outstanding balance)
+	 * @param transType a multiplier for withdrawals (-1) or deposits (+1), unused for Loan objects
+	 * @param amount the amount of loan payment
 	 */
-	public void doTransaction(int transType, double amount) {
-		//Can ONLY make loan payments ("deposits")
-		if(transType == Account.DEPOSIT) {
-			//Loan balances are negative amounts, so ADD the loan payment to make it less negative
-			setAccountBalance(getAccountBalance() + amount);
+	public void doTransaction(final int transType, double amount) {
+		//WITHDRAWAL: Determine if the account will be overdrawn; if so, alert the user and try again
+		while(transType == Account.DEPOSIT && amount > Math.abs(getAccountBalance())) {
+			System.out.println(
+				"\n\t"
+				+ amount
+				+ " is greater than your outstanding balance of "
+				+ getAccountBalance()
+				+ ". Enter a new value or 0 to void transaction.\n"
+			);			
+			amount = getTransactionValue(Account.AMOUNT_MESSAGE + "pay: ");
 		}
+		//Process the transaction
+		setAccountBalance(getAccountBalance() + amount);
+		setAmountPaidThisMonth(getAmountPaidThisMonth() + amount);
 	}
+
 	/**
-	 * Overloads doTransaction to receive only the amount because the only loan transactions are deposits
+	 * Overloads doTransaction to receive only the amount because the only allowable loan transactions are deposits
 	 * @param amount dollar amount of payment on the loan
 	 */
 	public void doTransaction(double amount) {
@@ -103,6 +131,22 @@ public class Loan extends Account {
 	 * Computes the monthly payment of a loan based on principal, term, and annual interest rate
 	 */
 	private double computeMonthlyPayment() {
-		return (-this.interestRate * this.principal / (1 - Math.pow(1 + this.interestRate, -this.termYears * 12)));
+		return (-this.monthlyInterestRate * this.principal / (1 - Math.pow(1 + this.monthlyInterestRate, -this.termYears * 12)));
+	}
+	
+	/**
+	 * computes the end of month interest for the loan
+	 * @return end of month interest
+	 */
+	public double doEndOfMonthInterest() {
+		return getAccountBalance() * monthlyInterestRate;
+	}
+	
+	/**
+	 * determines if a late fee for non-payment or below minimum payment is required
+	 * @return true if fee is required or false if not
+	 */
+	public boolean checkLateFee() {
+		return amountPaidThisMonth < monthlyPaymentAmount;
 	}
 }

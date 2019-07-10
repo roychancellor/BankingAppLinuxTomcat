@@ -25,9 +25,9 @@ public abstract class Account implements iActions {
 	 * @param accountBalance opening account balance
 	 */
 	public Account(String accountNumber, double accountBalance) {
-
 		this.accountNumber = accountNumber;
 		this.accountBalance = accountBalance;
+		
 	}
 	
 //Getters and setters

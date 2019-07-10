@@ -89,7 +89,7 @@ public class Customer implements Comparable<Customer> {
 	}
 
 	/**
-	 *@return lastName, firstName
+	 *@return customer and account information
 	 */
 	@Override
 	public String toString() {
@@ -98,10 +98,19 @@ public class Customer implements Comparable<Customer> {
 			+ "customer ID XXX-XX-" + this.custID.substring(this.custID.length() - 4, this.custID.length())
 			+ "\n-------------------------------------------------------------"
 			+ "\n* Customer since " + this.dateOpened
-			+ "\n* " + this.checking.getAccountNumber() + "\tBalance: " + this.checking.getAccountBalance()
-			+ "\n* " + this.saving.getAccountNumber() + "\tBalance: " + this.saving.getAccountBalance()
-			+ "\n* " + this.loan.getAccountNumber() + "\tBalance: " + this.loan.getAccountBalance();
+			+ balancesToString();
 	}
+	
+	/**
+	 * creates a string of all account balances formatted for printing
+	 * @return string
+	 */
+	public String balancesToString() {
+		return "\n* " + this.checking.getAccountNumber() + "\tBalance: " + this.checking.getAccountBalance()
+		+ "\n* " + this.saving.getAccountNumber() + "\tBalance: " + this.saving.getAccountBalance()
+		+ "\n* " + this.loan.getAccountNumber() + "\tBalance: " + this.loan.getAccountBalance();
+	}
+	
 	/**
 	 * overloaded toString to allow a boolean parameter for controlling whether loan details show or not
 	 * @param verbose boolean value to print details or not
@@ -110,11 +119,11 @@ public class Customer implements Comparable<Customer> {
 	public String toString(boolean verbose) {
 		String message = this.toString();
 		
-		//Add the loan details
+		//Concatenate the loan details when verbose is true
 		if(verbose) {
 			message += "\n   * principal borrowed: " + (-this.loan.getPrincipal())
-			+ "\n   * annual interest rate: " + this.loan.getInterestRate() * 12
-			+ "\n   * monthly payment: " + this.loan.getMonthlyPayment()
+			+ "\n   * annual interest rate: " + this.loan.getAnnualInterestRate() * 12
+			+ "\n   * monthly payment: " + this.loan.getMonthlyPaymentAmount()
 			+ "\n   * term years: " + this.loan.getTermYears();
 		}
 
@@ -126,6 +135,7 @@ public class Customer implements Comparable<Customer> {
 	/**
 	 * Implementation of compareTo for comparing two Customer objects
 	 * Allows sorting by lastName, firstName
+	 * @return the value of String compareTo for lastName (if unequal) or firstName if lastNames same
 	 */
 	public int compareTo(Customer c) {
 		int valueLastName = this.lastName.compareTo(c.lastName);
@@ -161,7 +171,7 @@ public class Customer implements Comparable<Customer> {
 			500,
 			Saving.MINIMUM_BALANCE,
 			Saving.BELOW_MIN_BALANCE_FEE,
-			Saving.INTEREST_RATE
+			Saving.ANNUAL_INTEREST_RATE
 		);
 	}
 	
@@ -175,7 +185,7 @@ public class Customer implements Comparable<Customer> {
 			accountNumber,
 			-5000,
 			Loan.LATE_FEE,
-			Loan.INTEREST_RATE,
+			Loan.ANNUAL_INTEREST_RATE,
 			10
 		);
 	}

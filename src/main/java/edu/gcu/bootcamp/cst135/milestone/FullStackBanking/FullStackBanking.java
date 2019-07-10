@@ -19,6 +19,7 @@ public class FullStackBanking {
 		
 		//Call the primary user interface
 		//bank.viewCustomerActionMenu();
-		bank.viewCustomerSelectionMenu();
+		//bank.viewCustomerSelectionMenu();
+		bank.viewMainMenu();
 	}
 }
