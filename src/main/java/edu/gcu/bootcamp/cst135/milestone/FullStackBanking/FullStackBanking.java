@@ -10,16 +10,14 @@ import edu.gcu.bootcamp.cst135.milestone.controller.Bank;
 
 public class FullStackBanking {
 	/**
-	 * 
-	 * @param args command-line arguments not implemented currently
+	 * controller to open the bank and call the main menu
+	 * @param args command-line arguments, not currently implemented
 	 */
 	public static void main(String[] args) {
 		//Open the bank
 		Bank bank = new Bank("GCU BANK");
 		
 		//Call the primary user interface
-		//bank.viewCustomerActionMenu();
-		//bank.viewCustomerSelectionMenu();
 		bank.viewMainMenu();
 	}
 }

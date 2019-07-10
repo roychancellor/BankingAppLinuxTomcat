@@ -194,7 +194,7 @@ public class Bank {
 				System.out.println(" 6: Get Account Balances");
 				System.out.println(" 7: Get Monthly Statement");
 				System.out.println("------------------------");
-				System.out.println(" " + MENU_EXIT + ": Logout");
+				System.out.println(" " + MENU_EXIT + ": Return to Customer Login");
 				//try to convert user input into an integer (throws InputMismatchException if not)
 				option = scanner.nextInt();
 				processCustomerMenu(option);
