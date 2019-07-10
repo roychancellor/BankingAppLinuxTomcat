@@ -43,7 +43,9 @@ public class Checking extends Account {
 		double feeAmount = 0;
 		//WITHDRAWAL: Determine if the account will be overdrawn; if so, alert the user and give choice to exit
 		if(transType == Account.WITHDRAWAL && amount > getAccountBalance()) {
-			System.out.println("A $" + getOverdraftFee() + " overdraftFee fee will be assessed if you continue. Continue Y or N?");
+			System.out.println("An overdraft fee of " 
+				+ Bank.money.format(getOverdraftFee())
+				+ " will be assessed if you continue. Continue Y or N?");
 			//If the user chooses to continue, assess the overdraftFee fee; if not, return to the checking withdrawal screen
 			if(Bank.scanner.nextLine().toLowerCase().equals("y")) {
 				feeAmount = getOverdraftFee();

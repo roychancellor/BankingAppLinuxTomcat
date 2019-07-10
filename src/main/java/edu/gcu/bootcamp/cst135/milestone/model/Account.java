@@ -11,8 +11,8 @@ public abstract class Account implements iActions {
 	
 	//Class Constants
 	//Multipliers for a common doTransaction method
-	public static final int DEPOSIT = 1;
-	public static final int WITHDRAW = -1;
+	//public static final int DEPOSIT = 1;
+	//public static final int WITHDRAW = -1;
 
 	//Class data
 	private String accountNumber;

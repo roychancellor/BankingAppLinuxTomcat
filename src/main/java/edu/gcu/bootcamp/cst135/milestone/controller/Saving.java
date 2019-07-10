@@ -71,9 +71,9 @@ public class Saving extends Account {
 		while(transType == Account.WITHDRAWAL && amount > getAccountBalance()) {
 			System.out.println(
 				"\n\t"
-				+ amount
+				+ Bank.money.format(amount)
 				+ " is greater than your balance of "
-				+ getAccountBalance()
+				+ Bank.money.format(getAccountBalance())
 				+ ". Enter a new value or 0 to void transaction.\n"
 			);			
 			amount = getTransactionValue(Account.AMOUNT_MESSAGE + "withdraw: ");

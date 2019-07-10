@@ -4,6 +4,8 @@
 package edu.gcu.bootcamp.cst135.milestone.model;
 
 import java.util.Date;
+
+import edu.gcu.bootcamp.cst135.milestone.controller.Bank;
 import edu.gcu.bootcamp.cst135.milestone.controller.Checking;
 import edu.gcu.bootcamp.cst135.milestone.controller.Saving;
 import edu.gcu.bootcamp.cst135.milestone.controller.Loan;
@@ -106,9 +108,9 @@ public class Customer implements Comparable<Customer> {
 	 * @return string
 	 */
 	public String balancesToString() {
-		return "\n* " + this.checking.getAccountNumber() + "\tBalance: " + this.checking.getAccountBalance()
-		+ "\n* " + this.saving.getAccountNumber() + "\tBalance: " + this.saving.getAccountBalance()
-		+ "\n* " + this.loan.getAccountNumber() + "\tBalance: " + this.loan.getAccountBalance();
+		return "\n* " + this.checking.getAccountNumber() + "\tBalance: " + Bank.money.format(this.checking.getAccountBalance())
+		+ "\n* " + this.saving.getAccountNumber() + "\tBalance: " + Bank.money.format(this.saving.getAccountBalance())
+		+ "\n* " + this.loan.getAccountNumber() + "\tBalance: " + Bank.money.format(this.loan.getAccountBalance());
 	}
 	
 	/**
@@ -121,9 +123,9 @@ public class Customer implements Comparable<Customer> {
 		
 		//Concatenate the loan details when verbose is true
 		if(verbose) {
-			message += "\n   * principal borrowed: " + (-this.loan.getPrincipal())
-			+ "\n   * annual interest rate: " + this.loan.getAnnualInterestRate() * 12
-			+ "\n   * monthly payment: " + this.loan.getMonthlyPaymentAmount()
+			message += "\n   * principal borrowed: " + (Bank.money.format(-this.loan.getPrincipal()))
+			+ "\n   * annual interest rate: " + this.loan.getMonthlyInterestRate() * 12 * 100 + "%"
+			+ "\n   * monthly payment: " + Bank.money.format(this.loan.getMonthlyPaymentAmount())
 			+ "\n   * term years: " + this.loan.getTermYears();
 		}
 
@@ -152,7 +154,7 @@ public class Customer implements Comparable<Customer> {
 	 * @return Checking account object
 	 */
 	public Checking createCheckingAccount() {
-		String accountNumber = "CHK" + ((Long)System.currentTimeMillis()).toString().substring(0, 9);
+		String accountNumber = "CHK" + createAccountNumber();
 		return new Checking(
 			accountNumber,
 			2500,
@@ -165,7 +167,7 @@ public class Customer implements Comparable<Customer> {
 	 * @return Saving account object
 	 */
 	public Saving createSavingAccount() {
-		String accountNumber = "SAV" + ((Long)System.currentTimeMillis()).toString().substring(0, 9);
+		String accountNumber = "SAV" + createAccountNumber();
 		return new Saving(
 			accountNumber,
 			500,
@@ -180,7 +182,7 @@ public class Customer implements Comparable<Customer> {
 	 * @return Saving account object
 	 */
 	public Loan createLoanAccount() {
-		String accountNumber = "LOA" + ((Long)System.currentTimeMillis()).toString().substring(0, 9);
+		String accountNumber = "LOA" + createAccountNumber();
 		return new Loan(
 			accountNumber,
 			-5000,
@@ -189,5 +191,12 @@ public class Customer implements Comparable<Customer> {
 			10
 		);
 	}
-
+	
+	/**
+	 * Creates an account number from the first 9 characters of System.currentTimeMillis
+	 * @return string
+	 */
+	private String createAccountNumber() {
+		return ((Long)System.currentTimeMillis()).toString().substring(0, 9);
+	}
 }

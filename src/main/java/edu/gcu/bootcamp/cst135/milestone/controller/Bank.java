@@ -254,10 +254,8 @@ public class Bank {
 		case 5:
 			System.out.println("\nYour minimum monthly payment is "
 				+ money.format(customers.get(custIndex).getLoan().getMonthlyPaymentAmount()));
-			customers.get(custIndex)
-				.getLoan()
-				.doTransaction(
-					customers.get(custIndex).getLoan().getTransactionValue(Account.AMOUNT_MESSAGE + "pay on the loan: ")
+			customers.get(custIndex).getLoan().doTransaction(
+				customers.get(custIndex).getLoan().getTransactionValue(Account.AMOUNT_MESSAGE + "pay on the loan: ")
 			);
 			viewBalances();
 			break;
@@ -335,7 +333,7 @@ public class Bank {
 					System.out.println("\n* Late fee charged: "
 						+ money.format(customers.get(custIndex).getLoan().getLateFee())
 						+ " (failure to make the minimum payment)\n"
-						);
+					);
 				}
 				
 				//New balance

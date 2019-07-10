@@ -34,7 +34,7 @@ public class Loan extends Account {
 	/**
 	 * @return the monthly monthlyInterestRate
 	 */
-	public double getAnnualInterestRate() {
+	public double getMonthlyInterestRate() {
 		return monthlyInterestRate;
 	}
 
@@ -108,7 +108,7 @@ public class Loan extends Account {
 				"\n\t"
 				+ amount
 				+ " is greater than your outstanding balance of "
-				+ getAccountBalance()
+				+ Bank.money.format(getAccountBalance())
 				+ ". Enter a new value or 0 to void transaction.\n"
 			);			
 			amount = getTransactionValue(Account.AMOUNT_MESSAGE + "pay: ");
