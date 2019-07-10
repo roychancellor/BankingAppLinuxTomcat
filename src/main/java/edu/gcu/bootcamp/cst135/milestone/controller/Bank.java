@@ -22,9 +22,11 @@ public class Bank {
 	private SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy hh:mm:ss");
 	private List<Customer> customers = new ArrayList<Customer>();
 	private int custIndex = 0;
+	
+	//Class constants
 	private static final int MENU_MIN = 1;
 	private static final int MENU_MAX = 7;
-	private static final int MENU_EXIT = 9;
+	private static final int MENU_EXIT = 0;
 	//Scanner on System.in for use in all classes
 	public static Scanner scanner = new Scanner(System.in);
 	//Format for money outputs in all classes
@@ -73,7 +75,7 @@ public class Bank {
 				System.out.println(" 1: Create New Customer");
 				System.out.println(" 2: Select Existing Customer");
 				System.out.println("------------------------");
-				System.out.println(" 9: Exit Banking Application");
+				System.out.println(" " + MENU_EXIT + ": Exit Banking Application");
 				//try to convert user input into an integer (throws InputMismatchException if not)
 				option = scanner.nextInt();
 				processMainMenu(option);
@@ -131,7 +133,7 @@ public class Bank {
 					);
 				}
 				System.out.println("------------------------");
-				System.out.println("9 : Return to Main Menu");
+				System.out.println(" " + MENU_EXIT + ": Return to Main Menu");
 				//try to convert user input into an integer (throws InputMismatchException if not)
 				option = scanner.nextInt();
 				
@@ -192,7 +194,7 @@ public class Bank {
 				System.out.println(" 6: Get Account Balances");
 				System.out.println(" 7: Get Monthly Statement");
 				System.out.println("------------------------");
-				System.out.println(" 9: Logout");
+				System.out.println(" " + MENU_EXIT + ": Logout");
 				//try to convert user input into an integer (throws InputMismatchException if not)
 				option = scanner.nextInt();
 				processCustomerMenu(option);
@@ -251,7 +253,7 @@ public class Bank {
 			break;
 		case 5:
 			System.out.println("\nYour minimum monthly payment is "
-				+ customers.get(custIndex).getLoan().getMonthlyPaymentAmount());
+				+ money.format(customers.get(custIndex).getLoan().getMonthlyPaymentAmount()));
 			customers.get(custIndex)
 				.getLoan()
 				.doTransaction(
@@ -298,7 +300,7 @@ public class Bank {
 		if(endOfMonth) {
 			System.out.println("\nMonthly charges and credits:");
 			//SAVINGS
-			//Savings service fee (deduct before computing interest)
+			//Service fee (deduct before computing interest)
 			if(customers.get(custIndex).getSaving().getAccountBalance() < customers.get(custIndex).getSaving().getMinBalance()) {
 				System.out.println("\n* Service fee charged: "
 						+ money.format(customers.get(custIndex).getSaving().getServiceFee())
@@ -309,7 +311,7 @@ public class Bank {
 					- customers.get(custIndex).getSaving().getServiceFee()
 				);
 			}
-			//Savings interest on any positive balance (interest compounded monthly)
+			//Interest on any positive balance (interest compounded monthly)
 			if (customers.get(custIndex).getSaving().getAccountBalance() > 0) {
 				double interestEarned = customers.get(custIndex).getSaving().getAccountBalance()
 						* customers.get(custIndex).getSaving().getInterestRate();
@@ -318,20 +320,22 @@ public class Bank {
 					customers.get(custIndex).getSaving().getAccountBalance()
 					+ interestEarned
 				);
-				System.out.printf("\n* Savings interest earned: $%.2f", interestEarned);
+				System.out.println("\n* Savings interest earned: " + money.format(interestEarned));
 			}
 			
 			//LOAN
 			if (customers.get(custIndex).getLoan().getAccountBalance() < 0) {
-				//Monthly loan interest
+				//Interest
 				double eomAdder = customers.get(custIndex).getLoan().doEndOfMonthInterest();
-				System.out.printf("\n* Loan interest charged: $%.2f", Math.abs(eomAdder));
+				System.out.println("\n* Loan interest charged: " + money.format(Math.abs(eomAdder)));
 				
-				//Loan late fee
+				//Late fee
 				if(customers.get(custIndex).getLoan().checkLateFee()) {
 					eomAdder -= customers.get(custIndex).getLoan().getLateFee();
-					System.out.printf("\n* Late fee charged: $%.2f (failure to make the minimum payment)\n",
-						customers.get(custIndex).getLoan().getLateFee());
+					System.out.println("\n* Late fee charged: "
+						+ money.format(customers.get(custIndex).getLoan().getLateFee())
+						+ " (failure to make the minimum payment)\n"
+						);
 				}
 				
 				//New balance
