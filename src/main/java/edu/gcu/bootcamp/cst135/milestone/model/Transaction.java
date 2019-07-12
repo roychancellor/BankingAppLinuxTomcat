@@ -18,10 +18,10 @@ public class Transaction {
 	}
 	
 	/**
-	 * @param transactionDate
-	 * @param accountNumber
-	 * @param amount
-	 * @param transactionType
+	 * @param transactionDate the date-time of the transaction
+	 * @param accountNumber the account number string
+	 * @param amount the dollar amount of the transaction
+	 * @param transactionType the description of the transaction
 	 */
 	public Transaction(Date transactionDate, String accountNumber, double amount, String transactionType) {
 		this.transactionDate = transactionDate;
@@ -48,15 +48,15 @@ public class Transaction {
 	/**
 	 * @return the accountNumber
 	 */
-	public String getAccountType() {
+	public String getAccountNumber() {
 		return accountNumber;
 	}
 
 	/**
 	 * @param accountNumber the accountNumber to set
 	 */
-	public void setAccountType(String accountType) {
-		this.accountNumber = accountType;
+	public void setAccountNumber(String accountNumber) {
+		this.accountNumber = accountNumber;
 	}
 
 	/**

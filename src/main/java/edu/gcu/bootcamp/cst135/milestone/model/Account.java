@@ -104,7 +104,6 @@ public abstract class Account implements iActions, iTrans {
 
 	/**
 	 * Implements the iTrans interface: addTransaction method
-	 * @param transDate is a Date object for a date-time stamp
 	 * @param amount is the dollar amount of the transaction
 	 * @param transType is a description of the type of transaction
 	 */
