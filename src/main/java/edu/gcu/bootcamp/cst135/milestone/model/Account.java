@@ -5,19 +5,20 @@
 package edu.gcu.bootcamp.cst135.milestone.model;
 
 import edu.gcu.bootcamp.cst135.milestone.model.iActions;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
 import edu.gcu.bootcamp.cst135.milestone.controller.Bank;
 
-public abstract class Account implements iActions {
+public abstract class Account implements iActions, iTrans {
 	
-	//Class Constants
-	//Multipliers for a common doTransaction method
-	//public static final int DEPOSIT = 1;
-	//public static final int WITHDRAW = -1;
-
 	//Class data
 	private String accountNumber;
 	private double accountBalance;
 	public static final String AMOUNT_MESSAGE = "Enter dollar amount you would like to ";
+	private List<Transaction> transList = new ArrayList<Transaction>();
 
 	/**
 	 * Constructor gets called when making child objects
@@ -27,7 +28,6 @@ public abstract class Account implements iActions {
 	public Account(String accountNumber, double accountBalance) {
 		this.accountNumber = accountNumber;
 		this.accountBalance = accountBalance;
-		
 	}
 	
 //Getters and setters
@@ -47,9 +47,17 @@ public abstract class Account implements iActions {
 		this.accountBalance = accountBalance;
 	}
 
+	public List<Transaction> getTransList() {
+		return transList;
+	}
+
+	public void setTransList(List<Transaction> transList) {
+		this.transList = transList;
+	}
+
 	@Override
 	public String toString() {
-		return accountNumber + "\t" + Bank.money.format(accountBalance);
+		return accountNumber + "\t" + String.format("$%(,12.2f", accountBalance);
 	}
 
 	/**
@@ -93,4 +101,23 @@ public abstract class Account implements iActions {
 	 * unique to those account types
 	 */
 	public abstract void doTransaction(final int transType, double amount);
+
+	/**
+	 * Implements the iTrans interface: addTransaction method
+	 * @param transDate is a Date object for a date-time stamp
+	 * @param amount is the dollar amount of the transaction
+	 * @param transType is a description of the type of transaction
+	 */
+	public void addTransaction(double amount, String transType) {
+		this.transList.add(new Transaction(new Date(), this.accountNumber, amount, transType));
+	}
+
+	/**
+	 * Implements the iTrans interface: displayTransaction method
+	 */
+	public void displayTransactions() {
+		for(Transaction t : transList) {
+			System.out.println(t.toString());
+		}
+	}	
 }

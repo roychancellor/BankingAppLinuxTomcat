@@ -116,6 +116,8 @@ public class Loan extends Account {
 		//Process the transaction
 		setAccountBalance(getAccountBalance() + amount);
 		setAmountPaidThisMonth(getAmountPaidThisMonth() + amount);
+		//Record the transaction
+		this.addTransaction(amount, "Loan payment");
 	}
 
 	/**
@@ -142,11 +144,43 @@ public class Loan extends Account {
 		return getAccountBalance() * monthlyInterestRate;
 	}
 	
+	@Override
+	/**
+	 * Implements the method in the iTrans interface
+	 */
+	public void doEndOfMonth() {
+		if (getAccountBalance() < 0) {
+			//Interest
+			double eomAdder = doEndOfMonthInterest();
+			System.out.println("* Loan interest charged: " + String.format("$%(,12.2f", Math.abs(eomAdder)));
+			this.addTransaction(eomAdder, "Interest charged");
+			
+			//Late fee
+			if(isFeeRequired()) {
+				eomAdder -= getLateFee();
+				System.out.println("* Late fee charged: "
+					+ String.format("$%(,12.2f", getLateFee())
+					+ " (failure to make the minimum payment)\n"
+				);
+				this.addTransaction(-getLateFee(), "Late fee");
+			}
+			
+			//New balance
+			setAccountBalance(getAccountBalance() + eomAdder);
+			
+			//Reset the amount paid for the month to zero
+			setAmountPaidThisMonth(0);
+		}
+		else {
+			System.out.println("\nCongratulations, your loan is now paid off!");
+		}
+	}
+	
 	/**
 	 * determines if a late fee for non-payment or below minimum payment is required
 	 * @return true if fee is required or false if not
 	 */
-	public boolean checkLateFee() {
+	public boolean isFeeRequired() {
 		return amountPaidThisMonth < monthlyPaymentAmount;
 	}
 }

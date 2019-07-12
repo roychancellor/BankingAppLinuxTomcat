@@ -44,7 +44,7 @@ public class Checking extends Account {
 		//WITHDRAWAL: Determine if the account will be overdrawn; if so, alert the user and give choice to exit
 		if(transType == Account.WITHDRAWAL && amount > getAccountBalance()) {
 			System.out.println("An overdraft fee of " 
-				+ Bank.money.format(getOverdraftFee())
+				+ String.format("$%(,12.2f", getOverdraftFee())
 				+ " will be assessed if you continue. Continue Y or N?");
 			//If the user chooses to continue, assess the overdraftFee fee; if not, return to the checking withdrawal screen
 			if(Bank.scanner.nextLine().toLowerCase().equals("y")) {
@@ -57,5 +57,25 @@ public class Checking extends Account {
 		
 		//Once validated, process the transaction
 		setAccountBalance(getAccountBalance() + transType * (amount + feeAmount));
+		//Record the transaction
+		if(transType == Account.WITHDRAWAL)
+			this.addTransaction(-amount, "Withdrawal");
+		if(transType == Account.DEPOSIT)
+			this.addTransaction(amount, "Deposit");
 	}
+	
+	/**
+	 * Implements the iTrans interface: doEndOfMonth method
+	 */
+	public void doEndOfMonth() {
+		//Future functionality for Checking objects
+	}
+	
+	/**
+	 * Implements the iTrans interface: checkLateFee method
+	 */
+	public boolean isFeeRequired() {
+		return false;
+	}
+
 }

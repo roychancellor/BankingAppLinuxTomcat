@@ -71,14 +71,52 @@ public class Saving extends Account {
 		while(transType == Account.WITHDRAWAL && amount > getAccountBalance()) {
 			System.out.println(
 				"\n\t"
-				+ Bank.money.format(amount)
+				+ String.format("$%(,12.2f",amount)
 				+ " is greater than your balance of "
-				+ Bank.money.format(getAccountBalance())
+				+ String.format("$%(,12.2f", getAccountBalance())
 				+ ". Enter a new value or 0 to void transaction.\n"
 			);			
 			amount = getTransactionValue(Account.AMOUNT_MESSAGE + "withdraw: ");
 		}
 		//Process the transaction
 		setAccountBalance(getAccountBalance() + transType * amount);
+		//Record the transaction
+		if(transType == Account.WITHDRAWAL)
+			this.addTransaction(-amount, "Withdrawal");
+		if(transType == Account.DEPOSIT)
+			this.addTransaction(amount, "Deposit");
 	}
+	
+	@Override
+	/**
+	 * Implements the iTrans interface method
+	 */
+	public void doEndOfMonth() {
+		//Service fee (deduct before computing interest)
+		if(isFeeRequired()) {
+			System.out.println("* Service fee charged: "
+				+ String.format("$%(,12.2f", getServiceFee())
+				+ "(savings below minimum balance)");
+
+			setAccountBalance(getAccountBalance() - getServiceFee());
+			this.addTransaction(-getServiceFee(), "Service fee");
+		}
+		//Interest on any positive balance (interest compounded monthly)
+		if (getAccountBalance() > 0) {
+			double interestEarned = getAccountBalance() * getInterestRate();
+			
+			setAccountBalance(getAccountBalance() + interestEarned);
+			System.out.println("* Savings interest earned: " + String.format("$%(,12.2f", interestEarned));
+			this.addTransaction(interestEarned, "Interest earned");
+		}
+	}
+	
+	/**
+	 * Implements the iTrans interface: checkLateFee method
+	 * @return true if fee is requires (balance below minimum) or false if not
+	 */
+	public boolean isFeeRequired() {
+		return getAccountBalance() < getMinBalance();
+	}
+
 }

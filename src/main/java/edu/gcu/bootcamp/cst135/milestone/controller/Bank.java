@@ -19,7 +19,7 @@ public class Bank {
 
 	//Class data
 	private String bankName;
-	private SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy hh:mm:ss");
+	public static SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy hh:mm:ss");
 	private List<Customer> customers = new ArrayList<Customer>();
 	private int custIndex = 0;
 	
@@ -165,7 +165,7 @@ public class Bank {
 	 */
 	private void welcomeCustomer() {
 		if(this.custIndex < customers.size())
-			System.out.println(customers.get(custIndex).toString(true));
+			System.out.println(customers.get(custIndex).toString(false));
 	}
 	
 	/**
@@ -253,7 +253,7 @@ public class Bank {
 			break;
 		case 5:
 			System.out.println("\nYour minimum monthly payment is "
-				+ money.format(customers.get(custIndex).getLoan().getMonthlyPaymentAmount()));
+				+ String.format("$%(,12.2f", customers.get(custIndex).getLoan().getMonthlyPaymentAmount()));
 			customers.get(custIndex).getLoan().doTransaction(
 				customers.get(custIndex).getLoan().getTransactionValue(Account.AMOUNT_MESSAGE + "pay on the loan: ")
 			);
@@ -263,7 +263,6 @@ public class Bank {
 			break;
 		case 7:
 			viewEndOfMonth();
-			System.out.println(customers.get(custIndex).balancesToString());
 			break;  
 		case MENU_EXIT:
 			viewCustomerExit();
@@ -297,56 +296,23 @@ public class Bank {
 		boolean endOfMonth = true;
 		if(endOfMonth) {
 			System.out.println("\nMonthly charges and credits:");
-			//SAVINGS
-			//Service fee (deduct before computing interest)
-			if(customers.get(custIndex).getSaving().getAccountBalance() < customers.get(custIndex).getSaving().getMinBalance()) {
-				System.out.println("\n* Service fee charged: "
-						+ money.format(customers.get(custIndex).getSaving().getServiceFee())
-						+ "(savings below minimum balance)");
-
-				customers.get(custIndex).getSaving().setAccountBalance(
-					customers.get(custIndex).getSaving().getAccountBalance()
-					- customers.get(custIndex).getSaving().getServiceFee()
-				);
-			}
-			//Interest on any positive balance (interest compounded monthly)
-			if (customers.get(custIndex).getSaving().getAccountBalance() > 0) {
-				double interestEarned = customers.get(custIndex).getSaving().getAccountBalance()
-						* customers.get(custIndex).getSaving().getInterestRate();
-				
-				customers.get(custIndex).getSaving().setAccountBalance(
-					customers.get(custIndex).getSaving().getAccountBalance()
-					+ interestEarned
-				);
-				System.out.println("\n* Savings interest earned: " + money.format(interestEarned));
-			}
+			customers.get(custIndex).getSaving().doEndOfMonth();
+			customers.get(custIndex).getLoan().doEndOfMonth();
 			
-			//LOAN
-			if (customers.get(custIndex).getLoan().getAccountBalance() < 0) {
-				//Interest
-				double eomAdder = customers.get(custIndex).getLoan().doEndOfMonthInterest();
-				System.out.println("\n* Loan interest charged: " + money.format(Math.abs(eomAdder)));
-				
-				//Late fee
-				if(customers.get(custIndex).getLoan().checkLateFee()) {
-					eomAdder -= customers.get(custIndex).getLoan().getLateFee();
-					System.out.println("\n* Late fee charged: "
-						+ money.format(customers.get(custIndex).getLoan().getLateFee())
-						+ " (failure to make the minimum payment)\n"
-					);
-				}
-				
-				//New balance
-				customers.get(custIndex).getLoan().setAccountBalance(
-					customers.get(custIndex).getLoan().getAccountBalance() + eomAdder
-				);
-				
-				//Reset the amount paid for the month to zero
-				customers.get(custIndex).getLoan().setAmountPaidThisMonth(0);
-			}
-			else {
-				System.out.println("\nCongratulations, your loan is now paid off!");
-			}
+			//Display the transaction list
+			System.out.println("\nDate and Time\t\tAccount\t\tAmount\t\tDescription");
+			printHeaderLine(70);
+			customers.get(custIndex).getChecking().displayTransactions();
+			printHeaderLine(70);
+			System.out.println("\t\t\tEnd balance:\t" + String.format("$%(,12.2f", customers.get(custIndex).getChecking().getAccountBalance()) + "\n");
+			printHeaderLine(70);
+			customers.get(custIndex).getSaving().displayTransactions();
+			printHeaderLine(70);
+			System.out.println("\t\t\tEnd balance:\t" + String.format("$%(,12.2f", customers.get(custIndex).getSaving().getAccountBalance()) + "\n");
+			printHeaderLine(70);
+			customers.get(custIndex).getLoan().displayTransactions();
+			printHeaderLine(70);
+			System.out.println("\t\t\tEnd balance:\t" + String.format("$%(,12.2f", customers.get(custIndex).getLoan().getAccountBalance()) + "\n");
 		}
 		else {
 			System.out.println("\nSorry, the <current month> is not complete.");
@@ -366,5 +332,13 @@ public class Bank {
 	private void viewBankingAppExit() {
 		System.out.println("\nGoodbye banker. Application closed at " + dateFormat.format(new Date()) + ". Have a good day!\n");
 	}
-
+	
+	/**
+	 * Prints a series of dashes for use as a header underline
+	 */
+	private void printHeaderLine(int numDashes) {
+		for(int i = 0; i < numDashes; i++)
+			System.out.print("-");
+		System.out.println();
+	}
 }

@@ -5,7 +5,6 @@ package edu.gcu.bootcamp.cst135.milestone.model;
 
 import java.util.Date;
 
-import edu.gcu.bootcamp.cst135.milestone.controller.Bank;
 import edu.gcu.bootcamp.cst135.milestone.controller.Checking;
 import edu.gcu.bootcamp.cst135.milestone.controller.Saving;
 import edu.gcu.bootcamp.cst135.milestone.controller.Loan;
@@ -38,6 +37,11 @@ public class Customer implements Comparable<Customer> {
 		this.checking = createCheckingAccount();
 		this.saving = createSavingAccount();
 		this.loan = createLoanAccount();
+		
+		//Populate transaction list with opening balance for each account
+		this.checking.addTransaction(this.checking.getAccountBalance(), "Beginning balance");
+		this.saving.addTransaction(this.saving.getAccountBalance(), "Beginning balance");
+		this.loan.addTransaction(this.loan.getAccountBalance(), "Beginning balance");
 	}
 
 	//Accessors (no mutators provided - Customers are immutable objects)
@@ -108,9 +112,9 @@ public class Customer implements Comparable<Customer> {
 	 * @return string
 	 */
 	public String balancesToString() {
-		return "\n* " + this.checking.getAccountNumber() + "\tBalance: " + Bank.money.format(this.checking.getAccountBalance())
-		+ "\n* " + this.saving.getAccountNumber() + "\tBalance: " + Bank.money.format(this.saving.getAccountBalance())
-		+ "\n* " + this.loan.getAccountNumber() + "\tBalance: " + Bank.money.format(this.loan.getAccountBalance());
+		return "\n* " + this.checking.getAccountNumber() + "\tBalance: " + String.format("$%(,12.2f", this.checking.getAccountBalance())
+		+ "\n* " + this.saving.getAccountNumber() + "\tBalance: " + String.format("$%(,12.2f", this.saving.getAccountBalance())
+		+ "\n* " + this.loan.getAccountNumber() + "\tBalance: " + String.format("$%(,12.2f", this.loan.getAccountBalance());
 	}
 	
 	/**
@@ -123,10 +127,10 @@ public class Customer implements Comparable<Customer> {
 		
 		//Concatenate the loan details when verbose is true
 		if(verbose) {
-			message += "\n   * principal borrowed: " + (Bank.money.format(-this.loan.getPrincipal()))
-			+ "\n   * annual interest rate: " + this.loan.getMonthlyInterestRate() * 12 * 100 + "%"
-			+ "\n   * monthly payment: " + Bank.money.format(this.loan.getMonthlyPaymentAmount())
-			+ "\n   * term years: " + this.loan.getTermYears();
+			message += "\n   * principal borrowed:\t" + String.format("$%(,12.2f", -this.loan.getPrincipal())
+			+ "\n   * annual interest rate:\t" + this.loan.getMonthlyInterestRate() * 12 * 100 + "%"
+			+ "\n   * monthly payment:\t" + String.format("$%(,12.2f", this.loan.getMonthlyPaymentAmount())
+			+ "\n   * term years:\t" + this.loan.getTermYears();
 		}
 
 		return message;
