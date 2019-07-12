@@ -25,13 +25,12 @@ public class Customer implements Comparable<Customer> {
 	 * @param firstName customer first name
 	 * @param lastName customer last name
 	 * @param dateOpened date the customer opened the account
-	 * @param custID unique 9-character string ID for customer
 	 */
-	public Customer(String firstName, String lastName, Date dateOpened, String custID) {
+	public Customer(String firstName, String lastName, Date dateOpened) {
 		this.firstName = firstName;
 		this.lastName = lastName;
 		this.dateOpened = dateOpened;
-		this.custID = custID;
+		this.custID = createAccountNumber();
 		
 		//Make Checking, Saving, and Loan accounts (in the future, create a menu to do this manually)
 		this.checking = createCheckingAccount();
@@ -57,6 +56,20 @@ public class Customer implements Comparable<Customer> {
 	 */
 	public String getLastName() {
 		return lastName;
+	}
+
+	/**
+	 * @param firstName the firstName to set
+	 */
+	public void setFirstName(String firstName) {
+		this.firstName = firstName;
+	}
+
+	/**
+	 * @param lastName the lastName to set
+	 */
+	public void setLastName(String lastName) {
+		this.lastName = lastName;
 	}
 
 	/**
@@ -202,5 +215,13 @@ public class Customer implements Comparable<Customer> {
 	 */
 	private String createAccountNumber() {
 		return ((Long)System.currentTimeMillis()).toString().substring(0, 9);
+	}
+	
+	/**
+	 * Creates an account number from the first 9 characters of System.currentTimeMillis + random 1-100
+	 * @return string
+	 */
+	private String createCustomerID() {
+		return ((Long)(System.currentTimeMillis() + (long)(Math.random() * 100 + 1))).toString().substring(0, 9);
 	}
 }
