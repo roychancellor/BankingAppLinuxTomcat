@@ -18,23 +18,23 @@ import edu.gcu.bootcamp.cst135.milestone.model.Customer;
 public class Bank {
 
 	//Class data
+	//Scanner on System.in for use in all classes
+	public static Scanner scanner = new Scanner(System.in);
 	private String bankName;
-	public static SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy hh:mm:ss");
 	private List<Customer> customers = new ArrayList<Customer>();
 	private int custIndex = 0;
 	
+	//Format for dates and money outputs in all classes
+	public static SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy hh:mm:ss");
+	public static DecimalFormat money = new DecimalFormat();
+	public static final String MONEY_FORMAT = "$#,##0.00;($#,##0.00)";
+
 	//Class constants
 	private static final int MENU_MIN = 1;
 	private static final int MENU_MAX = 7;
 	private static final int MENU_EXIT = 0;
 	private static final boolean CUSTOMER_UPDATE = true;
 	private static final boolean CUSTOMER_TRANSACT = false;
-	//Scanner on System.in for use in all classes
-	public static Scanner scanner = new Scanner(System.in);
-	//Format for money outputs in all classes
-	public static DecimalFormat money = new DecimalFormat();
-	public static final String MONEY_FORMAT = "$#,##0.00;($#,##0.00)";
-
 	
 	//Constructor
 	public Bank(String bankName) {
@@ -68,10 +68,10 @@ public class Bank {
 		try {
 			int option;
 			do {
-				System.out.println("\n$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
-				System.out.println("                MAIN MENU");
-				System.out.println("                " + bankName);
-				System.out.println("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
+				System.out.println("\n$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
+				System.out.println("          MAIN MENU");
+				System.out.println("          " + bankName);
+				System.out.println("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
 				System.out.println("Pick an option: ");
 				System.out.println("-----------------------");
 				System.out.println(" 1: Customer Management");
@@ -127,8 +127,8 @@ public class Bank {
 				System.out.println("\n===========================");
 				System.out.println("   Customer Management");
 				System.out.println("===========================");
-				System.out.println("1: Enter New Customer");
-				System.out.println("2: Modify Existing Customer");
+				System.out.println(" 1: Enter New Customer");
+				System.out.println(" 2: Modify Customer");
 				System.out.println("------------------------");
 				System.out.println(" " + MENU_EXIT + ": Return to Main Menu");
 				//try to convert user input into an integer (throws InputMismatchException if not)
@@ -167,6 +167,11 @@ public class Bank {
 		scanner.nextLine();
 		//Add a new Customer object to the existing list of customers
 		customers.add(new Customer(getName("Enter first name:"), getName("Enter last name:"), new Date()));
+		System.out.println("\nSuccess, "
+			+ customers.get(customers.size() - 1).getFirstName()
+			+ " " + customers.get(customers.size() - 1).getLastName()
+			+ " created."
+		);
 		
 		//Sort the list of Bank customers by lastName, firstName
 		Collections.sort(customers);
@@ -178,9 +183,17 @@ public class Bank {
 	private void updateCustomerInformation() {
 		//Clear the newline from last nextInt call
 		scanner.nextLine();
+		
 		//Get new names
-		customers.get(custIndex).setLastName(getName("Enter new last name:"));
+		String origLastName = customers.get(custIndex).getLastName();
+		String origFirstName = customers.get(custIndex).getFirstName();
 		customers.get(custIndex).setFirstName(getName("Enter new first name:"));
+		customers.get(custIndex).setLastName(getName("Enter new last name:"));
+		System.out.println("\nSuccess, " + origFirstName + " " + origLastName
+			+ " changed to "
+			+ customers.get(custIndex).getFirstName()
+			+ " " + customers.get(custIndex).getLastName()
+		);
 		//Sort the list of Bank customers by lastName, firstName
 		Collections.sort(customers);
 	}

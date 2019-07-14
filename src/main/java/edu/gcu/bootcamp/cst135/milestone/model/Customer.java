@@ -30,7 +30,7 @@ public class Customer implements Comparable<Customer> {
 		this.firstName = firstName;
 		this.lastName = lastName;
 		this.dateOpened = dateOpened;
-		this.custID = createAccountNumber();
+		this.custID = createCustomerID();
 		
 		//Make Checking, Saving, and Loan accounts (in the future, create a menu to do this manually)
 		this.checking = createCheckingAccount();
@@ -112,10 +112,10 @@ public class Customer implements Comparable<Customer> {
 	 */
 	@Override
 	public String toString() {
-		return "\n-------------------------------------------------------------"
-			+ "\nAccount details for " + this.firstName + " " + this.lastName + ", "
-			+ "customer ID XXX-XX-" + this.custID.substring(this.custID.length() - 4, this.custID.length())
-			+ "\n-------------------------------------------------------------"
+		return "\n----------------------------------------------"
+			+ "\nAccount details for " + this.firstName + " " + this.lastName
+			+ "\ncustomer ID XXX-XX-" + this.custID.substring(this.custID.length() - 4, this.custID.length())
+			+ "\n----------------------------------------------"
 			+ "\n* Customer since " + this.dateOpened
 			+ balancesToString();
 	}
