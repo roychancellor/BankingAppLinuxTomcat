@@ -71,9 +71,9 @@ public class Saving extends Account {
 		while(transType == Account.WITHDRAWAL && amount > getAccountBalance()) {
 			System.out.println(
 				"\n\t"
-				+ String.format("$%(,12.2f",amount)
+				+ Bank.money.format(amount)
 				+ " is greater than your balance of "
-				+ String.format("$%(,12.2f", getAccountBalance())
+				+ Bank.money.format(getAccountBalance())
 				+ ". Enter a new value or 0 to void transaction.\n"
 			);			
 			amount = getTransactionValue(Account.AMOUNT_MESSAGE + "withdraw: ");
@@ -95,7 +95,7 @@ public class Saving extends Account {
 		//Service fee (deduct before computing interest)
 		if(isFeeRequired()) {
 			System.out.println("* Service fee charged: "
-				+ String.format("$%(,12.2f", getServiceFee())
+				+ Bank.money.format(getServiceFee())
 				+ "(savings below minimum balance)");
 
 			setAccountBalance(getAccountBalance() - getServiceFee());
@@ -106,7 +106,7 @@ public class Saving extends Account {
 			double interestEarned = getAccountBalance() * getInterestRate();
 			
 			setAccountBalance(getAccountBalance() + interestEarned);
-			System.out.println("* Savings interest earned: " + String.format("$%(,12.2f", interestEarned));
+			System.out.println("* Savings interest earned: " + Bank.money.format(interestEarned));
 			this.addTransaction(interestEarned, "Interest earned");
 		}
 	}

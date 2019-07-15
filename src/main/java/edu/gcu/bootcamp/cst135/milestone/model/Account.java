@@ -57,7 +57,7 @@ public abstract class Account implements iActions, iTrans {
 
 	@Override
 	public String toString() {
-		return accountNumber + "\t" + String.format("$%(,12.2f", accountBalance);
+		return accountNumber + "\t" + Bank.money.format(accountBalance);
 	}
 
 	/**
@@ -118,5 +118,7 @@ public abstract class Account implements iActions, iTrans {
 		for(Transaction t : transList) {
 			System.out.println(t.toString());
 		}
-	}	
+		Bank.printHeaderLine(75);
+		System.out.println("\t\t\tEnd balance:\t" + String.format("$%(,12.2f", getAccountBalance()) + "\n");
+	}
 }

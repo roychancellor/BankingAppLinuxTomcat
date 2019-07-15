@@ -152,14 +152,14 @@ public class Loan extends Account {
 		if (getAccountBalance() < 0) {
 			//Interest
 			double eomAdder = doEndOfMonthInterest();
-			System.out.println("* Loan interest charged: " + String.format("$%(,12.2f", Math.abs(eomAdder)));
+			System.out.println("* Loan interest charged: " + Bank.money.format(Math.abs(eomAdder)));
 			this.addTransaction(eomAdder, "Interest charged");
 			
 			//Late fee
 			if(isFeeRequired()) {
 				eomAdder -= getLateFee();
 				System.out.println("* Late fee charged: "
-					+ String.format("$%(,12.2f", getLateFee())
+					+ Bank.money.format(getLateFee())
 					+ " (failure to make the minimum payment)\n"
 				);
 				this.addTransaction(-getLateFee(), "Late fee");

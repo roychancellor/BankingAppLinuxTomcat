@@ -355,7 +355,7 @@ public class Bank {
 			break;
 		case 5:
 			System.out.println("\nYour minimum monthly payment is "
-				+ String.format("$%(,12.2f", customers.get(custIndex).getLoan().getMonthlyPaymentAmount()));
+				+ money.format(customers.get(custIndex).getLoan().getMonthlyPaymentAmount()));
 			customers.get(custIndex).getLoan().doTransaction(
 				customers.get(custIndex).getLoan().getTransactionValue(Account.AMOUNT_MESSAGE + "pay on the loan: ")
 			);
@@ -394,7 +394,8 @@ public class Bank {
 		System.out.println("          " + dateFormat.format(new Date()));
 		System.out.println("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$\n");
 
-		//Determine if the end of the month has occurred (NOT IMPLEMENTED YET)
+		//Determine if the end of the month has occurred
+		//Stub-out only - NOT IMPLEMENTED IN THIS VERSION
 		boolean endOfMonth = true;
 		if(endOfMonth) {
 			System.out.println("\nMonthly charges and credits:");
@@ -403,18 +404,12 @@ public class Bank {
 			
 			//Display the transaction list
 			System.out.println("\nDate and Time\t\tAccount\t\tAmount\t\tDescription");
-			printHeaderLine(70);
+			printHeaderLine(75);
 			customers.get(custIndex).getChecking().displayTransactions();
-			printHeaderLine(70);
-			System.out.println("\t\t\tEnd balance:\t" + String.format("$%(,12.2f", customers.get(custIndex).getChecking().getAccountBalance()) + "\n");
-			printHeaderLine(70);
+			printHeaderLine(75);
 			customers.get(custIndex).getSaving().displayTransactions();
-			printHeaderLine(70);
-			System.out.println("\t\t\tEnd balance:\t" + String.format("$%(,12.2f", customers.get(custIndex).getSaving().getAccountBalance()) + "\n");
-			printHeaderLine(70);
+			printHeaderLine(75);
 			customers.get(custIndex).getLoan().displayTransactions();
-			printHeaderLine(70);
-			System.out.println("\t\t\tEnd balance:\t" + String.format("$%(,12.2f", customers.get(custIndex).getLoan().getAccountBalance()) + "\n");
 		}
 		else {
 			System.out.println("\nSorry, the <current month> is not complete.");
@@ -438,7 +433,7 @@ public class Bank {
 	/**
 	 * Prints a series of dashes for use as a header underline
 	 */
-	private void printHeaderLine(int numDashes) {
+	public static void printHeaderLine(int numDashes) {
 		for(int i = 0; i < numDashes; i++)
 			System.out.print("-");
 		System.out.println();
