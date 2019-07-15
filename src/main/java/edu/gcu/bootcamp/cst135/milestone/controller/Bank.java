@@ -432,6 +432,7 @@ public class Bank {
 	
 	/**
 	 * Prints a series of dashes for use as a header underline
+	 * @param numDashes the number of dashes to print in a single line
 	 */
 	public static void printHeaderLine(int numDashes) {
 		for(int i = 0; i < numDashes; i++)
