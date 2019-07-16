@@ -49,6 +49,7 @@ public class Checking extends Account {
 			//If the user chooses to continue, assess the overdraftFee fee; if not, return to the checking withdrawal screen
 			if(Bank.scanner.nextLine().toLowerCase().equals("y")) {
 				feeAmount = getOverdraftFee();
+				this.addTransaction(feeAmount, "Overdraft fee");
 			}
 			else {  //the user chose not to continue with the overdraft fee, so ask for a new amount to withdraw
 				doTransaction(Account.WITHDRAWAL, getTransactionValue(Account.AMOUNT_MESSAGE + "withdraw: "));
