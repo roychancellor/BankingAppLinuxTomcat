@@ -40,14 +40,15 @@ public class Bank {
 	public Bank(String bankName) {
 		this.bankName = bankName;
 		/*** CREATE LIST OF CUSTOMERS FOR EASE OF TESTING ***/
-		customers.add(new Customer("Roy", "Chancellor", new Date()));
-		customers.add(new Customer("Nathan", "Chancellor", new Date()));
-		customers.add(new Customer("Kelsey", "Chancellor", new Date()));
-		customers.add(new Customer("Robyn", "Chancellor", new Date()));
-		customers.add(new Customer("Aaron", "Zephyr", new Date()));
-		customers.add(new Customer("Betty", "Zephyr", new Date()));
-		customers.add(new Customer("Crystal", "Aaronson", new Date()));
-		customers.add(new Customer("Zilbah", "Aaronson", new Date()));
+		customers.add(new Customer("Tony", "Womack", new Date()));
+		customers.add(new Customer("Craig", "Counsell", new Date()));
+		customers.add(new Customer("Luis", "Gonzales", new Date()));
+		customers.add(new Customer("Matt", "Williams", new Date()));
+		customers.add(new Customer("Steve", "Finley", new Date()));
+		customers.add(new Customer("Danny", "Bautista", new Date()));
+		customers.add(new Customer("Mark", "Grace", new Date()));
+		customers.add(new Customer("Damian", "Miller", new Date()));
+		customers.add(new Customer("Curt", "Schilling", new Date()));
 		
 		//Sort the customers by lastName, firstName
 		Collections.sort(customers);
@@ -72,12 +73,12 @@ public class Bank {
 				System.out.println("          MAIN MENU");
 				System.out.println("          " + bankName);
 				System.out.println("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
-				System.out.println("Pick an option: ");
-				System.out.println("-----------------------");
-				System.out.println(" 1: Customer Management");
-				System.out.println(" 2: Customer Transactions");
-				System.out.println("------------------------");
-				System.out.println(" " + MENU_EXIT + ": Exit Banking Application");
+				System.out.println("\nPick an option: ");
+				System.out.println("----------------------------");
+				System.out.println(" 1 : Customer Management");
+				System.out.println(" 2 : Customer Transactions");
+				System.out.println("----------------------------");
+				System.out.println(" " + MENU_EXIT + " : Exit Banking Application");
 				//try to convert user input into an integer (throws InputMismatchException if not)
 				option = scanner.nextInt();
 				processMainMenu(option);
@@ -124,13 +125,13 @@ public class Bank {
 		try {
 			int option = 0;
 			do {
-				System.out.println("\n===========================");
-				System.out.println("   Customer Management");
-				System.out.println("===========================");
-				System.out.println(" 1: Enter New Customer");
-				System.out.println(" 2: Modify Customer");
-				System.out.println("------------------------");
-				System.out.println(" " + MENU_EXIT + ": Return to Main Menu");
+				System.out.println("\n============================");
+				System.out.println("    Customer Management");
+				System.out.println("============================");
+				System.out.println(" 1 : Enter New Customer");
+				System.out.println(" 2 : Modify Customer");
+				System.out.println("-------------------------");
+				System.out.println(" " + MENU_EXIT + " : Return to Main Menu");
 				//try to convert user input into an integer (throws InputMismatchException if not)
 				option = scanner.nextInt();
 				
@@ -223,13 +224,13 @@ public class Bank {
 				System.out.println("==============================");
 				for(int i = 0; i < customers.size(); i++) {
 					System.out.println(
-						(i + 1) + " : "
+						" " + (i + 1) + " : "
 						+ customers.get(i).getFirstName()
 						+ " " + customers.get(i).getLastName()
 					);
 				}
 				System.out.println("------------------------");
-				System.out.println(" " + MENU_EXIT + ": Return to Main Menu");
+				System.out.println(" " + MENU_EXIT + " : Return to Main Menu");
 				//try to convert user input into an integer (throws InputMismatchException if not)
 				option = scanner.nextInt();
 				
@@ -286,17 +287,18 @@ public class Bank {
 				System.out.println("        Welcome " + customers.get(custIndex).getFirstName() + " " + customers.get(custIndex).getLastName() + "!");
 				System.out.println("          " + dateFormat.format(new Date()));
 				System.out.println("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
-				System.out.println("Pick an option: ");
-				System.out.println("-----------------------");
-				System.out.println(" 1: Deposit to Checking");
-				System.out.println(" 2: Deposit to Savings");
-				System.out.println(" 3: Withdraw from Checking");
-				System.out.println(" 4: Withdraw from Savings");			
-				System.out.println(" 5: Make a Loan Payment");			
-				System.out.println(" 6: Get Account Balances");
-				System.out.println(" 7: Get Monthly Statement");
-				System.out.println("------------------------");
-				System.out.println(" " + MENU_EXIT + ": Return to Customer Login");
+				System.out.println("\nPick an option: ");
+				printHeaderLine(29);
+				System.out.println(" 1 : Deposit to Checking");
+				System.out.println(" 2 : Deposit to Savings");
+				System.out.println(" 3 : Withdraw from Checking");
+				System.out.println(" 4 : Withdraw from Savings");			
+				System.out.println(" 5 : Make a Loan Payment");			
+				System.out.println(" 6 : View Loan amortization");			
+				System.out.println(" 7 : Get Account Balances");
+				System.out.println(" 8 : Get Monthly Statement");
+				printHeaderLine(29);
+				System.out.println(" " + MENU_EXIT + " : Return to Customer Login");
 				//try to convert user input into an integer (throws InputMismatchException if not)
 				option = scanner.nextInt();
 				processCustomerMenu(option);
@@ -361,9 +363,12 @@ public class Bank {
 			);
 			viewBalances();
 			break;
-		case 6: viewBalances();
-			break;
+		case 6:
+			customers.get(custIndex).getLoan().viewAmortization();
 		case 7:
+			viewBalances();
+			break;
+		case 8:
 			viewEndOfMonth();
 			break;  
 		case MENU_EXIT:
@@ -387,18 +392,19 @@ public class Bank {
 	 */
 	private void viewEndOfMonth() {
 
-		System.out.println("\n$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
-		System.out.println("                 GCU BANK");
-		System.out.println("               END OF MONTH");
-		System.out.println("      Statement for " + customers.get(custIndex).getFirstName() + " " + customers.get(custIndex).getLastName());
-		System.out.println("          " + dateFormat.format(new Date()));
-		System.out.println("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$\n");
+		System.out.println("\n$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
+		System.out.println("                                 GCU BANK");
+		System.out.println("                         END OF MONTH STATEMENT");
+		System.out.println("                       for customer " + customers.get(custIndex).getFirstName() + " " + customers.get(custIndex).getLastName());
+		System.out.println("                          " + dateFormat.format(new Date()));
+		System.out.println("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
 
 		//Determine if the end of the month has occurred
 		//Stub-out only - NOT IMPLEMENTED IN THIS VERSION
 		boolean endOfMonth = true;
 		if(endOfMonth) {
 			System.out.println("\nMonthly charges and credits:");
+			printHeaderLine(65);
 			customers.get(custIndex).getSaving().doEndOfMonth();
 			customers.get(custIndex).getLoan().doEndOfMonth();
 			

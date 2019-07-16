@@ -132,7 +132,7 @@ public class Loan extends Account {
 	/**
 	 * Computes the monthly payment of a loan based on principal, term, and annual interest rate
 	 */
-	private double computeMonthlyPayment() {
+	public double computeMonthlyPayment() {
 		return (-this.monthlyInterestRate * this.principal / (1 - Math.pow(1 + this.monthlyInterestRate, -this.termYears * 12)));
 	}
 	
@@ -182,5 +182,25 @@ public class Loan extends Account {
 	 */
 	public boolean isFeeRequired() {
 		return amountPaidThisMonth < monthlyPaymentAmount;
+	}
+	
+	/**
+	 * prints an amortization table for this loan
+	 */
+	public void viewAmortization() {
+		double balance = this.principal;
+		double interestPaid = 0;
+		int paymentNumber = 1;
+		
+		System.out.println("\nNumber\tInterest\tPrincipal\tBalance");
+		Bank.printHeaderLine(60);
+		System.out.printf("0\t--------\t--------\t$%(,12.2f\n", this.principal);
+		
+		while(balance < 0) {
+			interestPaid = -balance * this.monthlyInterestRate;
+			balance = balance - interestPaid + this.monthlyPaymentAmount;
+			System.out.printf("%d\t$%(,9.2f\t$%(,7.2f\t$%(,12.2f\n", paymentNumber, -interestPaid, this.monthlyPaymentAmount - interestPaid, balance);
+			paymentNumber++;
+		}
 	}
 }
