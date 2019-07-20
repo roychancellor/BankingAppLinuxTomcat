@@ -131,6 +131,7 @@ public class Loan extends Account {
 
 	/**
 	 * Computes the monthly payment of a loan based on principal, term, and annual interest rate
+	 * @return the monthly payment amount for compounded interest
 	 */
 	public double computeMonthlyPayment() {
 		return (-this.monthlyInterestRate * this.principal / (1 - Math.pow(1 + this.monthlyInterestRate, -this.termYears * 12)));
@@ -191,16 +192,25 @@ public class Loan extends Account {
 		double balance = this.principal;
 		double interestPaid = 0;
 		int paymentNumber = 1;
+		double totalInterestPaid = 0;
+		double totalPrincipalPaid = 0;
 		
 		System.out.println("\nNumber\tInterest\tPrincipal\tBalance");
-		Bank.printHeaderLine(60);
+		Bank.printHeaderLine(55);
 		System.out.printf("0\t--------\t--------\t$%(,12.2f\n", this.principal);
 		
 		while(balance < 0) {
 			interestPaid = -balance * this.monthlyInterestRate;
+			totalInterestPaid += interestPaid;
+			totalPrincipalPaid += (this.monthlyPaymentAmount - interestPaid);
 			balance = balance - interestPaid + this.monthlyPaymentAmount;
 			System.out.printf("%d\t$%(,9.2f\t$%(,7.2f\t$%(,12.2f\n", paymentNumber, -interestPaid, this.monthlyPaymentAmount - interestPaid, balance);
 			paymentNumber++;
 		}
+		
+		Bank.printHeaderLine(55);
+		System.out.printf("TOTALS:\t$%(,9.2f\t$%(,9.2f\n", totalInterestPaid, totalPrincipalPaid);
+		Bank.printHeaderLine(55);
+		System.out.println("\n");
 	}
 }
