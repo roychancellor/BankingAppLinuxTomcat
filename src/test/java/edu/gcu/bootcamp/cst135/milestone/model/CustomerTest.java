@@ -6,6 +6,8 @@ import java.util.Date;
 
 import org.junit.Test;
 
+import edu.gcu.cst235.milestone.model.Customer;
+
 public class CustomerTest {
 
 	@Test

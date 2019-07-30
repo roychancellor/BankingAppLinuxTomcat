@@ -2,15 +2,15 @@
  * Superclass for creating Checking, Saving, and Loan accounts
  * Future versions may declare this class abstract since it will not be instantiated
  */
-package edu.gcu.bootcamp.cst135.milestone.model;
-
-import edu.gcu.bootcamp.cst135.milestone.model.iActions;
+package edu.gcu.cst235.milestone.model;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import edu.gcu.bootcamp.cst135.milestone.controller.Bank;
+import edu.gcu.cst235.milestone.controller.Bank;
+import edu.gcu.cst235.milestone.controller.iActions;
+import edu.gcu.cst235.milestone.controller.iTrans;
 
 public abstract class Account implements iActions, iTrans {
 	

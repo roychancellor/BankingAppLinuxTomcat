@@ -3,12 +3,11 @@
  * calls the viewCustomerMenu() method to initiate the user interface. The user interface
  * takes over control of the program.
  */
-package edu.gcu.bootcamp.cst135.milestone.FullStackBanking;
+package edu.gcu.cst235.milestone;
 
-//Imports that are required for this class
-import edu.gcu.bootcamp.cst135.milestone.controller.Bank;
+import edu.gcu.cst235.milestone.controller.Bank;
 
-public class FullStackBanking {
+public class BankingApp {
 	/**
 	 * controller to open the bank and call the main menu
 	 * @param args command-line arguments, not currently implemented

@@ -2,7 +2,7 @@
  * Bank is the primary class for the banking application, housing all methods to process user input
  * The actual account computations occur in the account classes Checking, Saving, and Loan
  */
-package edu.gcu.bootcamp.cst135.milestone.controller;
+package edu.gcu.cst235.milestone.controller;
 
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
@@ -12,8 +12,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Scanner;
 
-import edu.gcu.bootcamp.cst135.milestone.model.Account;
-import edu.gcu.bootcamp.cst135.milestone.model.Customer;
+import edu.gcu.cst235.milestone.model.Account;
+import edu.gcu.cst235.milestone.model.Customer;
 
 public class Bank {
 

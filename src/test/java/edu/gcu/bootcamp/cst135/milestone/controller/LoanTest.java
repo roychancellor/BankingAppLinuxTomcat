@@ -4,6 +4,8 @@ import static org.junit.Assert.*;
 
 import org.junit.Test;
 
+import edu.gcu.cst235.milestone.model.Loan;
+
 public class LoanTest {
 
 	@Test

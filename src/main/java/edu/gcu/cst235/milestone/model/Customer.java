@@ -1,14 +1,11 @@
 /**
  * Customer class used to create Customer objects which will create Checking, Saving, and Loan objects
  */
-package edu.gcu.bootcamp.cst135.milestone.model;
+package edu.gcu.cst235.milestone.model;
 
 import java.util.Date;
 
-import edu.gcu.bootcamp.cst135.milestone.controller.Bank;
-import edu.gcu.bootcamp.cst135.milestone.controller.Checking;
-import edu.gcu.bootcamp.cst135.milestone.controller.Saving;
-import edu.gcu.bootcamp.cst135.milestone.controller.Loan;
+import edu.gcu.cst235.milestone.controller.Bank;
 
 public class Customer implements Comparable<Customer> {
 	//Class data

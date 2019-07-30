@@ -1,8 +1,8 @@
-package edu.gcu.bootcamp.cst135.milestone.model;
+package edu.gcu.cst235.milestone.model;
 
 import java.util.Date;
 
-import edu.gcu.bootcamp.cst135.milestone.controller.Bank;
+import edu.gcu.cst235.milestone.controller.Bank;
 
 public class Transaction {
 	//Class data

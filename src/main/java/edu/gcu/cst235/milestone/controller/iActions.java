@@ -1,4 +1,4 @@
-package edu.gcu.bootcamp.cst135.milestone.model;
+package edu.gcu.cst235.milestone.controller;
 
 public interface iActions {
 	/**

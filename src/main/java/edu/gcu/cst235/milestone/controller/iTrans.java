@@ -1,7 +1,7 @@
 /**
  * 
  */
-package edu.gcu.bootcamp.cst135.milestone.model;
+package edu.gcu.cst235.milestone.controller;
 
 /**
  * method declarations for logging banking transactions

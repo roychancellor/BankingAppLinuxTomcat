@@ -1,6 +1,6 @@
-package edu.gcu.bootcamp.cst135.milestone.controller;
+package edu.gcu.cst235.milestone.model;
 
-import edu.gcu.bootcamp.cst135.milestone.model.Account;
+import edu.gcu.cst235.milestone.controller.Bank;
 
 public class Loan extends Account {
 
