@@ -11,6 +11,7 @@ import java.util.List;
 import edu.gcu.cst235.milestone.controller.Bank;
 import edu.gcu.cst235.milestone.controller.iActions;
 import edu.gcu.cst235.milestone.controller.iTrans;
+import edu.gcu.cst235.milestone.view.Menus;
 
 public abstract class Account implements iActions, iTrans {
 	
@@ -76,7 +77,7 @@ public abstract class Account implements iActions, iTrans {
 			isValid = true;
 			try {
 				System.out.println(message);
-				value = Bank.scanner.nextDouble();
+				value = Menus.scan.nextDouble();
 				if(value < 0) {
 					System.out.println(invalidMessage);
 					isValid = false;
@@ -89,7 +90,7 @@ public abstract class Account implements iActions, iTrans {
 			finally {
 				//value is now validated to be a double >= 0
 				//so, read the newline token that is remaining
-				Bank.scanner.nextLine();				
+				Menus.scan.nextLine();				
 			}
 		} while(!isValid);
 
@@ -118,7 +119,7 @@ public abstract class Account implements iActions, iTrans {
 		for(Transaction t : transList) {
 			System.out.println(t.toString());
 		}
-		Bank.printHeaderLine(75);
+		Menus.printHeaderLine(75);
 		System.out.println("\t\t\tEnd balance:\t" + String.format("$%(,12.2f", getAccountBalance()) + "\n");
 	}
 }

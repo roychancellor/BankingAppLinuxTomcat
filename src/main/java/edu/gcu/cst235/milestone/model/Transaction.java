@@ -2,7 +2,7 @@ package edu.gcu.cst235.milestone.model;
 
 import java.util.Date;
 
-import edu.gcu.cst235.milestone.controller.Bank;
+import edu.gcu.cst235.milestone.view.Menus;
 
 public class Transaction {
 	//Class data
@@ -88,7 +88,7 @@ public class Transaction {
 	}
 
 	public String toString() {
-		return Bank.dateFormat.format(this.transactionDate)
+		return Menus.dateFormat.format(this.transactionDate)
 			+ DELIM + this.accountNumber
 			+ DELIM + String.format("$%(,12.2f", this.amount)
 			+ DELIM + this.transactionType; 

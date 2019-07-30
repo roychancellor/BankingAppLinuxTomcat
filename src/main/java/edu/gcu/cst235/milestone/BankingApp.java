@@ -17,6 +17,6 @@ public class BankingApp {
 		Bank bank = new Bank("GCU BANK");
 		
 		//Call the primary user interface
-		bank.viewMainMenu();
+		bank.runBank();
 	}
 }

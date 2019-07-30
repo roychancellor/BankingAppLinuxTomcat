@@ -4,6 +4,7 @@
 package edu.gcu.cst235.milestone.model;
 
 import edu.gcu.cst235.milestone.controller.Bank;
+import edu.gcu.cst235.milestone.view.Menus;
 
 public class Checking extends Account {
 
@@ -47,7 +48,7 @@ public class Checking extends Account {
 				+ Bank.money.format(getOverdraftFee())
 				+ " will be assessed if you continue. Continue Y or N?");
 			//If the user chooses to continue, assess the overdraftFee fee; if not, return to the checking withdrawal screen
-			if(Bank.scanner.nextLine().toLowerCase().equals("y")) {
+			if(Menus.scan.nextLine().toLowerCase().equals("y")) {
 				feeAmount = getOverdraftFee();
 				this.addTransaction(feeAmount, "Overdraft fee");
 			}

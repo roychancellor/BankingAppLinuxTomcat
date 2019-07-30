@@ -1,6 +1,7 @@
 package edu.gcu.cst235.milestone.model;
 
 import edu.gcu.cst235.milestone.controller.Bank;
+import edu.gcu.cst235.milestone.view.Menus;
 
 public class Loan extends Account {
 
@@ -196,7 +197,7 @@ public class Loan extends Account {
 		double totalPrincipalPaid = 0;
 		
 		System.out.println("\nNumber\tInterest\tPrincipal\tBalance");
-		Bank.printHeaderLine(55);
+		Menus.printHeaderLine(55);
 		System.out.printf("0\t--------\t--------\t$%(,12.2f\n", this.principal);
 		
 		while(balance < 0) {
@@ -208,9 +209,9 @@ public class Loan extends Account {
 			paymentNumber++;
 		}
 		
-		Bank.printHeaderLine(55);
+		Menus.printHeaderLine(55);
 		System.out.printf("TOTALS:\t$%(,9.2f\t$%(,9.2f\n", totalInterestPaid, totalPrincipalPaid);
-		Bank.printHeaderLine(55);
+		Menus.printHeaderLine(55);
 		System.out.println("\n");
 	}
 }
