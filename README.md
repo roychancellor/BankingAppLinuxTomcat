@@ -1,3 +1,2 @@
-# Banking App 2.0
-This is a revised version of the banking app for CST-135 that implements a Customer class and a Transaction interface.
-Work in progress......
+# Banking App 3.0
+This version will store customers in a database for persistence and will require customer login with a username and password which whill be stored using hashing and/or encryption.
