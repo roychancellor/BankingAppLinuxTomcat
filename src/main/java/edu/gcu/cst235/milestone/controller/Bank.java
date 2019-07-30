@@ -105,12 +105,13 @@ public class Bank {
 	 * creates a new customer and adds to the customer database table
 	 */
 	private void doCreateCustomer() {
+		//Clear the scanner from previous nextInt call
+		Menus.scan.nextLine();
+		
 		//Add a new Customer object to the existing list of customers
-		customers.add(new Customer(
-			Menus.getName("Enter first name:"),
-			Menus.getName("Enter last name:"),
-			new Date())
-		);
+		String firstName = Menus.getName("Enter first name:");
+		String lastName = Menus.getName("Enter last name:");
+		customers.add(new Customer(firstName, lastName, new Date()));
 		System.out.println("\nSuccess, "
 			+ customers.get(customers.size() - 1).getFirstName()
 			+ " " + customers.get(customers.size() - 1).getLastName()
@@ -128,6 +129,9 @@ public class Bank {
 		custIndex = Menus.viewCustomerSelectionMenu(customers);
 		
 		if(custIndex != Menus.MENU_EXIT) {
+			//Clear the scanner from previous nextInt call
+			Menus.scan.nextLine();
+			
 			//Get new names
 			String origLastName = customers.get(custIndex).getLastName();
 			String origFirstName = customers.get(custIndex).getFirstName();
@@ -156,6 +160,9 @@ public class Bank {
 		welcomeCustomer();
 		int option = Menus.viewCustomerActionMenu(this.bankName, customers.get(custIndex));
 		
+		//Clear the scanner from previous nextInt call
+		Menus.scan.nextLine();
+
 		processCustomerMenu(option);
 	}
 	/**

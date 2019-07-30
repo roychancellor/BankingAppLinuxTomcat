@@ -118,8 +118,6 @@ public class Menus {
 	 * @return
 	 */
 	public static String getName(String message) {
-		//Clear the newline from previous nextInt or nextDouble call
-		//scan.nextLine();
 		System.out.println(message);		
 		return scan.nextLine();
 	}
