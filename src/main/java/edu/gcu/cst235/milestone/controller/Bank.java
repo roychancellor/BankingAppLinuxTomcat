@@ -132,9 +132,14 @@ public class Bank {
 			//Clear the scanner from previous nextInt call
 			Menus.scan.nextLine();
 			
+			//Make the user selection into a zero-based index
+			custIndex -= 1;
+			
 			//Get new names
 			String origLastName = customers.get(custIndex).getLastName();
 			String origFirstName = customers.get(custIndex).getFirstName();
+			
+			//Set the new names
 			customers.get(custIndex).setFirstName(Menus.getName("Enter new first name:"));
 			customers.get(custIndex).setLastName(Menus.getName("Enter new last name:"));
 			System.out.println("\nSuccess, " + origFirstName + " " + origLastName
@@ -157,13 +162,23 @@ public class Bank {
 	
 	private void doCustomerTransactions() {
 		//CUSTOMER LOGIN --> create Customer object from database
-		welcomeCustomer();
-		int option = Menus.viewCustomerActionMenu(this.bankName, customers.get(custIndex));
-		
-		//Clear the scanner from previous nextInt call
-		Menus.scan.nextLine();
+		custIndex = Menus.viewCustomerSelectionMenu(customers);
+			
+		int option = Menus.MENU_EXIT;
+		do {
+			if(custIndex != Menus.MENU_EXIT) {
+				//Make the user selection into a zero-based index
+				custIndex -= 1;
+				option = Menus.viewCustomerActionMenu(this.bankName, customers.get(custIndex));
+				
+				//Clear the scanner from previous nextInt call
+				Menus.scan.nextLine();
 
-		processCustomerMenu(option);
+				welcomeCustomer();
+
+				processCustomerMenu(option);
+			}			
+		} while(option!= Menus.MENU_EXIT);
 	}
 	/**
 	 * Calls a method to display the screen to process the user-selected option from the main menu

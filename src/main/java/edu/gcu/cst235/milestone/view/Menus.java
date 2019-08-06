@@ -150,12 +150,12 @@ public class Menus {
 				System.out.println(" " + MENU_EXIT + " : Return to Main Menu");
 
 				//Clear the newline from last nextInt call
-				Menus.scan.nextLine();
+				//Menus.scan.nextLine();
 				//try to convert user input into an integer (throws InputMismatchException if not)
 				option = Menus.scan.nextInt();
 				
 				//validate user input
-				if(option < 1 || option > customers.size()) {
+				if(option < MENU_EXIT || option > customers.size()) {
 					printInputError(1, customers.size());
 					invalidInput = true;
 				}
