@@ -12,14 +12,14 @@ public class CustomerTest {
 
 	@Test
 	public final void testCompareTo() {
-		Customer cControl = new Customer("MMM", "MMM", new Date());
-		Customer cEqual = new Customer("MMM", "MMM", new Date());
-		Customer cLastGT = new Customer("MMM", "ZZZ", new Date());
-		Customer cLastLT = new Customer("MMM", "AAA", new Date());
-		Customer cLastEqFirstGT = new Customer("ZZZ", "MMM", new Date());
-		Customer cLastEqFirstLT = new Customer("AAA", "MMM", new Date());
-		Customer cBothGT = new Customer("ZZZ", "ZZZ", new Date());
-		Customer cBothLT = new Customer("AAA", "AAA", new Date());
+		Customer cControl = new Customer(1,"MMM", "MMM", new Date());
+		Customer cEqual = new Customer(1,"MMM", "MMM", new Date());
+		Customer cLastGT = new Customer(1,"MMM", "ZZZ", new Date());
+		Customer cLastLT = new Customer(1,"MMM", "AAA", new Date());
+		Customer cLastEqFirstGT = new Customer(1,"ZZZ", "MMM", new Date());
+		Customer cLastEqFirstLT = new Customer(1,"AAA", "MMM", new Date());
+		Customer cBothGT = new Customer(1,"ZZZ", "ZZZ", new Date());
+		Customer cBothLT = new Customer(1,"AAA", "AAA", new Date());
 		
 		assertEquals("Equal names", 0, cControl.compareTo(cEqual));
 		assertEquals("Last greater", -13, cControl.compareTo(cLastGT));

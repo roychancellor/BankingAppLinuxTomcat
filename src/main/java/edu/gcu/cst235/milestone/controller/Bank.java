@@ -8,10 +8,13 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 
 import edu.gcu.cst235.milestone.model.Account;
 import edu.gcu.cst235.milestone.model.Customer;
+import edu.gcu.cst235.milestone.model.DatabaseActions;
+import edu.gcu.cst235.milestone.model.DbConstants;
 import edu.gcu.cst235.milestone.view.Menus;
 
 public class Bank {
@@ -20,6 +23,7 @@ public class Bank {
 	private String bankName;
 	private List<Customer> customers = new ArrayList<Customer>();
 	private int custIndex = 0;
+	private DatabaseActions db;
 	
 	//Format for dates and money outputs in all classes
 	public static DecimalFormat money = new DecimalFormat();
@@ -28,35 +32,36 @@ public class Bank {
 	//Constructor
 	public Bank(String bankName) {
 		this.bankName = bankName;
-		/*** CREATE LIST OF CUSTOMERS FOR EASE OF TESTING ***/
-		customers.add(new Customer("Tony", "Womack", new Date()));
-		customers.add(new Customer("Craig", "Counsell", new Date()));
-		customers.add(new Customer("Luis", "Gonzales", new Date()));
-		customers.add(new Customer("Matt", "Williams", new Date()));
-		customers.add(new Customer("Steve", "Finley", new Date()));
-		customers.add(new Customer("Danny", "Bautista", new Date()));
-		customers.add(new Customer("Mark", "Grace", new Date()));
-		customers.add(new Customer("Damian", "Miller", new Date()));
-		customers.add(new Customer("Curt", "Schilling", new Date()));
 		
-		//Sort the customers by lastName, firstName
-		Collections.sort(customers);
-		
-		//Set the money format
-		money.applyPattern(MONEY_FORMAT);
+		this.db = new DatabaseActions(DbConstants.VERBOSE, DbConstants.LOCAL);
+		if(db.connectToDatabase()) {
+			//Create the list of customers from the customers database
+			customers = db.makeCustomerListFromDatabase();
+			
+			//Set the money format
+			money.applyPattern(MONEY_FORMAT);
+		}
+		else {
+			System.out.println("FATAL ERROR: Unable to open database. BANK IS CLOSED FOR BUSINESS!");
+		}
 	}
 	
 	//Class methods
 	
 	/**
 	 * the highest level method that controls the bank execution
+	 * runs until user chooses to exit
 	 */
 	public void runBank() {
 		int selection;
+		
 		do {
 			selection = Menus.viewMainMenu(this.bankName);
 			processMainMenu(selection);
-		} while(selection != Menus.MENU_EXIT);	
+		} while(selection != Menus.MENU_EXIT);
+
+		//Close the database connection
+		db.close();
 	}
 	
 	/**
@@ -75,7 +80,6 @@ public class Bank {
 				viewBankingAppExit();
 				break;
 			default:
-				Menus.printInputError(1, 2);
 				Menus.viewMainMenu(this.bankName);
 		}
 	}
@@ -111,7 +115,11 @@ public class Bank {
 		//Add a new Customer object to the existing list of customers
 		String firstName = Menus.getName("Enter first name:");
 		String lastName = Menus.getName("Enter last name:");
-		customers.add(new Customer(firstName, lastName, new Date()));
+//		String userName = Menus.getUserName("Enter a user name:");
+//		String passWord = Menus.getPassWord("Enter a password (8 characters minimum):");
+		//HASH PASSWORD WITH SALT
+		//WRITE NEW CUSTOMER TO DATABASE
+		customers.add(new Customer(999, firstName, lastName, new Date()));
 		System.out.println("\nSuccess, "
 			+ customers.get(customers.size() - 1).getFirstName()
 			+ " " + customers.get(customers.size() - 1).getLastName()
@@ -127,7 +135,6 @@ public class Bank {
 	 */
 	private void doUpdateCustomer() {
 		custIndex = Menus.viewCustomerSelectionMenu(customers);
-		
 		if(custIndex != Menus.MENU_EXIT) {
 			//Clear the scanner from previous nextInt call
 			Menus.scan.nextLine();
@@ -135,7 +142,7 @@ public class Bank {
 			//Make the user selection into a zero-based index
 			custIndex -= 1;
 			
-			//Get new names
+			//Get original names
 			String origLastName = customers.get(custIndex).getLastName();
 			String origFirstName = customers.get(custIndex).getFirstName();
 			
@@ -160,25 +167,46 @@ public class Bank {
 			System.out.println(customers.get(custIndex).toString(false));
 	}
 	
+	/**
+	 * gets the customer's transaction selection
+	 */
 	private void doCustomerTransactions() {
-		//CUSTOMER LOGIN --> create Customer object from database
+		boolean credentialsMismatch = false;
+		
+		do {
+			credentialsMismatch = false;
+			//Get username and password from the customer
+			String[] credentials = Menus.viewCustomerLogin();
+			
+			//BANK
+			//Query the credentials database for the customer credentials
+			int customerId = db.checkLoginCredentials(credentials[0], "salt", credentials[1]);
+			if(customerId > 0) {
+				System.out.println("CustomerId " + customerId + " successfully logged in.");
+			}
+			else {
+				System.out.println("\nIncorrect username and/or password. Try again.");
+			}
+			//If found, log the customer in
+			//If not found, return an error message and have the customer re-enter credentials
+			//Loop through a certain number of times and if customer doesn't enter
+			//valid credentials, return to the main menu
+			//Otherwise, get the customer id from the database and set the custIndex to that number - 1
+		} while(credentialsMismatch);
+		
 		custIndex = Menus.viewCustomerSelectionMenu(customers);
 			
-		int option = Menus.MENU_EXIT;
-		do {
-			if(custIndex != Menus.MENU_EXIT) {
-				//Make the user selection into a zero-based index
-				custIndex -= 1;
+		if(custIndex != Menus.MENU_EXIT) {
+			custIndex -= 1;
+			int option = Menus.MENU_EXIT;
+			do {
 				option = Menus.viewCustomerActionMenu(this.bankName, customers.get(custIndex));
 				
-				//Clear the scanner from previous nextInt call
-				Menus.scan.nextLine();
-
 				welcomeCustomer();
-
+	
 				processCustomerMenu(option);
-			}			
-		} while(option!= Menus.MENU_EXIT);
+			} while(option!= Menus.MENU_EXIT);
+		}
 	}
 	/**
 	 * Calls a method to display the screen to process the user-selected option from the main menu
@@ -236,7 +264,6 @@ public class Bank {
 			Menus.viewCustomerExit(customers.get(custIndex));
 			break;
 		default:
-			Menus.printInputError(1, 8);
 			Menus.viewCustomerActionMenu(this.bankName, customers.get(custIndex));
 		}
 	}	

@@ -12,7 +12,8 @@ public class Customer implements Comparable<Customer> {
 	private String firstName;
 	private String lastName;
 	private Date dateOpened;
-	private String custID;
+	//private String custID;
+	private int custID;
 	private Checking checking;
 	private Saving saving;
 	private Loan loan;
@@ -24,11 +25,12 @@ public class Customer implements Comparable<Customer> {
 	 * @param lastName customer last name
 	 * @param dateOpened date the customer opened the account
 	 */
-	public Customer(String firstName, String lastName, Date dateOpened) {
-		this.firstName = firstName;
+	public Customer(int custID, String lastName, String firstName, Date dateOpened) {
 		this.lastName = lastName;
+		this.firstName = firstName;
 		this.dateOpened = dateOpened;
-		this.custID = createCustomerID();
+		//this.custID = createCustomerID();
+		this.custID = custID;
 		
 		//Make Checking, Saving, and Loan accounts (in the future, create a menu to do this manually)
 		this.checking = createCheckingAccount();
@@ -101,7 +103,7 @@ public class Customer implements Comparable<Customer> {
 	/**
 	 * @return the custID
 	 */
-	public String getCustomerID() {
+	public int getCustomerID() {
 		return custID;
 	}
 
@@ -112,10 +114,12 @@ public class Customer implements Comparable<Customer> {
 	public String toString() {
 		return "\n----------------------------------------------"
 			+ "\nAccount details for " + this.firstName + " " + this.lastName
-			+ "\ncustomer ID XXX-XX-" + this.custID.substring(this.custID.length() - 4, this.custID.length())
+			//+ "\ncustomer ID " + this.custID.substring(this.custID.length() - 4, this.custID.length())
+			+ "\ncustomer ID " + this.custID
 			+ "\n----------------------------------------------"
 			+ "\n* Customer since " + this.dateOpened
-			+ balancesToString();
+			+ balancesToString()
+			+ "\n----------------------------------------------";
 	}
 	
 	/**
@@ -141,7 +145,8 @@ public class Customer implements Comparable<Customer> {
 			message += "\n   * principal borrowed:\t" + Bank.money.format(-this.loan.getPrincipal())
 			+ "\n   * annual interest rate:\t" + this.loan.getMonthlyInterestRate() * 12 * 100 + "%"
 			+ "\n   * monthly payment:\t" + Bank.money.format(this.loan.getMonthlyPaymentAmount())
-			+ "\n   * term years:\t" + this.loan.getTermYears();
+			+ "\n   * term years:\t" + this.loan.getTermYears()
+			+ "\n----------------------------------------------";
 		}
 
 		return message;

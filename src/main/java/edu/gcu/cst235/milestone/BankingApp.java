@@ -13,10 +13,10 @@ public class BankingApp {
 	 * @param args command-line arguments, not currently implemented
 	 */
 	public static void main(String[] args) {
-		//Open the bank
-		Bank bank = new Bank("GCU BANK");
+		//Open the bank (will open a connection to the bank database
+		Bank bank = new Bank("ROY BANK 3.0");
 		
-		//Call the primary user interface
+		//Run the bank with the primary user interface
 		bank.runBank();
 	}
 }
