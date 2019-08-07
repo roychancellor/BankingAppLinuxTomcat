@@ -7,7 +7,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -153,7 +152,7 @@ public class DatabaseActions {
 	}
 	
 	/**
-	 * Prints a class name
+	 * Helper method that prints a class name
 	 * @param methodName the name of the class to print
 	 */
 	private void printMethod(String methodName) {
@@ -180,13 +179,16 @@ public class DatabaseActions {
 	 * Adds a customer to the customers table
 	 * @param lastName the contact name being added
 	 * @param firstName the contact phone being added
-	 * @return true if the try block succeeds, false if not
+	 * @param username the customer's username
+	 * @param passSalt the hashed salt for the customer's password
+	 * @param passHash the hashed customer password
+	 * @return the customerId of the created customer if successful; -1 if unsuccessful
 	 */
-	public boolean addCustomer(String lastName, String firstName, String username, String passSalt, String passHash) {
+	public int addCustomer(String lastName, String firstName, String username, String passSalt, String passHash) {
 		try {
 			System.out.print("Adding customer " + lastName + ", " + firstName);
 			
-			//CUSTOMERS TABLE
+			//WRITE TO CUSTOMERS TABLE
 			//Prepare the SQL statement
 			sql = conn.prepareStatement(DbConstants.CREATE_CUSTOMER, Statement.RETURN_GENERATED_KEYS);
 			if(verboseSQL) printSQL();
@@ -200,7 +202,7 @@ public class DatabaseActions {
 			
 			System.out.println("...Success, " + numRec + " record(s) inserted into customers table.");
 			
-			//GET THE CUSTOMER ID FOR THE NEW CUSTOMER TO USE FOR WRITING CREDENTIALS
+			//GET THE AUTO-GENERATED CUSTOMER ID FOR THE NEW CUSTOMER TO USE FOR WRITING CREDENTIALS
 			int customerId = -1;
 			rs = sql.getGeneratedKeys();
 			if(rs.next()) {
@@ -210,7 +212,7 @@ public class DatabaseActions {
 				System.out.println("\nERROR: No key found!!!");
 			}
 			
-			//CREDENTIALS TABLE
+			//WRITE TO CREDENTIALS TABLE
 			if(customerId > 0) {
 				//Prepare the SQL statement
 				sql = conn.prepareStatement(DbConstants.CREATE_CREDENTIALS);
@@ -226,11 +228,11 @@ public class DatabaseActions {
 				numRec = sql.executeUpdate();
 				
 				System.out.println("...Success, " + numRec + " record(s) inserted into credentials table.");
-				return true;
+				return customerId;
 			}
 			else {
 				System.out.println("\nNO CREDENTIALS WRITTEN");
-				return false;
+				return -1;
 			}
 		}
 		catch(SQLException e) {
@@ -238,7 +240,7 @@ public class DatabaseActions {
 			e.printStackTrace();
 		}
 		
-		return false;
+		return -1;
 	}
 
 	/**
@@ -266,7 +268,7 @@ public class DatabaseActions {
 					rs.getDate(DbConstants.CUSTOMER_DATE_OPENED)
 				);
 				
-				//Add the contact to the list of contacts
+				//Add the customer to the list of customers
 				customerList.add(cust);
 			}
 			

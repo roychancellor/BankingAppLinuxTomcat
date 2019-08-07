@@ -8,7 +8,9 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import edu.gcu.cst235.milestone.model.Account;
 import edu.gcu.cst235.milestone.model.Customer;
@@ -21,6 +23,7 @@ public class Bank {
 	//Class data
 	private String bankName;
 	private List<Customer> customers = new ArrayList<Customer>();
+	private Map<Integer, Integer> custIdToIndex = new HashMap<Integer, Integer>();
 	private int custIndex = 0;
 	private DatabaseActions db;
 	
@@ -36,9 +39,11 @@ public class Bank {
 		if(db.connectToDatabase()) {
 			//Create the list of customers from the customers database
 			customers = db.makeCustomerListFromDatabase();
-			//Sort customers by last name, first name
-			//Collections.sort(customers);
-			
+			//Sort the customer list
+			Collections.sort(customers);
+			//Make a map of customerId from the database to the index of the customers list
+			//which is necessary after the sort
+			mapIdtoIndex();
 			//Set the money format
 			money.applyPattern(MONEY_FORMAT);
 		}
@@ -48,6 +53,16 @@ public class Bank {
 	}
 	
 	//Class methods
+
+	/**
+	 * Helper method that maps database customerId to customer list index
+	 * so list can remain sorted without losing track of customerId
+	 */
+	private void mapIdtoIndex() {
+		for(int i = 0; i < customers.size(); i++) {
+			custIdToIndex.put(customers.get(i).getCustomerID(), i);
+		}
+	}
 	
 	/**
 	 * the highest level method that controls the bank execution
@@ -110,28 +125,26 @@ public class Bank {
 	 * creates a new customer and adds to the customer database table
 	 */
 	private void doCreateCustomer() {
-		//Add a new Customer object to the database of customers
+		//Add a new customer to the database of customers
 		String lastName = Menus.getCustomerString("Enter last name:");
 		String firstName = Menus.getCustomerString("Enter first name:");
 		String userName = Menus.getCustomerString("Enter a user name:");
 
 		//HASH PASSWORD WITH SALT
+		//HASHING STILL NEEDS TO BE IMPLEMENTED
 		String passHash = Menus.getCustomerString("Enter a password (8 characters minimum):");
 		String passSalt = "salt";
 		
-		//WRITE NEW CUSTOMER TO DATABASE AND WRITE THE CUSTOMER'S CREDENTIALS TO DATABASE
-		db.addCustomer(lastName, firstName, userName, passSalt, passHash);
+		//WRITE NEW CUSTOMER AND CUSTOMER'S CREDENTIALS TO DATABASE TABLES
+		int custId = db.addCustomer(lastName, firstName, userName, passSalt, passHash);
 
-		//RELOAD customers LIST FROM DB
-//		customers.add(new Customer(999, firstName, lastName, new Date()));
-//		System.out.println("\nSuccess, "
-//			+ customers.get(customers.size() - 1).getFirstName()
-//			+ " " + customers.get(customers.size() - 1).getLastName()
-//			+ " created."
-//		);
-		
-		//Sort the list of Bank customers by lastName, firstName
-		//Collections.sort(customers);
+		//For now, also add a Customer object to the existing list until DB
+		//is fully implemented throughout the bank
+		customers.add(new Customer(custId, lastName, firstName, new Date()));
+		//Sort the customer list
+		Collections.sort(customers);
+		//Update the id to index map
+		mapIdtoIndex();
 	}
 	
 	/**
@@ -140,9 +153,6 @@ public class Bank {
 	private void doUpdateCustomer() {
 		custIndex = Menus.viewCustomerSelectionMenu(customers);
 		if(custIndex != Menus.MENU_EXIT) {
-			//Clear the scanner from previous nextInt call
-			Menus.scan.nextLine();
-			
 			//Make the user selection into a zero-based index
 			custIndex -= 1;
 			
@@ -158,8 +168,10 @@ public class Bank {
 				+ customers.get(custIndex).getFirstName()
 				+ " " + customers.get(custIndex).getLastName()
 			);
-			//Sort the list of Bank customers by lastName, firstName
+			//Sort the customer list
 			Collections.sort(customers);
+			//Update the id to index map
+			mapIdtoIndex();
 		}
 	}
 	
@@ -176,12 +188,12 @@ public class Bank {
 	 */
 	private void doCustomerTransactions() {
 		//Get a customer logged in
-		custIndex = doCustomerLogin();
+		int customerIdFromDb = doCustomerLogin();
+		System.out.println("\ncustomerId = " + customerIdFromDb + "\n");
 		
-		//custIndex = Menus.viewCustomerSelectionMenu(customers);
-			
-		if(custIndex != Menus.MENU_EXIT) {
-			custIndex -= 1;
+		if(customerIdFromDb != Menus.MENU_EXIT) {
+			custIndex = this.custIdToIndex.get(customerIdFromDb);
+			System.out.println("\nThe customer list index is " + custIndex);
 			int option = Menus.MENU_EXIT;
 			do {
 				option = Menus.viewCustomerActionMenu(this.bankName, customers.get(custIndex));
@@ -202,34 +214,40 @@ public class Bank {
 		int numFails = 0;
 		final int MAX_TRIES = 3;
 		
-		//Loop through a certain number of times and if customer doesn't enter
+		//Loop a certain number of times and if customer doesn't enter
 		//valid credentials, return the exit value
 		//Otherwise, return the customerId
 		do {
 			keepGoing = true;
 			
 			//Get username and password from the customer
+			//Method returns null if user elects to cancel
 			String[] credentialCheck = Menus.viewCustomerLogin();
 			
-			//Query the credentials database for the customer credentials
-			int customerId = db.checkLoginCredentials(credentialCheck[0], "salt", credentialCheck[1]);
-
-			//If found, log the customer in
-			if(customerId > 0) {
-				System.out.println("CustomerId " + customerId + " successfully logged in.");
-				return customerId;
-			}
-			//If not found, return an error message and have the customer re-enter credentials
-			else {
-				numFails++;
-				if(numFails < MAX_TRIES) {
-					System.out.println("\nIncorrect username and/or password. " + (MAX_TRIES - numFails)
-						+ " attempts remaining. Try again.");
+			if(credentialCheck != null) {
+				//Query the credentials database for the customer credentials
+				int customerId = db.checkLoginCredentials(credentialCheck[0], "salt", credentialCheck[1]);
+	
+				//If found, log the customer in
+				if(customerId > 0) {
+					//System.out.println("CustomerId " + customerId + " successfully logged in.");
+					return customerId;
 				}
+				//If not found, return an error message and have the customer re-enter credentials
 				else {
-					System.out.println("\nYou have exceeded the maximum number of login attempts.");
-					keepGoing = false;
+					numFails++;
+					if(numFails < MAX_TRIES) {
+						System.out.println("\nIncorrect username and/or password. " + (MAX_TRIES - numFails)
+							+ " attempts remaining. Try again.");
+					}
+					else {
+						System.out.println("\nYou have exceeded the maximum number of login attempts.");
+						keepGoing = false;
+					}
 				}
+			}
+			else {
+				keepGoing = false;
 			}
 		} while(keepGoing);
 		

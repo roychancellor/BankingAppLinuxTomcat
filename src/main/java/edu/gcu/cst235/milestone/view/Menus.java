@@ -70,7 +70,7 @@ public class Menus {
 	 */
 	public static int viewCustomerSelectionMenu(List<Customer> customers) {
 		System.out.println("\n==============================");
-		System.out.println("   Customer Login");
+		System.out.println("   MASTER CUSTOMER LIST");
 		System.out.println("   Select Customer:");
 		System.out.println("==============================");
 		for(int i = 0; i < customers.size(); i++) {
@@ -82,7 +82,7 @@ public class Menus {
 		}
 		System.out.println("------------------------");
 		System.out.println(" " + MENU_EXIT + " : Return to Main Menu");
-
+		
 		return getIntFromUser(MENU_EXIT, customers.size(), "Oops, enter a correct menu item.");
 	}
 	
@@ -93,18 +93,28 @@ public class Menus {
 	public static String[] viewCustomerLogin() {
 		printHeaderLine(29);
 		System.out.println("CUSTOMER LOGIN");
-		System.out.println("Enter username and password");
+		System.out.println("1. Enter username and password");
+		printHeaderLine(29);
+		System.out.println("0. Cancel and return to main menu");
 		printHeaderLine(29);
 		
-		String[] credentials = new String[2];
-		System.out.println("\nUsername:");
-		String username = scan.nextLine();
-		System.out.println("\nPassword:");
-		String password = scan.nextLine();
-		credentials[0] = username;
-		credentials[1] = password;
+		System.out.println("\nMake selection:");
+		int menuSelect = getIntFromUser(0, 1, "Oops, enter a valid menu item");
 		
-		return credentials;
+		if(menuSelect != MENU_EXIT) {
+			String[] credentials = new String[2];
+			System.out.println("\nUsername:");
+			String username = scan.nextLine();
+			System.out.println("\nPassword:");
+			String password = scan.nextLine();
+			credentials[0] = username;
+			credentials[1] = password;
+			
+			return credentials;
+		}
+		else {
+			return null;
+		}
 	}
 	
 	/**
