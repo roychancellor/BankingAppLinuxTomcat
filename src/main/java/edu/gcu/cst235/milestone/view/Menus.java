@@ -56,9 +56,9 @@ public class Menus {
 	/**
 	 * helper method for getting customer names
 	 * @param message
-	 * @return
+	 * @return the customer's entered string
 	 */
-	public static String getName(String message) {
+	public static String getCustomerString(String message) {
 		System.out.println(message);		
 		return scan.nextLine();
 	}

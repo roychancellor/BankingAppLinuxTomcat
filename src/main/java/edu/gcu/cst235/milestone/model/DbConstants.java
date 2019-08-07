@@ -11,7 +11,7 @@ public class DbConstants {
 	public static final boolean LOCAL = false;
 	public static final boolean PRODUCTION = true;
 	public static final boolean VERBOSE = true;
-	public static final boolean QUIET = false;
+	public static final boolean SILENT = false;
 	public static final String DB_URL_LOCAL = "jdbc:mysql://localhost:3306";
 	public static final String DB_URL_AWS = "jdbc:mysql://cst235-mysql.czz73jkkcnrj.us-east-2.rds.amazonaws.com:3306";
 	public static final String USER_NAME_LOCAL = "root";  //I KNOW THIS IS NOT OK...FOR DEMO ONLY
@@ -33,20 +33,23 @@ public class DbConstants {
 	public static final int DELETE = -1;
 	
 	//SQL command to CREATE a customer in the customers table
-	public static final String ADD_CUSTOMER = "INSERT INTO "
+	public static final String CREATE_CUSTOMER = "INSERT INTO "
 		+ DB_NAME + "." + CUSTOMER_TABLE
 		+ "(" + CUSTOMER_LAST_NAME + "," + CUSTOMER_FIRST_NAME + ")"
 		+ " VALUES(?,?)";
 	
 	//SQL command to CREATE customer login credentials in the credentials table
-	public static final String ADD_CREDENTIALS = "INSERT INTO "
+	public static final String CREATE_CREDENTIALS = "INSERT INTO "
 		+ DB_NAME + "." + CREDENTIALS_TABLE
-		+ "(" + CUSTOMER_USER_NAME + "," + CUSTOMER_PASSWORD_SALT + "," + CUSTOMER_PASSWORD_HASH + ")"
-		+ " VALUES(?,?,?)";
+		+ "(" + CUSTOMER_ID + "," + CUSTOMER_USER_NAME + "," + CUSTOMER_PASSWORD_SALT + "," + CUSTOMER_PASSWORD_HASH + ")"
+		+ " VALUES(?,?,?,?)";
+	
+	//SQL command to RETRIEVE all customers unordered
+	public static final String GET_CUSTOMERS_ORDERED = "SELECT * FROM " + DB_NAME + "." + CUSTOMER_TABLE + " "
+		+ "ORDER BY " + CUSTOMER_LAST_NAME + "," + CUSTOMER_FIRST_NAME;	
 	
 	//SQL command to RETRIEVE all customers and ORDER BY lastName, firstName
-	public static final String GET_CUSTOMERS = "SELECT * FROM " + DB_NAME + "." + CUSTOMER_TABLE + " "
-		+ "ORDER BY " + CUSTOMER_LAST_NAME + "," + CUSTOMER_FIRST_NAME;	
+	public static final String GET_CUSTOMERS_UNORDERED = "SELECT * FROM " + DB_NAME + "." + CUSTOMER_TABLE;
 	
 	//SQL command to RETRIEVE customerId from a username and password match in the credentials table
 	public static final String GET_CUSTOMER_ID_FROM_CREDENTIALS = "SELECT " + CUSTOMER_ID

@@ -8,7 +8,6 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 
 import edu.gcu.cst235.milestone.model.Account;
@@ -33,10 +32,12 @@ public class Bank {
 	public Bank(String bankName) {
 		this.bankName = bankName;
 		
-		this.db = new DatabaseActions(DbConstants.VERBOSE, DbConstants.LOCAL);
+		this.db = new DatabaseActions(DbConstants.SILENT, DbConstants.LOCAL);
 		if(db.connectToDatabase()) {
 			//Create the list of customers from the customers database
 			customers = db.makeCustomerListFromDatabase();
+			//Sort customers by last name, first name
+			//Collections.sort(customers);
 			
 			//Set the money format
 			money.applyPattern(MONEY_FORMAT);
@@ -109,25 +110,28 @@ public class Bank {
 	 * creates a new customer and adds to the customer database table
 	 */
 	private void doCreateCustomer() {
-		//Clear the scanner from previous nextInt call
-		Menus.scan.nextLine();
-		
-		//Add a new Customer object to the existing list of customers
-		String firstName = Menus.getName("Enter first name:");
-		String lastName = Menus.getName("Enter last name:");
-//		String userName = Menus.getUserName("Enter a user name:");
-//		String passWord = Menus.getPassWord("Enter a password (8 characters minimum):");
+		//Add a new Customer object to the database of customers
+		String lastName = Menus.getCustomerString("Enter last name:");
+		String firstName = Menus.getCustomerString("Enter first name:");
+		String userName = Menus.getCustomerString("Enter a user name:");
+
 		//HASH PASSWORD WITH SALT
-		//WRITE NEW CUSTOMER TO DATABASE
-		customers.add(new Customer(999, firstName, lastName, new Date()));
-		System.out.println("\nSuccess, "
-			+ customers.get(customers.size() - 1).getFirstName()
-			+ " " + customers.get(customers.size() - 1).getLastName()
-			+ " created."
-		);
+		String passHash = Menus.getCustomerString("Enter a password (8 characters minimum):");
+		String passSalt = "salt";
+		
+		//WRITE NEW CUSTOMER TO DATABASE AND WRITE THE CUSTOMER'S CREDENTIALS TO DATABASE
+		db.addCustomer(lastName, firstName, userName, passSalt, passHash);
+
+		//RELOAD customers LIST FROM DB
+//		customers.add(new Customer(999, firstName, lastName, new Date()));
+//		System.out.println("\nSuccess, "
+//			+ customers.get(customers.size() - 1).getFirstName()
+//			+ " " + customers.get(customers.size() - 1).getLastName()
+//			+ " created."
+//		);
 		
 		//Sort the list of Bank customers by lastName, firstName
-		Collections.sort(customers);
+		//Collections.sort(customers);
 	}
 	
 	/**
@@ -147,8 +151,8 @@ public class Bank {
 			String origFirstName = customers.get(custIndex).getFirstName();
 			
 			//Set the new names
-			customers.get(custIndex).setFirstName(Menus.getName("Enter new first name:"));
-			customers.get(custIndex).setLastName(Menus.getName("Enter new last name:"));
+			customers.get(custIndex).setFirstName(Menus.getCustomerString("Enter new first name:"));
+			customers.get(custIndex).setLastName(Menus.getCustomerString("Enter new last name:"));
 			System.out.println("\nSuccess, " + origFirstName + " " + origLastName
 				+ " changed to "
 				+ customers.get(custIndex).getFirstName()
@@ -171,30 +175,10 @@ public class Bank {
 	 * gets the customer's transaction selection
 	 */
 	private void doCustomerTransactions() {
-		boolean credentialsMismatch = false;
+		//Get a customer logged in
+		custIndex = doCustomerLogin();
 		
-		do {
-			credentialsMismatch = false;
-			//Get username and password from the customer
-			String[] credentials = Menus.viewCustomerLogin();
-			
-			//BANK
-			//Query the credentials database for the customer credentials
-			int customerId = db.checkLoginCredentials(credentials[0], "salt", credentials[1]);
-			if(customerId > 0) {
-				System.out.println("CustomerId " + customerId + " successfully logged in.");
-			}
-			else {
-				System.out.println("\nIncorrect username and/or password. Try again.");
-			}
-			//If found, log the customer in
-			//If not found, return an error message and have the customer re-enter credentials
-			//Loop through a certain number of times and if customer doesn't enter
-			//valid credentials, return to the main menu
-			//Otherwise, get the customer id from the database and set the custIndex to that number - 1
-		} while(credentialsMismatch);
-		
-		custIndex = Menus.viewCustomerSelectionMenu(customers);
+		//custIndex = Menus.viewCustomerSelectionMenu(customers);
 			
 		if(custIndex != Menus.MENU_EXIT) {
 			custIndex -= 1;
@@ -208,6 +192,50 @@ public class Bank {
 			} while(option!= Menus.MENU_EXIT);
 		}
 	}
+	
+	/**
+	 * logs in a customer
+	 * @return the customer id if successful and Menus.MENU_EXIT if unsuccessful after 3 tries
+	 */
+	private int doCustomerLogin() {
+		boolean keepGoing = true;
+		int numFails = 0;
+		final int MAX_TRIES = 3;
+		
+		//Loop through a certain number of times and if customer doesn't enter
+		//valid credentials, return the exit value
+		//Otherwise, return the customerId
+		do {
+			keepGoing = true;
+			
+			//Get username and password from the customer
+			String[] credentialCheck = Menus.viewCustomerLogin();
+			
+			//Query the credentials database for the customer credentials
+			int customerId = db.checkLoginCredentials(credentialCheck[0], "salt", credentialCheck[1]);
+
+			//If found, log the customer in
+			if(customerId > 0) {
+				System.out.println("CustomerId " + customerId + " successfully logged in.");
+				return customerId;
+			}
+			//If not found, return an error message and have the customer re-enter credentials
+			else {
+				numFails++;
+				if(numFails < MAX_TRIES) {
+					System.out.println("\nIncorrect username and/or password. " + (MAX_TRIES - numFails)
+						+ " attempts remaining. Try again.");
+				}
+				else {
+					System.out.println("\nYou have exceeded the maximum number of login attempts.");
+					keepGoing = false;
+				}
+			}
+		} while(keepGoing);
+		
+		return Menus.MENU_EXIT;
+	}
+	
 	/**
 	 * Calls a method to display the screen to process the user-selected option from the main menu
 	 * After each transaction, calls viewBalances to update the user

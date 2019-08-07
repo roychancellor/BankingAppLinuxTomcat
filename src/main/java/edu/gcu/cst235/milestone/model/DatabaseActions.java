@@ -7,6 +7,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -176,6 +177,71 @@ public class DatabaseActions {
 	}
 
 	/**
+	 * Adds a customer to the customers table
+	 * @param lastName the contact name being added
+	 * @param firstName the contact phone being added
+	 * @return true if the try block succeeds, false if not
+	 */
+	public boolean addCustomer(String lastName, String firstName, String username, String passSalt, String passHash) {
+		try {
+			System.out.print("Adding customer " + lastName + ", " + firstName);
+			
+			//CUSTOMERS TABLE
+			//Prepare the SQL statement
+			sql = conn.prepareStatement(DbConstants.CREATE_CUSTOMER, Statement.RETURN_GENERATED_KEYS);
+			if(verboseSQL) printSQL();
+
+			//Populate statement parameters
+			sql.setString(1, lastName);
+			sql.setString(2, firstName);
+			
+			//Execute SQL statement
+			int numRec = sql.executeUpdate();
+			
+			System.out.println("...Success, " + numRec + " record(s) inserted into customers table.");
+			
+			//GET THE CUSTOMER ID FOR THE NEW CUSTOMER TO USE FOR WRITING CREDENTIALS
+			int customerId = -1;
+			rs = sql.getGeneratedKeys();
+			if(rs.next()) {
+				customerId = rs.getInt(1);
+			}
+			else {
+				System.out.println("\nERROR: No key found!!!");
+			}
+			
+			//CREDENTIALS TABLE
+			if(customerId > 0) {
+				//Prepare the SQL statement
+				sql = conn.prepareStatement(DbConstants.CREATE_CREDENTIALS);
+				if(verboseSQL) printSQL();
+	
+				//Populate statement parameters
+				sql.setInt(1, customerId);
+				sql.setString(2, username);
+				sql.setString(3, passSalt);
+				sql.setString(4, passHash);
+				
+				//Execute SQL statement
+				numRec = sql.executeUpdate();
+				
+				System.out.println("...Success, " + numRec + " record(s) inserted into credentials table.");
+				return true;
+			}
+			else {
+				System.out.println("\nNO CREDENTIALS WRITTEN");
+				return false;
+			}
+		}
+		catch(SQLException e) {
+			printMethod(new Throwable().getStackTrace()[0].getMethodName());
+			e.printStackTrace();
+		}
+		
+		return false;
+	}
+
+	/**
 	 * gets all customers from the database and returns an ArrayList of Customer objects
 	 * sorted by last name, first name
 	 * @return ArrayList of Customer objects
@@ -184,7 +250,7 @@ public class DatabaseActions {
 		List <Customer> customerList = new ArrayList<Customer>();
 		try {
 			//Prepare the SQL statement
-			String sql = DbConstants.GET_CUSTOMERS;
+			String sql = DbConstants.GET_CUSTOMERS_UNORDERED;
 			if(verboseSQL) System.out.println("Executing SQL: " + sql);
 			
 			//Execute SQL statement and get a result set
@@ -234,11 +300,11 @@ public class DatabaseActions {
 			//Print the result
 			if(rs.next()) {
 				int custId = rs.getInt(1);
-				System.out.println("...Success, found username and password for customerId = " + custId);
+				if(verboseSQL) System.out.println("...Success, found username and password for customerId = " + custId);
 				return custId;
 			}
 			else {
-				System.out.println("...Unable to find the user.");
+				if(verboseSQL) System.out.println("...Unable to find the user.");
 				return -1;
 			}
 		}
