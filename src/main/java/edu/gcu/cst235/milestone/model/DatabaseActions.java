@@ -97,15 +97,15 @@ public class DatabaseActions {
 	}
 
 	/**
-	 * @param productionDbDb the productionDb to set
+	 * @param productionDb the productionDb to set
 	 */
-	public void setProductionDb(boolean localDb) {
-		this.productionDb = localDb;
+	public void setProductionDb(boolean productionDb) {
+		this.productionDb = productionDb;
 	}
 
 	/**
 	 * connects to a user-specified database
-	 * @param verboseSQL
+	 * @return true if connection to DB successful, false if not
 	 */
 	public boolean connectToDatabase() {
 		String dbURL = "";
@@ -283,6 +283,9 @@ public class DatabaseActions {
 	
 	/**
 	 * queries the database for unique hashed username and hashed password combination
+	 * @param hashedUsername the hashed username
+	 * @param hashedSalt the hashed password salt
+	 * @param hashedPassword the hashed password
 	 * @return the customer id corresponding to the username and password record
 	 */
 	public int checkLoginCredentials(String hashedUsername, String hashedSalt, String hashedPassword) {

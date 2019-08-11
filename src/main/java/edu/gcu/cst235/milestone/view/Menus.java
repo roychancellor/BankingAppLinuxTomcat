@@ -24,6 +24,8 @@ public class Menus {
 	// Opening menu for the application
 	/**
 	 * Displays the highest level (main) menu and gets a user selection.
+	 * @param bankName the name of the bank
+	 * @return the integer value of the user's selection
 	 */
 	public static int viewMainMenu(String bankName) {
 		System.out.println("\n$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
@@ -41,6 +43,7 @@ public class Menus {
 
 	/**
 	 * Displays the customer selection menu and gets a user selection.
+	 * @return the integer value of the user input
 	 */
 	public static int viewManageCustomerMenu() {
 		System.out.println("\n============================");
@@ -55,7 +58,7 @@ public class Menus {
 	
 	/**
 	 * helper method for getting customer names
-	 * @param message
+	 * @param message the prompt message to the user
 	 * @return the customer's entered string
 	 */
 	public static String getCustomerString(String message) {
@@ -67,6 +70,8 @@ public class Menus {
 	// Picking a customer for banking transaction menu
 	/**
 	 * Displays the customer selection menu and gets a user selection.
+	 * @param customers an ArrayList of Customer objects to display
+	 * @return the integer selection of customer from the list of customers
 	 */
 	public static int viewCustomerSelectionMenu(List<Customer> customers) {
 		System.out.println("\n==============================");
@@ -119,6 +124,9 @@ public class Menus {
 	
 	/**
 	 * Displays the customer action menu and gets a user selection.
+	 * @param bankName the name of the bank
+	 * @param cust a Customer object for the current customer performing transactions
+	 * @return the integer value of the transaction the customer wants to perform
 	 */
 	public static int viewCustomerActionMenu(String bankName, Customer cust) {
 		System.out.println("\n$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
@@ -180,6 +188,7 @@ public class Menus {
 
 	/**
 	 * Displays all account balances
+	 * @param cust a Customer object for the current customer
 	 */
 	public static void viewBalances(Customer cust) {
 		System.out.println(cust.toString(false));
@@ -187,6 +196,7 @@ public class Menus {
 	
 	/**
 	 * Outputs a message to the customer when exiting the customer transaction menu
+	 * @param cust a Customer object for the current customer
 	 */
 	public static void viewCustomerExit(Customer cust) {
 		System.out.println("\nGoodbye " + cust.getFirstName() + ". Have a good day!\n");

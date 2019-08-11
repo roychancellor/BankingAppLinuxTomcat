@@ -60,7 +60,7 @@ public class Bank {
 	 */
 	private void mapIdtoIndex() {
 		for(int i = 0; i < customers.size(); i++) {
-			custIdToIndex.put(customers.get(i).getCustomerID(), i);
+			custIdToIndex.put(customers.get(i).getCustomerId(), i);
 		}
 	}
 	
@@ -189,11 +189,9 @@ public class Bank {
 	private void doCustomerTransactions() {
 		//Get a customer logged in
 		int customerIdFromDb = doCustomerLogin();
-		System.out.println("\ncustomerId = " + customerIdFromDb + "\n");
 		
 		if(customerIdFromDb != Menus.MENU_EXIT) {
 			custIndex = this.custIdToIndex.get(customerIdFromDb);
-			System.out.println("\nThe customer list index is " + custIndex);
 			int option = Menus.MENU_EXIT;
 			do {
 				option = Menus.viewCustomerActionMenu(this.bankName, customers.get(custIndex));
@@ -203,6 +201,10 @@ public class Bank {
 				processCustomerMenu(option);
 			} while(option!= Menus.MENU_EXIT);
 		}
+	}
+	
+	public int testDoCustomerLogin() {
+		return doCustomerLogin();
 	}
 	
 	/**

@@ -12,8 +12,7 @@ public class Customer implements Comparable<Customer> {
 	private String firstName;
 	private String lastName;
 	private Date dateOpened;
-	//private String custID;
-	private int custID;
+	private int custId;
 	private Checking checking;
 	private Saving saving;
 	private Loan loan;
@@ -21,16 +20,17 @@ public class Customer implements Comparable<Customer> {
 	/**
 	 * Constructor for Customers requires all three parameters to create a new Customer object
 	 * Customer objects are immutable
-	 * @param firstName customer first name
-	 * @param lastName customer last name
-	 * @param dateOpened date the customer opened the account
+	 * @param custId the customer identification number
+	 * @param lastName the customer last name
+	 * @param firstName the customer first name
+	 * @param dateOpened the date the customer opened the account
 	 */
-	public Customer(int custID, String lastName, String firstName, Date dateOpened) {
+	public Customer(int custId, String lastName, String firstName, Date dateOpened) {
 		this.lastName = lastName;
 		this.firstName = firstName;
 		this.dateOpened = dateOpened;
 		//this.custID = createCustomerID();
-		this.custID = custID;
+		this.custId = custId;
 		
 		//Make Checking, Saving, and Loan accounts (in the future, create a menu to do this manually)
 		this.checking = createCheckingAccount();
@@ -103,8 +103,8 @@ public class Customer implements Comparable<Customer> {
 	/**
 	 * @return the custID
 	 */
-	public int getCustomerID() {
-		return custID;
+	public int getCustomerId() {
+		return custId;
 	}
 
 	/**
@@ -115,7 +115,7 @@ public class Customer implements Comparable<Customer> {
 		return "\n----------------------------------------------"
 			+ "\nAccount details for " + this.firstName + " " + this.lastName
 			//+ "\ncustomer ID " + this.custID.substring(this.custID.length() - 4, this.custID.length())
-			+ "\ncustomer ID " + this.custID
+			+ "\ncustomer ID " + this.custId
 			+ "\n----------------------------------------------"
 			+ "\n* Customer since " + this.dateOpened
 			+ balancesToString()

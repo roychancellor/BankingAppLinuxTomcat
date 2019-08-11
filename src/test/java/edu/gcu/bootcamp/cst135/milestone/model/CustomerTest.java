@@ -1,11 +1,8 @@
 package edu.gcu.bootcamp.cst135.milestone.model;
 
 import static org.junit.Assert.*;
-
 import java.util.Date;
-
 import org.junit.Test;
-
 import edu.gcu.cst235.milestone.model.Customer;
 
 public class CustomerTest {
@@ -22,8 +19,8 @@ public class CustomerTest {
 		Customer cBothLT = new Customer(1,"AAA", "AAA", new Date());
 		
 		assertEquals("Equal names", 0, cControl.compareTo(cEqual));
-		assertEquals("Last greater", -13, cControl.compareTo(cLastGT));
-		assertEquals("Last less", 12, cControl.compareTo(cLastLT));
+		assertEquals("Last greater, first equal", -13, cControl.compareTo(cLastGT));
+		assertEquals("Last less, first equal", 12, cControl.compareTo(cLastLT));
 		assertEquals("Last equal, first greater", -13, cControl.compareTo(cLastEqFirstGT));
 		assertEquals("Last equal, first less", 12, cControl.compareTo(cLastEqFirstLT));
 		assertEquals("Both greater", -13, cControl.compareTo(cBothGT));
