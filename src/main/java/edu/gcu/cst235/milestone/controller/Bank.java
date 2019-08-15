@@ -35,7 +35,7 @@ public class Bank {
 	public Bank(String bankName) {
 		this.bankName = bankName;
 		
-		this.db = new DatabaseActions(DbConstants.SILENT, DbConstants.LOCAL);
+		this.db = new DatabaseActions(DbConstants.SILENT, DbConstants.PRODUCTION);
 		if(db.connectToDatabase()) {
 			//Create the list of customers from the customers database
 			customers = db.makeCustomerListFromDatabase();
@@ -126,13 +126,13 @@ public class Bank {
 	 */
 	private void doCreateCustomer() {
 		//Add a new customer to the database of customers
-		String lastName = Menus.getCustomerString("Enter last name:");
-		String firstName = Menus.getCustomerString("Enter first name:");
-		String userName = Menus.getCustomerString("Enter a user name:");
+		String lastName = Menus.getCustomerName("Enter LAST name:");
+		String firstName = Menus.getCustomerName("Enter FIRST name:");
+		String userName = Menus.getCustomerUserName("Enter a user name:");
 
 		//HASH PASSWORD WITH SALT
 		//HASHING STILL NEEDS TO BE IMPLEMENTED
-		String passHash = Menus.getCustomerString("Enter a password (8 characters minimum):");
+		String passHash = Menus.getCustomerPassword("Enter a password (8 characters minimum):");
 		String passSalt = "salt";
 		
 		//WRITE NEW CUSTOMER AND CUSTOMER'S CREDENTIALS TO DATABASE TABLES
@@ -161,8 +161,8 @@ public class Bank {
 			String origFirstName = customers.get(custIndex).getFirstName();
 			
 			//Set the new names
-			customers.get(custIndex).setFirstName(Menus.getCustomerString("Enter new first name:"));
-			customers.get(custIndex).setLastName(Menus.getCustomerString("Enter new last name:"));
+			customers.get(custIndex).setFirstName(Menus.getCustomerName("Enter new first name:"));
+			customers.get(custIndex).setLastName(Menus.getCustomerName("Enter new last name:"));
 			System.out.println("\nSuccess, " + origFirstName + " " + origLastName
 				+ " changed to "
 				+ customers.get(custIndex).getFirstName()
@@ -303,7 +303,7 @@ public class Bank {
 		case 6:
 			customers.get(custIndex).getLoan().viewAmortization();
 		case 7:
-			Menus.viewBalances(customers.get(custIndex));
+			//Menus.viewBalances(customers.get(custIndex));
 			break;
 		case 8:
 			Menus.viewEndOfMonth(customers.get(custIndex));

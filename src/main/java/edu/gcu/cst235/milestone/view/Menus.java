@@ -2,10 +2,7 @@ package edu.gcu.cst235.milestone.view;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.InputMismatchException;
 import java.util.List;
-import java.util.Map;
 import java.util.Scanner;
 
 import edu.gcu.cst235.milestone.model.Customer;
@@ -30,7 +27,7 @@ public class Menus {
 	public static int viewMainMenu(String bankName) {
 		System.out.println("\n$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
 		System.out.println("          MAIN MENU");
-		System.out.println("          " + bankName);
+		System.out.println("        " + bankName);
 		System.out.println("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
 		System.out.println("\nPick an option: ");
 		System.out.println("----------------------------");
@@ -38,7 +35,7 @@ public class Menus {
 		System.out.println(" 2 : Customer Transactions");
 		System.out.println("----------------------------");
 		System.out.println(" " + MENU_EXIT + " : Exit Banking Application");
-		return getIntFromUser(MENU_EXIT, 2, "Oops, enter a correct menu item.");
+		return Utils.getValueFromUser(MENU_EXIT, 2, "Oops, enter a correct menu item.");
 	}
 
 	/**
@@ -53,17 +50,34 @@ public class Menus {
 		System.out.println(" 2 : Modify Customer");
 		System.out.println("-------------------------");
 		System.out.println(" " + MENU_EXIT + " : Return to Main Menu");
-		return getIntFromUser(MENU_EXIT, 2, "Oops, enter a correct menu item.");
+		return Utils.getValueFromUser(MENU_EXIT, 2, "Oops, enter a correct menu item.");
 	}
 	
 	/**
 	 * helper method for getting customer names
-	 * @param message the prompt message to the user
-	 * @return the customer's entered string
+	 * @param userPrompt the prompt message to the user
+	 * @return the customer's name
 	 */
-	public static String getCustomerString(String message) {
-		System.out.println(message);		
-		return scan.nextLine();
+	public static String getCustomerName(String userPrompt) {
+		return Utils.getPersonName(userPrompt);
+	}
+	
+	/**
+	 * helper method for getting customer username
+	 * @param userPrompt the prompt message to the user
+	 * @return the customer's username
+	 */
+	public static String getCustomerUserName(String userPrompt) {
+		return Utils.getUsername(userPrompt);
+	}
+	
+	/**
+	 * helper method for getting customer password
+	 * @param userPrompt the prompt message to the user
+	 * @return the customer's password
+	 */
+	public static String getCustomerPassword(String userPrompt) {
+		return Utils.getPassword(userPrompt);
 	}
 	
 	// CST235 TASK: REMOVE THE LIST PARAMETER
@@ -88,7 +102,7 @@ public class Menus {
 		System.out.println("------------------------");
 		System.out.println(" " + MENU_EXIT + " : Return to Main Menu");
 		
-		return getIntFromUser(MENU_EXIT, customers.size(), "Oops, enter a correct menu item.");
+		return Utils.getValueFromUser(MENU_EXIT, customers.size(), "Oops, enter a correct menu item.");
 	}
 	
 	/**
@@ -104,7 +118,7 @@ public class Menus {
 		printHeaderLine(29);
 		
 		System.out.println("\nMake selection:");
-		int menuSelect = getIntFromUser(0, 1, "Oops, enter a valid menu item");
+		int menuSelect = Utils.getValueFromUser(0, 1, "Oops, enter a valid menu item");
 		
 		if(menuSelect != MENU_EXIT) {
 			String[] credentials = new String[2];
@@ -147,7 +161,7 @@ public class Menus {
 		System.out.println(" 8 : Get Monthly Statement");
 		printHeaderLine(29);
 		System.out.println(" " + MENU_EXIT + " : Return to Customer Login");
-		return getIntFromUser(MENU_EXIT, 8, "Oops, enter a correct menu item.");
+		return Utils.getValueFromUser(MENU_EXIT, 8, "Oops, enter a correct menu item.");
 	}
 
 	/**
@@ -218,81 +232,11 @@ public class Menus {
 		return scan.nextLine();
 	}
 	
-	// Get user DOUBLE input	
-	/**
-	 * helper method to get a double value from the user
-	 * @param inputMessage the message to prompt the user
-	 * @return the double value the user entered
-	 */
-	public static double getDoubleFromUser(String inputMessage) {	
-		double amount = 0.0;
-		boolean invalidEntry = false;
-		
-		do {
-			invalidEntry = false;
-			try {
-				System.out.println(inputMessage);
-				String input = scan.nextLine();
-				amount = Double.parseDouble(input);
-			}
-			catch (Exception e) { // Can we parse the user's entry?
-				showErrorMessage("Invalid input: Not a decimal number. Try again.\n");
-				invalidEntry = true;
-			}
-		} while(invalidEntry);
-		
-		return amount;
-	}
-	
 	// Balance displays for each account class type
 	
 
 	// Formatted syso method
 	
 
-	// Formatted balance printing method
-	
-	/**
-	 * helper method that gets an integer between minValue and maxValue from the user
-	 * If the user enters anything other than an integer, catches the exception
-	 * and prints the error message received from the method call
-	 * @param minValue the minimum value of the menu
-	 * @param maxValue the maximum value of the menu
-	 * @param errorMessage the error message to display for an invalid entry
-	 * @return the integer the user entered
-	 */
-	public static int getIntFromUser(int minValue, int maxValue, String errorMessage) {
-		int selection = 0;
-		boolean invalidSelection;
-		
-		//Loop until the user enters an integer between the given limits
-		do {
-			invalidSelection = false;
-			try {
-				selection = scan.nextInt();
-				if(selection < minValue || selection > maxValue) {
-					showErrorMessage(errorMessage);
-					invalidSelection = true;
-				}
-			}
-			catch(InputMismatchException e) {
-				showErrorMessage(errorMessage);
-				invalidSelection = true;
-				scan.nextLine();
-			}
-		} while(invalidSelection);
-
-		//scan the next line to clear out the newline character before returning
-		scan.nextLine();
-		
-		return selection;
-	}
-	
-	/**
-	 * shows the cash error message when user enters the wrong type of cash
-	 * @param message the error message to display
-	 */
-	public static void showErrorMessage(String message) {
-		System.out.println("\n" + message);		
-	}
+	// Formatted balance printing method	
 }

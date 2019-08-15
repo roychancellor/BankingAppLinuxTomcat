@@ -114,27 +114,27 @@ public class DatabaseActions {
 		
 		//Get the database connection from the user
 		if(isProductionDb()) {
-			dbURL = DbConstants.DB_URL_AWS;
+			dbURL = DbConstants.DB_URL_AWSDB;
 			dbUser = DbConstants.USER_NAME_AWS;
 			dbPassword = DbConstants.PASSWORD_AWS;
 		}
 		else {
-			dbURL = DbConstants.DB_URL_LOCAL;
+			dbURL = DbConstants.DB_URL_LOCALDB;
 			dbUser = DbConstants.USER_NAME_LOCAL;
 			dbPassword = DbConstants.PASSWORD_LOCAL;
 		}
 
 		//Open connection to database
 		try {
-			System.out.print("Connecting to " + dbURL);
+			if(verboseSQL) System.out.print("Connecting to " + dbURL);
 			this.conn = DriverManager.getConnection(dbURL, dbUser, dbPassword);
-			System.out.println("...SUCCESS!");
+			if(verboseSQL) System.out.println("...SUCCESS!");
 			
 			//Create a Statement object
 			try {
-				System.out.print("\nCreating a Statement object for the Connection");
+				if(verboseSQL) System.out.print("\nCreating a Statement object for the Connection");
 				this.stmt = conn.createStatement();
-				System.out.println("...SUCCESS!");
+				if(verboseSQL) System.out.println("...SUCCESS!");
 				this.connectedToDb = true;
 			}
 			catch(SQLException e) {
@@ -165,9 +165,10 @@ public class DatabaseActions {
 	 */
 	public void close() {
 		try {
-			System.out.print("\nClosing connection to " + DbConstants.DB_URL_LOCAL);
+			if(verboseSQL) System.out.print("\nClosing connection to "
+				+ (this.isProductionDb() ? DbConstants.DB_URL_AWSDB : DbConstants.DB_URL_LOCALDB));
 			this.conn.close();
-			System.out.println("...SUCCESS!");
+			if(verboseSQL) System.out.println("...SUCCESS!");
 		}
 		catch(SQLException e) {
 			printMethod(new Throwable().getStackTrace()[0].getMethodName());
@@ -186,7 +187,7 @@ public class DatabaseActions {
 	 */
 	public int addCustomer(String lastName, String firstName, String username, String passSalt, String passHash) {
 		try {
-			System.out.print("Adding customer " + lastName + ", " + firstName);
+			if(verboseSQL) System.out.print("Adding customer " + lastName + ", " + firstName);
 			
 			//WRITE TO CUSTOMERS TABLE
 			//Prepare the SQL statement
@@ -200,7 +201,7 @@ public class DatabaseActions {
 			//Execute SQL statement
 			int numRec = sql.executeUpdate();
 			
-			System.out.println("...Success, " + numRec + " record(s) inserted into customers table.");
+			if(verboseSQL) System.out.println("...Success, " + numRec + " record(s) inserted into customers table.");
 			
 			//GET THE AUTO-GENERATED CUSTOMER ID FOR THE NEW CUSTOMER TO USE FOR WRITING CREDENTIALS
 			int customerId = -1;
@@ -227,11 +228,11 @@ public class DatabaseActions {
 				//Execute SQL statement
 				numRec = sql.executeUpdate();
 				
-				System.out.println("...Success, " + numRec + " record(s) inserted into credentials table.");
+				if(verboseSQL) System.out.println("...Success, " + numRec + " record(s) inserted into credentials table.");
 				return customerId;
 			}
 			else {
-				System.out.println("\nNO CREDENTIALS WRITTEN");
+				if(verboseSQL) System.out.println("\nNO CREDENTIALS WRITTEN");
 				return -1;
 			}
 		}
@@ -327,13 +328,4 @@ public class DatabaseActions {
 	private void printSQL() {
 		System.out.println("\nExecuting SQL: " + sql.toString());
 	}
-
-	//Create customer
-	//Retrieve customer
-	//Update customer
-	//Retrieve user name and password
-	//Create account
-	//Retrieve account balance
-	//Retrieve account transactions
-	//Update account balance
 }
