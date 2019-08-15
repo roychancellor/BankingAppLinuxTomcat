@@ -82,10 +82,10 @@ public class Bank {
 	
 	/**
 	 * Calls the Create Customer menu or the Customer Selection Menu based on the option selected
-	 * @param option
+	 * @param menuOption the menu option the user chose
 	 */
-	private void processMainMenu(int option) {
-		switch(option) {
+	private void processMainMenu(int menuOption) {
+		switch(menuOption) {
 			case 1:
 				doManageCustomers();
 				break;
@@ -132,11 +132,11 @@ public class Bank {
 
 		//HASH PASSWORD WITH SALT
 		//HASHING STILL NEEDS TO BE IMPLEMENTED
-		String passHash = Menus.getCustomerPassword("Enter a password (8 characters minimum):");
+		String passHash = Menus.getCustomerPassword("Enter a password (total of 8 letters and/or numbers):");
 		String passSalt = "salt";
 		
 		//WRITE NEW CUSTOMER AND CUSTOMER'S CREDENTIALS TO DATABASE TABLES
-		int custId = db.addCustomer(lastName, firstName, userName, passSalt, passHash);
+		int custId = db.createCustomer(lastName, firstName, userName, passSalt, passHash);
 
 		//For now, also add a Customer object to the existing list until DB
 		//is fully implemented throughout the bank
@@ -148,7 +148,8 @@ public class Bank {
 	}
 	
 	/**
-	 * updates customer first and last name
+	 * updates customer first and last name,
+	 * re-sorts customer list, and updates the id to index map
 	 */
 	private void doUpdateCustomer() {
 		custIndex = Menus.viewCustomerSelectionMenu(customers);
@@ -176,7 +177,7 @@ public class Bank {
 	}
 	
 	/**
-	 * prints a welcome message to the customer, verbose with loan details
+	 * prints a welcome message to the customer
 	 */
 	private void welcomeCustomer() {
 		if(this.custIndex < customers.size())
@@ -203,12 +204,16 @@ public class Bank {
 		}
 	}
 	
+	/**
+	 * Method for unit testing the customer login method
+	 * @return the result of running doCustomerLogin
+	 */
 	public int testDoCustomerLogin() {
 		return doCustomerLogin();
 	}
 	
 	/**
-	 * logs in a customer
+	 * logs in a customer by checking user-entered credential against the database
 	 * @return the customer id if successful and Menus.MENU_EXIT if unsuccessful after 3 tries
 	 */
 	private int doCustomerLogin() {
@@ -232,7 +237,6 @@ public class Bank {
 	
 				//If found, log the customer in
 				if(customerId > 0) {
-					//System.out.println("CustomerId " + customerId + " successfully logged in.");
 					return customerId;
 				}
 				//If not found, return an error message and have the customer re-enter credentials
@@ -257,13 +261,13 @@ public class Bank {
 	}
 	
 	/**
-	 * Calls a method to display the screen to process the user-selected option from the main menu
+	 * Processes the user-selected option from the main menu
 	 * After each transaction, calls viewBalances to update the user
-	 * @param option
+	 * @param menuOption the menu option the user selected
 	 */
-	private void processCustomerMenu(int option) {
+	private void processCustomerMenu(int menuOption) {
 
-		switch(option) {
+		switch(menuOption) {
 		case 1:
 			customers.get(custIndex).getChecking().doTransaction(
 				Account.DEPOSIT,

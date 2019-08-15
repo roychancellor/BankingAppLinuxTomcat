@@ -31,7 +31,7 @@ public abstract class Account implements iActions, iTrans {
 		this.accountBalance = accountBalance;
 	}
 	
-//Getters and setters
+	//Getters and setters
 	public String getAccountNumber() {
 		return accountNumber;
 	}

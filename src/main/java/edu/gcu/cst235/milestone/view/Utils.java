@@ -199,7 +199,8 @@ public class Utils {
 			System.out.println("\n" + userPrompt);
 			password = scan.nextLine();
 			if(!verifyRegex(passwordRegex, password) /*|| password.length() < 2 || password.length() > 200*/) {
-				System.err.println("Oops, password must be 8-200 characters and contain only letters, numbers, and the special character '!'.");
+				System.err.println("Oops, password must be 8-200 characters"
+					+ " and contain only letters, numbers, and the special character '!'.");
 				passwordInvalid = true;				
 			}
 		} while(passwordInvalid);

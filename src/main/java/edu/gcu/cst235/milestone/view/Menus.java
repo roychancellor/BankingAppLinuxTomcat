@@ -18,7 +18,6 @@ public class Menus {
 	
 	public static SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy hh:mm:ss");
 	
-	// Opening menu for the application
 	/**
 	 * Displays the highest level (main) menu and gets a user selection.
 	 * @param bankName the name of the bank
@@ -80,8 +79,6 @@ public class Menus {
 		return Utils.getPassword(userPrompt);
 	}
 	
-	// CST235 TASK: REMOVE THE LIST PARAMETER
-	// Picking a customer for banking transaction menu
 	/**
 	 * Displays the customer selection menu and gets a user selection.
 	 * @param customers an ArrayList of Customer objects to display
@@ -231,12 +228,4 @@ public class Menus {
 		System.out.println(message);
 		return scan.nextLine();
 	}
-	
-	// Balance displays for each account class type
-	
-
-	// Formatted syso method
-	
-
-	// Formatted balance printing method	
 }

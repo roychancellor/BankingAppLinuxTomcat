@@ -185,7 +185,7 @@ public class DatabaseActions {
 	 * @param passHash the hashed customer password
 	 * @return the customerId of the created customer if successful; -1 if unsuccessful
 	 */
-	public int addCustomer(String lastName, String firstName, String username, String passSalt, String passHash) {
+	public int createCustomer(String lastName, String firstName, String username, String passSalt, String passHash) {
 		try {
 			if(verboseSQL) System.out.print("Adding customer " + lastName + ", " + firstName);
 			
