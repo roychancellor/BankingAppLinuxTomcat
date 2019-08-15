@@ -1,11 +1,11 @@
-/**
- * Child class of Account that creates Checking account objects
- */
 package edu.gcu.cst235.milestone.model;
 
 import edu.gcu.cst235.milestone.controller.Bank;
 import edu.gcu.cst235.milestone.view.Menus;
 
+/**
+ * Child class of Account that creates Checking account objects
+ */
 public class Checking extends Account {
 
 	//Unique child class data and getters/setters

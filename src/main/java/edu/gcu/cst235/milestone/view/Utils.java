@@ -5,6 +5,9 @@ import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * Utility methods for the banking application
+ */
 public class Utils {
 	private static Scanner scan = new Scanner(System.in);
 	

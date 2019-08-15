@@ -7,7 +7,9 @@ import java.util.Scanner;
 
 import edu.gcu.cst235.milestone.model.Customer;
 
-// These are all the menus for the application
+/**
+ * All menus for the banking application
+ */
 public class Menus {
 	
 	// Create a scanner for reuse across all methods

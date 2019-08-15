@@ -6,7 +6,10 @@ import org.junit.Test;
 
 import edu.gcu.cst235.milestone.view.Utils;
 
-public class TestGetPersonName {
+/**
+ * JUnit tests for the Utils methods
+ */
+public class TestUtilsMethods {
 
 	@Test
 	public final void testGetValueFromUserIntIntString() {

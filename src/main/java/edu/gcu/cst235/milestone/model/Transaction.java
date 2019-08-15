@@ -4,6 +4,10 @@ import java.util.Date;
 
 import edu.gcu.cst235.milestone.view.Menus;
 
+/**
+ * Class for logging banking transactions
+ *
+ */
 public class Transaction {
 	//Class data
 	private Date transactionDate;

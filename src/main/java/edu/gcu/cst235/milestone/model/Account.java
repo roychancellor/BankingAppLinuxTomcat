@@ -1,7 +1,3 @@
-/**
- * Superclass for creating Checking, Saving, and Loan accounts
- * Future versions may declare this class abstract since it will not be instantiated
- */
 package edu.gcu.cst235.milestone.model;
 
 import java.util.ArrayList;
@@ -13,6 +9,10 @@ import edu.gcu.cst235.milestone.controller.iActions;
 import edu.gcu.cst235.milestone.controller.iTrans;
 import edu.gcu.cst235.milestone.view.Menus;
 
+/**
+ * Superclass for creating Checking, Saving, and Loan accounts
+ * Future versions may declare this class abstract since it will not be instantiated
+ */
 public abstract class Account implements iActions, iTrans {
 	
 	//Class data

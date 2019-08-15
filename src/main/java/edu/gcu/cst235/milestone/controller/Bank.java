@@ -1,7 +1,3 @@
-/**
- * Bank is the primary class for the banking application, housing all methods to process user input
- * The actual account computations occur in the account classes Checking, Saving, and Loan
- */
 package edu.gcu.cst235.milestone.controller;
 
 import java.text.DecimalFormat;
@@ -18,6 +14,10 @@ import edu.gcu.cst235.milestone.model.DatabaseActions;
 import edu.gcu.cst235.milestone.model.DbConstants;
 import edu.gcu.cst235.milestone.view.Menus;
 
+/**
+ * Bank is the primary class for the banking application, housing all methods to process user input
+ * The actual account computations occur in the account classes Checking, Saving, and Loan
+ */
 public class Bank {
 
 	//Class data

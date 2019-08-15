@@ -3,6 +3,10 @@ package edu.gcu.cst235.milestone.model;
 import edu.gcu.cst235.milestone.controller.Bank;
 import edu.gcu.cst235.milestone.view.Menus;
 
+/**
+ * Class that inherits Account fields and behaviors and creates Loan object data and behaviors
+ *
+ */
 public class Loan extends Account {
 
 	//Class data

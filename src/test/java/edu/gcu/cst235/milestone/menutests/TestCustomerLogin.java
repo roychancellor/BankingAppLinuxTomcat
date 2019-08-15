@@ -7,6 +7,9 @@ import org.junit.Test;
 import edu.gcu.cst235.milestone.controller.Bank;
 import edu.gcu.cst235.milestone.view.Menus;
 
+/**
+ * JUnit test that verifies the customer login method is correct
+ */
 public class TestCustomerLogin {
 
 	/**

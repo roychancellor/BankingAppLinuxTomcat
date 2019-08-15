@@ -5,6 +5,9 @@ import java.util.Date;
 import org.junit.Test;
 import edu.gcu.cst235.milestone.model.Customer;
 
+/**
+ * JUnit test that verifies the compareTo method for Customer objects is functional
+ */
 public class TestCustomerCompareTo {
 
 	/**

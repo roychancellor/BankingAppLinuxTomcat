@@ -1,10 +1,10 @@
-/**
- * Child class of Account that creates Saving account objects
- */
 package edu.gcu.cst235.milestone.model;
 
 import edu.gcu.cst235.milestone.controller.Bank;
 
+/**
+ * Child class of Account that creates Saving account objects
+ */
 public class Saving extends Account {
 
 	//Unique child class data and getters/setters

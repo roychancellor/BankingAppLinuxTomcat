@@ -1,12 +1,12 @@
-/**
- * Customer class used to create Customer objects which will create Checking, Saving, and Loan objects
- */
 package edu.gcu.cst235.milestone.model;
 
 import java.util.Date;
 
 import edu.gcu.cst235.milestone.controller.Bank;
 
+/**
+ * Customer class used to create Customer objects which will create Checking, Saving, and Loan objects
+ */
 public class Customer implements Comparable<Customer> {
 	//Class data
 	private String firstName;

@@ -1,12 +1,7 @@
-/**
- * 
- */
 package edu.gcu.cst235.milestone.controller;
 
 /**
- * method declarations for logging banking transactions
- * @author roy
- *
+ * Interfac of method declarations for logging banking transactions
  */
 public interface iTrans {
 	public void addTransaction(double amount, String transType);

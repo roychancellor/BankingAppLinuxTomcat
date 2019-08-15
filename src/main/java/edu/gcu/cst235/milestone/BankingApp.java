@@ -1,12 +1,12 @@
-/**
- * Class FullStackBanking contains the main() method that creates a new Bank object and
- * calls the viewCustomerMenu() method to initiate the user interface. The user interface
- * takes over control of the program.
- */
 package edu.gcu.cst235.milestone;
 
 import edu.gcu.cst235.milestone.controller.Bank;
 
+/**
+ * Class contains the main() method that creates a new Bank object and
+ * calls the viewCustomerMenu() method to initiate the user interface. The user interface
+ * takes over control of the program.
+ */
 public class BankingApp {
 	/**
 	 * controller to open the bank and call the main menu

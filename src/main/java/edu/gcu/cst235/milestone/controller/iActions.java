@@ -1,5 +1,8 @@
 package edu.gcu.cst235.milestone.controller;
 
+/**
+ * Interface containing methods for banking actions
+ */
 public interface iActions {
 	/**
 	 * DEPOSIT and WITHDRAW are provided as descriptors for transType in processTransaction

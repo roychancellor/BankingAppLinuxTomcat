@@ -2,7 +2,6 @@ package edu.gcu.cst235.milestone.model;
 
 /**
  * Class contains constants for use with SQL queries
- * @author Roy Chancellor
  */
 public class DbConstants {
 	/**
