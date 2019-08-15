@@ -1,13 +1,14 @@
-package edu.gcu.bootcamp.cst135.milestone.controller;
+package edu.gcu.cst235.milestone.loantests;
 
 import static org.junit.Assert.*;
 import org.junit.Test;
 import edu.gcu.cst235.milestone.model.Loan;
 
-public class LoanTest {
+public class TestLoanPaymentCalculation {
 
 	@Test
 	public final void testComputeMonthlyPayment() {
+		System.out.println("\nTesting the loan payment calculation");
 		Loan testLoan = new Loan("aaaaaaaaa", -5000, 25, 0.08, 10);
 		//Check whether the monthly payment returns the correct value within less than half a cent
 		//Checking a double requires an allowable delta, so set at 0.004 for this test

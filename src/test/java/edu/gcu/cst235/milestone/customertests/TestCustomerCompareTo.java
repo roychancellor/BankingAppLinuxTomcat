@@ -1,14 +1,20 @@
-package edu.gcu.bootcamp.cst135.milestone.model;
+package edu.gcu.cst235.milestone.customertests;
 
 import static org.junit.Assert.*;
 import java.util.Date;
 import org.junit.Test;
 import edu.gcu.cst235.milestone.model.Customer;
 
-public class CustomerTest {
+public class TestCustomerCompareTo {
 
+	/**
+	 * Tests the compareTo method in the Customer class to ensure it returns the correct
+	 * sign of the number for sorting Customer objects when calling Collections.sort
+	 */
 	@Test
 	public final void testCompareTo() {
+		System.out.println("\nTesting the compareTo method for sorting Customer objects");
+		
 		Customer cControl = new Customer(1,"MMM", "MMM", new Date());
 		Customer cEqual = new Customer(1,"MMM", "MMM", new Date());
 		Customer cLastGT = new Customer(1,"MMM", "ZZZ", new Date());

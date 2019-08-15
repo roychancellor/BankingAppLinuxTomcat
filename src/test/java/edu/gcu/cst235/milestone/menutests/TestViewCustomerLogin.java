@@ -1,3 +1,5 @@
+package edu.gcu.cst235.milestone.menutests;
+
 import static org.junit.Assert.*;
 import org.junit.Test;
 import edu.gcu.cst235.milestone.view.Menus;
@@ -5,13 +7,14 @@ import edu.gcu.cst235.milestone.view.Menus;
 /**
  * Tests whether the class returns the user-entered login credentials correctly
  */
-public class ViewCustomerLoginTest {
+public class TestViewCustomerLogin {
 
 	/**
 	 * Test method for {@link edu.gcu.cst235.milestone.view.Menus#viewCustomerLogin()}.
 	 */
 	@Test
 	public final void testViewCustomerLogin() {
+		System.out.println("\nTesting tht the viewCustomerLogin method returns what the user typed...");
 		String[] userCredentials = Menus.viewCustomerLogin();
 		System.out.println("TEST 1: Verify method returns what the user typed in");
 		System.out.println("Username should equal \"username\"");

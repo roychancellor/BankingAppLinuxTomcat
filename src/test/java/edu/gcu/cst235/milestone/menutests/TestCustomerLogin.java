@@ -1,4 +1,4 @@
-package edu.gcu.bootcamp.cst135.milestone.controller;
+package edu.gcu.cst235.milestone.menutests;
 
 import static org.junit.Assert.*;
 
@@ -7,10 +7,14 @@ import org.junit.Test;
 import edu.gcu.cst235.milestone.controller.Bank;
 import edu.gcu.cst235.milestone.view.Menus;
 
-public class CustomerLoginTest {
+public class TestCustomerLogin {
 
+	/**
+	 * Tests the customer login method
+	 */
 	@Test
 	public final void testTestDoCustomerLogin() {
+		System.out.println("\nTesting the doCustomerLogin method...");
 		Bank testBank = new Bank("Test Bank");
 		
 		//TEST 1: User elects to cancel --> returns Menus.MENU_EXIT

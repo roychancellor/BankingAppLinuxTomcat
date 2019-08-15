@@ -35,7 +35,8 @@ public class Bank {
 	public Bank(String bankName) {
 		this.bankName = bankName;
 		
-		this.db = new DatabaseActions(DbConstants.SILENT, DbConstants.PRODUCTION);
+		//this.db = new DatabaseActions(DbConstants.SILENT, DbConstants.PRODUCTION);
+		this.db = new DatabaseActions(DbConstants.SILENT, DbConstants.LOCAL);
 		if(db.connectToDatabase()) {
 			//Create the list of customers from the customers database
 			customers = db.makeCustomerListFromDatabase();
