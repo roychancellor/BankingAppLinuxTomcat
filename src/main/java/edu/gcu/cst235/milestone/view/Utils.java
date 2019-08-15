@@ -90,7 +90,7 @@ public class Utils {
 
 	/**
 	 * checks to see if the user entry is a double value or not
-	 * @param str
+	 * @param str is the dtring to test if it contains a double
 	 * @return true if double, false if not
 	 */
 	public static boolean isDouble(String str) {
@@ -146,6 +146,7 @@ public class Utils {
 	
 	/**
 	 * Gets a person's first or last name and validates it against a regular expression
+	 * @param userPrompt a string containing a prompt to the user
 	 * @return name as a String in proper name format (first letter capitalized)
 	 */
 	public static String getPersonName(String userPrompt) {
@@ -167,6 +168,7 @@ public class Utils {
 	
 	/**
 	 * Gets a user's username and validates it against a regular expression
+	 * @param userPrompt a string containing a prompt to the user
 	 * @return username as a String
 	 */
 	public static String getUsername(String userPrompt) {
@@ -188,6 +190,7 @@ public class Utils {
 	
 	/**
 	 * Gets a user's password and validates it against a regular expression
+	 * @param userPrompt a string containing a prompt to the user
 	 * @return password as a String
 	 */
 	public static String getPassword(String userPrompt) {

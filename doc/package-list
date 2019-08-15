@@ -1,7 +1,9 @@
-
-edu.gcu.bootcamp.cst135.milestone.controller
-edu.gcu.bootcamp.cst135.milestone.model
 edu.gcu.cst235.milestone
 edu.gcu.cst235.milestone.controller
+edu.gcu.cst235.milestone.customertests
+edu.gcu.cst235.milestone.loantests
+edu.gcu.cst235.milestone.menutests
 edu.gcu.cst235.milestone.model
+edu.gcu.cst235.milestone.testsuite
+edu.gcu.cst235.milestone.utilstests
 edu.gcu.cst235.milestone.view
