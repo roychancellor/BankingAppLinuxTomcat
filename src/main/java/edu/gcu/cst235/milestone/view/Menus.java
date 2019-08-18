@@ -31,12 +31,12 @@ public class Menus {
 		System.out.println("        " + bankName);
 		System.out.println("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
 		System.out.println("\nPick an option: ");
-		System.out.println("----------------------------");
+		System.out.println("--------------------------------");
 		System.out.println(" 1 : Customer Management");
 		System.out.println(" 2 : Customer Transactions");
-		System.out.println("----------------------------");
+		System.out.println("--------------------------------");
 		System.out.println(" " + MENU_EXIT + " : Exit Banking Application");
-		return Utils.getValueFromUser(MENU_EXIT, 2, "Oops, enter a correct menu item.");
+		return MenuUtils.getValueFromUser(MENU_EXIT, 2, "Oops, enter a correct menu item.");
 	}
 
 	/**
@@ -49,9 +49,9 @@ public class Menus {
 		System.out.println("============================");
 		System.out.println(" 1 : Enter New Customer");
 		System.out.println(" 2 : Modify Customer");
-		System.out.println("-------------------------");
+		System.out.println("----------------------------");
 		System.out.println(" " + MENU_EXIT + " : Return to Main Menu");
-		return Utils.getValueFromUser(MENU_EXIT, 2, "Oops, enter a correct menu item.");
+		return MenuUtils.getValueFromUser(MENU_EXIT, 2, "Oops, enter a correct menu item.");
 	}
 	
 	/**
@@ -60,7 +60,7 @@ public class Menus {
 	 * @return the customer's name
 	 */
 	public static String getCustomerName(String userPrompt) {
-		return Utils.getPersonName(userPrompt);
+		return MenuUtils.getPersonName(userPrompt);
 	}
 	
 	/**
@@ -69,7 +69,7 @@ public class Menus {
 	 * @return the customer's username
 	 */
 	public static String getCustomerUserName(String userPrompt) {
-		return Utils.getUsername(userPrompt);
+		return MenuUtils.getUsername(userPrompt);
 	}
 	
 	/**
@@ -78,7 +78,7 @@ public class Menus {
 	 * @return the customer's password
 	 */
 	public static String getCustomerPassword(String userPrompt) {
-		return Utils.getPassword(userPrompt);
+		return MenuUtils.getPassword(userPrompt);
 	}
 	
 	/**
@@ -98,10 +98,10 @@ public class Menus {
 				+ " " + customers.get(i).getLastName()
 			);
 		}
-		System.out.println("------------------------");
+		System.out.println("------------------------------");
 		System.out.println(" " + MENU_EXIT + " : Return to Main Menu");
 		
-		return Utils.getValueFromUser(MENU_EXIT, customers.size(), "Oops, enter a correct menu item.");
+		return MenuUtils.getValueFromUser(MENU_EXIT, customers.size(), "Oops, enter a correct menu item.");
 	}
 	
 	/**
@@ -117,7 +117,7 @@ public class Menus {
 		printHeaderLine(29);
 		
 		System.out.println("\nMake selection:");
-		int menuSelect = Utils.getValueFromUser(0, 1, "Oops, enter a valid menu item");
+		int menuSelect = MenuUtils.getValueFromUser(0, 1, "Oops, enter a valid menu item");
 		
 		if(menuSelect != MENU_EXIT) {
 			String[] credentials = new String[2];
@@ -160,7 +160,7 @@ public class Menus {
 		System.out.println(" 8 : Get Monthly Statement");
 		printHeaderLine(29);
 		System.out.println(" " + MENU_EXIT + " : Return to Customer Login");
-		return Utils.getValueFromUser(MENU_EXIT, 8, "Oops, enter a correct menu item.");
+		return MenuUtils.getValueFromUser(MENU_EXIT, 8, "Oops, enter a correct menu item.");
 	}
 
 	/**

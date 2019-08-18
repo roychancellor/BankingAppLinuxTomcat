@@ -8,7 +8,7 @@ import java.util.regex.Pattern;
 /**
  * Utility methods for the banking application
  */
-public class Utils {
+public class MenuUtils {
 	private static Scanner scan = new Scanner(System.in);
 	
 	/**
@@ -139,7 +139,7 @@ public class Utils {
 			System.out.println("\nEnter your e-mail address --> ");
 			emailAddress = scan.nextLine();
 			if(!verifyRegex(emailRegex, emailAddress.toUpperCase())) {
-				System.err.println("Oops, email format must be address@domainName.extension");
+				System.err.println("Oops, email format must be\naddress@domainName.extension");
 				emailInvalid = true;				
 			}
 		} while(emailInvalid);
@@ -161,7 +161,7 @@ public class Utils {
 			System.out.println("\n" + userPrompt);
 			name = scan.nextLine();
 			if(!verifyRegex(nameRegex, name.toUpperCase()) /*|| name.length() < 2 || name.length() > 100*/) {
-				System.err.println("Oops, name must be 2-100 characters and contain only letters, dash, or apostrophe.");
+				System.err.println("Oops, name must be 2-100 characters\nand contain only letters, dash, or apostrophe.");
 				nameInvalid = true;				
 			}
 		} while(nameInvalid);
@@ -183,7 +183,7 @@ public class Utils {
 			System.out.println("\n" + userPrompt);
 			username = scan.nextLine();
 			if(!verifyRegex(usernameRegex, username) /*|| username.length() < 2 || username.length() > 200*/) {
-				System.err.println("Oops, username must be 2-200 characters and contain only letters and numbers.");
+				System.err.println("Oops, username must be 2-200 characters\nand contain only letters and numbers.");
 				usernameInvalid = true;				
 			}
 		} while(usernameInvalid);
@@ -206,7 +206,7 @@ public class Utils {
 			password = scan.nextLine();
 			if(!verifyRegex(passwordRegex, password) /*|| password.length() < 2 || password.length() > 200*/) {
 				System.err.println("Oops, password must be 8-200 characters"
-					+ " and contain only letters, numbers, and the special character '!'.");
+					+ "\nand contain only letters, numbers, and the special character '!'\n");
 				passwordInvalid = true;				
 			}
 		} while(passwordInvalid);
@@ -246,7 +246,7 @@ public class Utils {
 				str = scan.nextLine();
 				
 				if(str == null || str.length() < minLength) {
-					System.err.println("\nOops, you must enter at least " + minLength + " characters. Try again.");
+					System.err.println("\nOops, you must enter at least " + minLength + " characters.\nTry again.");
 					stringInvalid = true;
 				}
 			} while(stringInvalid);

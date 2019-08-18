@@ -133,7 +133,7 @@ public class Bank {
 
 		//HASH PASSWORD WITH SALT
 		//HASHING STILL NEEDS TO BE IMPLEMENTED
-		String passHash = Menus.getCustomerPassword("Enter a password (total of 8 letters and/or numbers):");
+		String passHash = Menus.getCustomerPassword("Enter a password\n(8-200 letters and/or numbers):");
 		String passSalt = "salt";
 		
 		//WRITE NEW CUSTOMER AND CUSTOMER'S CREDENTIALS TO DATABASE TABLES
@@ -163,8 +163,8 @@ public class Bank {
 			String origFirstName = customers.get(custIndex).getFirstName();
 			
 			//Set the new names
-			customers.get(custIndex).setFirstName(Menus.getCustomerName("Enter new first name:"));
-			customers.get(custIndex).setLastName(Menus.getCustomerName("Enter new last name:"));
+			customers.get(custIndex).setLastName(Menus.getCustomerName("Enter new LAST name:"));
+			customers.get(custIndex).setFirstName(Menus.getCustomerName("Enter new FIRST name:"));
 			System.out.println("\nSuccess, " + origFirstName + " " + origLastName
 				+ " changed to "
 				+ customers.get(custIndex).getFirstName()
@@ -244,7 +244,7 @@ public class Bank {
 				else {
 					numFails++;
 					if(numFails < MAX_TRIES) {
-						System.out.println("\nIncorrect username and/or password. " + (MAX_TRIES - numFails)
+						System.out.println("\nIncorrect username and/or password.\n" + (MAX_TRIES - numFails)
 							+ " attempts remaining. Try again.");
 					}
 					else {
