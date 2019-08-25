@@ -1,4 +1,4 @@
-package edu.gcu.cst341.milestone;
+package edu.gcu.cst341.application;
 
 import edu.gcu.cst341.controller.Bank;
 
