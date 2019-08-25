@@ -1,0 +1,65 @@
+body {
+	background-color:#000;
+	font-family:arial;
+}
+#page {
+	border:2px solid #fff;
+	width:450px;
+	margin:auto;
+	padding:10px;
+}
+section {
+	background-color:#fff;
+	padding:10px;
+}
+
+footer {
+	font-size:.8em;
+	color:#fff;
+	text-align:center;
+}
+footer a{
+	color:#fff;
+	text-decoration:none;
+}
+
+table {
+	width:100%;
+}
+
+td {
+	border-bottom:1px solid black;
+}
+
+th {
+	text-align:left;
+}
+
+nav {
+	overflow:auto;
+	margin-bottom:2px;
+}
+
+nav div {
+	padding:3px;
+	width:100px;
+	border:1px solid #aaa;
+	float:left;
+	text-align:center;
+	margin:2px;
+}
+
+nav div a {
+	color:#fff;
+	width:100%;
+	display:block;
+	text-decoration:none;
+}
+
+nav div a:hover {
+	background-color:#aaa;
+}
+
+.error {
+	color:#f00;
+}

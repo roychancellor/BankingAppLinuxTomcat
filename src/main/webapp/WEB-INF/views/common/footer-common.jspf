@@ -1,0 +1,7 @@
+<footer>
+	<img src="${footerImg}" />
+	<p>
+		<a href="/list">List</a> | <a href="/additem">Add Item</a> | <a href="/about">About</a> | <a href="/logout">Logout</a>
+		
+	</p>
+</footer>

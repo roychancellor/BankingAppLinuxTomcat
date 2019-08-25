@@ -224,7 +224,7 @@ public class Customer implements Comparable<Customer> {
 	 * Creates an account number from the first 9 characters of System.currentTimeMillis + random 1-100
 	 * @return string
 	 */
-	private String createCustomerID() {
-		return ((Long)(System.currentTimeMillis() + (long)(Math.random() * 100 + 1))).toString().substring(0, 9);
-	}
+//	private String createCustomerID() {
+//		return ((Long)(System.currentTimeMillis() + (long)(Math.random() * 100 + 1))).toString().substring(0, 9);
+//	}
 }
