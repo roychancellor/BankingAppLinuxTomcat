@@ -1,4 +1,4 @@
-package edu.gcu.cst341.controller;
+package edu.gcu.cst341.spring;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -7,6 +7,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import org.springframework.stereotype.Service;
 
 import edu.gcu.cst341.model.Account;
 import edu.gcu.cst341.model.Customer;
@@ -18,7 +20,8 @@ import edu.gcu.cst341.view.Menus;
  * Bank is the primary class for the banking application, housing all methods to process user input
  * The actual account computations occur in the account classes Checking, Saving, and Loan
  */
-public class Bank {
+@Service
+public class BankService {
 
 	//Class data
 	private String bankName;
@@ -32,8 +35,8 @@ public class Bank {
 	public static final String MONEY_FORMAT = "$#,##0.00;($#,##0.00)";
 
 	//Constructor
-	public Bank(String bankName) {
-		this.bankName = bankName;
+	public BankService() {
+		this.bankName = "Roy Bank 4.0";
 		
 		this.db = new DataSource(DbConstants.SILENT, DbConstants.LOCAL);
 		if(db.connectToDatabase()) {
@@ -52,6 +55,78 @@ public class Bank {
 		}
 	}
 	
+	//Getters and setters
+	
+	/**
+	 * @return the bankName
+	 */
+	public String getBankName() {
+		return bankName;
+	}
+
+	/**
+	 * @param bankName the bankName to set
+	 */
+	public void setBankName(String bankName) {
+		this.bankName = bankName;
+	}
+
+	/**
+	 * @return the customers
+	 */
+	public List<Customer> getCustomers() {
+		return customers;
+	}
+
+	/**
+	 * @param customers the customers to set
+	 */
+	public void setCustomers(List<Customer> customers) {
+		this.customers = customers;
+	}
+
+	/**
+	 * @return the custIdToIndex
+	 */
+	public Map<Integer, Integer> getCustIdToIndex() {
+		return custIdToIndex;
+	}
+
+	/**
+	 * @param custIdToIndex the custIdToIndex to set
+	 */
+	public void setCustIdToIndex(Map<Integer, Integer> custIdToIndex) {
+		this.custIdToIndex = custIdToIndex;
+	}
+
+	/**
+	 * @return the custIndex
+	 */
+	public int getCustIndex() {
+		return custIndex;
+	}
+
+	/**
+	 * @param custIndex the custIndex to set
+	 */
+	public void setCustIndex(int custIndex) {
+		this.custIndex = custIndex;
+	}
+
+	/**
+	 * @return the db
+	 */
+	public DataSource getDb() {
+		return db;
+	}
+
+	/**
+	 * @param db the db to set
+	 */
+	public void setDb(DataSource db) {
+		this.db = db;
+	}
+
 	//Class methods
 
 	/**
@@ -187,10 +262,10 @@ public class Bank {
 	/**
 	 * gets the customer's transaction selection
 	 */
-	private void doCustomerTransactions() {
+	public void doCustomerTransactions() {
 		//Get a customer logged in
 //		int customerIdFromDb = doCustomerLogin();
-		int customerIdFromDb = 1;
+		int customerIdFromDb = this.getCustIndex();
 		
 		if(customerIdFromDb != Menus.MENU_EXIT) {
 			custIndex = this.custIdToIndex.get(customerIdFromDb);

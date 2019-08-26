@@ -12,7 +12,7 @@ import java.util.List;
 /**
  * Class contains SQL CRUD functions for the banking application
 */
-public class DatabaseActions {
+public class DataSource {
 	private Connection conn;
 	private Statement stmt;
 	private ResultSet rs;
@@ -27,7 +27,7 @@ public class DatabaseActions {
 	 * @param verboseSQL when true will print all SQL commands to the console
 	 * @param productionDb when true will open the AWS-hosted bank db; false opens the local bank db for testing
 	 */
-	public DatabaseActions(boolean verboseSQL, boolean productionDb) {
+	public DataSource(boolean verboseSQL, boolean productionDb) {
 		this.verboseSQL = verboseSQL;
 		this.productionDb = productionDb;
 	}

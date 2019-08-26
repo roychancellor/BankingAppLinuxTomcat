@@ -1,7 +1,5 @@
 package edu.gcu.cst341.spring;
 
-import javax.servlet.http.HttpSession;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
@@ -21,49 +19,61 @@ public class LoginController {
 	StudentService StudentService;
 	@Autowired
 	LoginService LoginService;
+	@Autowired
+	BankService BankService;
 	
 	@ModelAttribute("username")
 	public String username() {
 		return null;
+	}
+	@ModelAttribute("customerid")
+	public int customerid() {
+		return 0;
 	}
 	
 	//NOTE: return statements are names of .jsp files
 	
 	@RequestMapping(value = "/login", method = RequestMethod.GET)
 	public String showLoginScreen() {
-		//Open the .jsp file
 		return "login";
 	}
 	
 	@RequestMapping(value = "/login", method = RequestMethod.POST)
-	public String processLoginScreen(@RequestParam String username, @RequestParam String password, ModelMap map, HttpSession s) {
-		//Keeps track of the username to be able to pass to other methods
-		//The username can either be "admin" or "faculty"
-		map.put("username", username);
-		if(LoginService.isValidCredentials(username, password)) {
-			//Force the browser to GO TO THE URL /studentlist, not run the .jsp file
-			return "redirect:studentlist";
+	public String processLoginScreen(@RequestParam String username, @RequestParam String password, ModelMap map) {
+		String pageToReturn = "redirect:studentlist";
+		int custId = 0;
+		if(username == null || password == null) {
+			map.put("errormessage", "Username and password must not be blank");
+			pageToReturn = "login";
 		}
-		map.put("errormessage", "Invalid login credentials");
-		//Open the .jsp file
-		return "login";
+		else {
+			custId = LoginService.validateCredentials(username, password);
+			if(custId > 0) {
+				BankService.setCustIndex(custId);
+				BankService.doCustomerTransactions();
+				//Keeps track of the username to be able to pass to other methods
+				map.put("username", username);
+			}
+			else {
+				map.put("errormessage", "Invalid login credentials");
+				pageToReturn = "login";
+			}
+		}
+		return pageToReturn;
 	}
 	
 	@RequestMapping(value = "/studentlist", method = RequestMethod.GET)
-	public String showListScreen(@ModelAttribute("username") String username, ModelMap map, HttpSession s) {
+	public String showListScreen(@ModelAttribute("username") String username, ModelMap map) {
 		String jspToAccess = null;
 		
 		//Determine which page to open depending on who is logged in
 		if(username.equals("admin")) {
-			//Open the .jsp file
 			jspToAccess = "studentlistadmin";
 		}
 		else if(username.equals("faculty")) {
-			//Open the .jsp file
 			jspToAccess = "studentlistfaculty";
 		}
 		else {
-			//open the login.jsp file
 			jspToAccess = "login";
 		}
 		
@@ -79,11 +89,9 @@ public class LoginController {
 	@RequestMapping(value="/addstudent", method = RequestMethod.GET)
 	public String processAddStudent(ModelMap m) {
 		if(m.get("username").equals("admin")) {
-			//Open the .jsp file
 			return "addstudent";
 		}
 		else {
-			//Open the login.jsp file
 			return "login";
 		}
 	}
@@ -94,7 +102,6 @@ public class LoginController {
 	 * @param firstname student first name
 	 * @param username the username of the logged-in user
 	 * @param map a ModelMap object
-	 * @param s an HttpSession object
 	 * @return a redirect to the student list page appropriate for the logged-in user
 	 */
 	@RequestMapping(value="/addstudent", method = RequestMethod.POST)
@@ -102,7 +109,7 @@ public class LoginController {
 		@RequestParam String lastname,
 		@RequestParam String firstname,
 		@ModelAttribute("username") String username,
-		ModelMap map, HttpSession s) {
+		ModelMap map) {
 		String jspToReturn = "login";
 		
 		if(username.equals("admin")) {

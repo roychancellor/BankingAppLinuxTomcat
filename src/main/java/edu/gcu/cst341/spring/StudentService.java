@@ -13,7 +13,7 @@ public class StudentService {
 	
 	/**
 	 * Gets a list of Student objects for the passed-in username
-	 * @param username the username f the logged-in user
+	 * @param username the username of the logged-in user
 	 * @return a list of Student objects for the user
 	 */
 	public List<Student> getStudentList(String username) {
