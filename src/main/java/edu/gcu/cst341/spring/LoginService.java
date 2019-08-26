@@ -15,7 +15,7 @@ public class LoginService {
 		int customerId = Menus.MENU_EXIT;
 		//Query the credentials database for the customer credentials
 		DataSource ds = new DataSource(false, false);
-		if(ds.connectToDatabase()) {
+		if(ds.isConnectedToDb()) {
 			customerId = ds.checkLoginCredentials(username, "salt", password);
 			ds.close();
 		}

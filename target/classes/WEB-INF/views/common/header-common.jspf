@@ -1,9 +1,9 @@
 <header>
-	<img src="${headerImg}" />
+	<h2>RoyBank 4.0</h2>
 </header>
 <nav>
-	<div><a href="/list">List</a></div>
-	<div><a href="/additem">Add Item</a></div>
-	<div><a href="/about">About</a></div>
+	<div><a href="/list-bank">List</a></div>
+	<div><a href="/add-bank">Add Item</a></div>
+	<div><a href="/about-bank">About</a></div>
 	<div><a href="/logout">Logout</a></div>
 </nav>

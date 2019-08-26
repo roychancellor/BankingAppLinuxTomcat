@@ -1,7 +1,5 @@
 <footer>
-	<img src="${footerImg}" />
 	<p>
-		<a href="/list">List</a> | <a href="/additem">Add Item</a> | <a href="/about">About</a> | <a href="/logout">Logout</a>
-		
+		<a href="/list-bank">List</a> | <a href="/add-bank">Add Item</a> | <a href="/about-bank">About</a> | <a href="/logout">Log Out</a>
 	</p>
 </footer>
