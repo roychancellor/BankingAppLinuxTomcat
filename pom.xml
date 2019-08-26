@@ -5,7 +5,7 @@
   <groupId>edu.gcu.cst341</groupId>
   <artifactId>BankingApp341</artifactId>
   <version>0.0.1-SNAPSHOT</version>
-  <packaging>jar</packaging>
+  <packaging>war</packaging>
 
   <name>BakingApp341</name>
   <url>http://maven.apache.org</url>

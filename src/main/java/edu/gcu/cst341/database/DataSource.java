@@ -1,4 +1,4 @@
-package edu.gcu.cst341.model;
+package edu.gcu.cst341.database;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -8,6 +8,8 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
+
+import edu.gcu.cst341.model.Customer;
 
 /**
  * Class contains SQL CRUD functions for the banking application
@@ -30,6 +32,12 @@ public class DataSource {
 	public DataSource(boolean verboseSQL, boolean productionDb) {
 		this.verboseSQL = verboseSQL;
 		this.productionDb = productionDb;
+		if(connectToDatabase()) {
+			System.out.println("\nCONNECTED TO DB...");
+		}
+		else {
+			System.out.println("\nERROR: NOT CONNECTED!!!");
+		}
 	}
 	
 	//Getters and Setters
@@ -126,6 +134,10 @@ public class DataSource {
 
 		//Open connection to database
 		try {
+			// load and register JDBC driver for MySQL
+//			Class.forName("com.mysql.jdbc.Driver");
+			Class.forName("com.mysql.cj.jdbc.Driver");
+
 			if(verboseSQL) System.out.print("Connecting to " + dbURL);
 			this.conn = DriverManager.getConnection(dbURL, dbUser, dbPassword);
 			if(verboseSQL) System.out.println("...SUCCESS!");
@@ -147,6 +159,9 @@ public class DataSource {
 			printMethod(new Throwable().getStackTrace()[0].getMethodName());
 			e.printStackTrace();
 			this.connectedToDb = false;
+		}
+		catch (ClassNotFoundException e) {
+			e.printStackTrace();
 		}
 		return connectedToDb;
 	}

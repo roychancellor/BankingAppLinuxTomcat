@@ -10,10 +10,10 @@ import java.util.Map;
 
 import org.springframework.stereotype.Service;
 
+import edu.gcu.cst341.database.DataSource;
+import edu.gcu.cst341.database.DbConstants;
 import edu.gcu.cst341.model.Account;
 import edu.gcu.cst341.model.Customer;
-import edu.gcu.cst341.model.DataSource;
-import edu.gcu.cst341.model.DbConstants;
 import edu.gcu.cst341.view.Menus;
 
 /**
