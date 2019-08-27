@@ -10,8 +10,7 @@ import java.util.Map;
 
 import org.springframework.stereotype.Service;
 
-import edu.gcu.cst341.database.DataSource;
-import edu.gcu.cst341.database.DbConstants;
+//import edu.gcu.cst341.database.DbConstants;
 import edu.gcu.cst341.model.Account;
 import edu.gcu.cst341.model.Customer;
 import edu.gcu.cst341.view.Menus;
@@ -28,7 +27,7 @@ public class BankService {
 	private List<Customer> customers = new ArrayList<Customer>();
 	private Map<Integer, Integer> custIdToIndex = new HashMap<Integer, Integer>();
 	private int custIndex = 0;
-	private DataSource db;
+	private DataService db;
 	
 	//Format for dates and money outputs in all classes
 	public static DecimalFormat money = new DecimalFormat();
@@ -38,25 +37,24 @@ public class BankService {
 	public BankService() {
 		this.bankName = "Roy Bank 4.0";
 		
-		System.out.println("BankService constructor opening DB connection...");
+//		System.out.println("BankService constructor opening DB connection...");
 //		this.db = new DataSource(DbConstants.SILENT, DbConstants.LOCAL);
-		this.db = new DataSource(DbConstants.SILENT, DbConstants.LOCAL);
-		if(db.connectToDatabase()) {
-			//Create the list of customers from the customers database
-			customers = db.makeCustomerListFromDatabase();
-			//Sort the customer list
-			Collections.sort(customers);
-			//Make a map of customerId from the database to the index of the customers list
-			//which is necessary after the sort
-			mapIdtoIndex();
-			//Set the money format
-			money.applyPattern(MONEY_FORMAT);
-			System.out.println("BankService constructor closing DB connection...");
-			db.close();
-		}
-		else {
-			System.out.println("FATAL ERROR: Unable to open database. BANK IS CLOSED FOR BUSINESS!");
-		}
+//		if(db.connectToDatabase()) {
+//			//Create the list of customers from the customers database
+//			customers = db.makeCustomerListFromDatabase();
+//			//Sort the customer list
+//			Collections.sort(customers);
+//			//Make a map of customerId from the database to the index of the customers list
+//			//which is necessary after the sort
+//			mapIdtoIndex();
+//			//Set the money format
+//			money.applyPattern(MONEY_FORMAT);
+//			System.out.println("BankService constructor closing DB connection...");
+//			db.close();
+//		}
+//		else {
+//			System.out.println("FATAL ERROR: Unable to open database. BANK IS CLOSED FOR BUSINESS!");
+//		}
 	}
 	
 	//Getters and setters
@@ -120,14 +118,14 @@ public class BankService {
 	/**
 	 * @return the db
 	 */
-	public DataSource getDb() {
+	public DataService getDb() {
 		return db;
 	}
 
 	/**
 	 * @param db the db to set
 	 */
-	public void setDb(DataSource db) {
+	public void setDb(DataService db) {
 		this.db = db;
 	}
 

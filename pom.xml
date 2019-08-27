@@ -26,6 +26,8 @@
    		<groupId>mysql</groupId>
    		<artifactId>mysql-connector-java</artifactId>
    		<version>8.0.15</version>
+   		<!-- put a copy in /usr/share/tomcat7/lib -->
+  		<scope>provided</scope>
 	</dependency>
     <dependency>
         <groupId>org.springframework</groupId>

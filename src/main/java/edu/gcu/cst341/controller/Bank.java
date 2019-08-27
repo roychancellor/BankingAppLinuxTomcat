@@ -8,10 +8,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import edu.gcu.cst341.database.DataSource;
 import edu.gcu.cst341.database.DbConstants;
 import edu.gcu.cst341.model.Account;
 import edu.gcu.cst341.model.Customer;
+import edu.gcu.cst341.spring.DataService;
 import edu.gcu.cst341.view.Menus;
 
 /**
@@ -25,7 +25,7 @@ public class Bank {
 	private List<Customer> customers = new ArrayList<Customer>();
 	private Map<Integer, Integer> custIdToIndex = new HashMap<Integer, Integer>();
 	private int custIndex = 0;
-	private DataSource db;
+	private DataService db;
 	
 	//Format for dates and money outputs in all classes
 	public static DecimalFormat money = new DecimalFormat();
@@ -35,7 +35,8 @@ public class Bank {
 	public Bank(String bankName) {
 		this.bankName = bankName;
 		
-		this.db = new DataSource(DbConstants.SILENT, DbConstants.LOCAL);
+		this.db = new DataService();
+//		this.db = new DataService(DbConstants.SILENT, DbConstants.LOCAL);
 		if(db.connectToDatabase()) {
 			//Create the list of customers from the customers database
 			customers = db.makeCustomerListFromDatabase();

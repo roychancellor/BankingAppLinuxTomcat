@@ -23,6 +23,9 @@
 				<p>Password:<br /><input type="password" name="password"/></p>
 				<p><input type="submit" /></p>
 			</form>
+			
+			<!-- <h3><a href="/newcustomer">Become a Customer</a></h3> -->
+			<p><a class="btn btn-success" href="/newcustomer">Become a Customer</a></p>
 		</section>
 		<%@ include file="common/footer-common.jspf" %>
 	</div>

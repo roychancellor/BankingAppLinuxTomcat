@@ -16,8 +16,6 @@ import org.springframework.web.bind.annotation.SessionAttributes;
 public class LoginController {
 	//Allows Spring to take over control of making these objects
 	@Autowired
-	StudentService StudentService;
-	@Autowired
 	LoginService LoginService;
 	@Autowired
 	BankService BankService;
@@ -77,7 +75,7 @@ public class LoginController {
 			jspToAccess = "login";
 		}
 		
-		map.addAttribute("stulist", StudentService.getStudentList("admin"));
+//		map.addAttribute("stulist", StudentService.getStudentList("admin"));
 		return jspToAccess;
 	}
 	
@@ -113,7 +111,7 @@ public class LoginController {
 		String jspToReturn = "login";
 		
 		if(username.equals("admin")) {
-			StudentService.addStudentToRoster(lastname, firstname, false, username);
+//			StudentService.addStudentToRoster(lastname, firstname, false, username);
 			//Redirect to the student list page for admin
 			jspToReturn = "redirect:studentlist";
 		}
@@ -162,10 +160,10 @@ public class LoginController {
 		//If admin is logged in, perform the action
 		if(username.equals("admin")) {
 			if(action > 0) {
-				StudentService.enrollStudent(id);
+//				StudentService.enrollStudent(id);
 			}
 			else if(action < 0) {
-				StudentService.removeStudentFromRoster(id);
+//				StudentService.removeStudentFromRoster(id);
 			}
 		}
 		else if(!username.equals("faculty") && !username.equals("admin")) {

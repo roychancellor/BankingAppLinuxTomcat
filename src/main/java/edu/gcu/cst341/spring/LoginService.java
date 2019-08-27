@@ -2,7 +2,6 @@ package edu.gcu.cst341.spring;
 
 import org.springframework.stereotype.Service;
 
-import edu.gcu.cst341.database.DataSource;
 import edu.gcu.cst341.view.Menus;
 
 @Service
@@ -15,7 +14,7 @@ public class LoginService {
 		int customerId = Menus.MENU_EXIT;
 		//Query the credentials database for the customer credentials
 		System.out.println("validateCredentials opening a DB connection");
-		DataSource ds = new DataSource(false, false);
+		DataService ds = new DataService();
 		if(ds.isConnectedToDb()) {
 			customerId = ds.checkLoginCredentials(username, "salt", password);
 			System.out.println("validateCredentials closing a DB connection");

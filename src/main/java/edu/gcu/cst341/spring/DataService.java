@@ -1,4 +1,4 @@
-package edu.gcu.cst341.database;
+package edu.gcu.cst341.spring;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -9,12 +9,13 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
+import edu.gcu.cst341.database.DbConstants;
 import edu.gcu.cst341.model.Customer;
 
 /**
  * Class contains SQL CRUD functions for the banking application
 */
-public class DataSource {
+public class DataService {
 	private Connection conn;
 	private Statement stmt;
 	private ResultSet rs;
@@ -29,9 +30,9 @@ public class DataSource {
 	 * @param verboseSQL when true will print all SQL commands to the console
 	 * @param productionDb when true will open the AWS-hosted bank db; false opens the local bank db for testing
 	 */
-	public DataSource(boolean verboseSQL, boolean productionDb) {
-		this.verboseSQL = verboseSQL;
-		this.productionDb = productionDb;
+	public DataService() {
+		this.verboseSQL = false;
+		this.productionDb = false;
 		if(connectToDatabase()) {
 			System.out.println("\nDataSource CONNECTED TO DB...");
 		}
