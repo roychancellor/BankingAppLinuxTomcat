@@ -20,8 +20,7 @@
         <url-pattern>/</url-pattern>
     </servlet-mapping>
     
-    <error-page>
-    	<!-- Redirect any error (except 500) to this page -->
+    <!-- <error-page>
     	<location>/WEB-INF/views/error.jsp</location>
-    </error-page>
+    </error-page> -->
 </web-app>

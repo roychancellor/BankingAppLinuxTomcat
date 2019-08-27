@@ -13,9 +13,29 @@ public class Customer implements Comparable<Customer> {
 	private String lastName;
 	private Date dateOpened;
 	private int custId;
+	private String username;
+	private String phoneNumber;
+	private String emailAddress;
 	private Checking checking;
 	private Saving saving;
 	private Loan loan;
+	
+	/**
+	 * No-argument constructor for Customer objects
+	 * Makes Checking, Saving, and Loan account objects and adds initial balance
+	 * transactions to the transaction list for each account
+	 */
+	public Customer() {
+		//Make Checking, Saving, and Loan accounts (in the future, create a menu to do this manually)
+		this.checking = createCheckingAccount();
+		this.saving = createSavingAccount();
+		this.loan = createLoanAccount();
+		
+		//Populate transaction list with opening balance for each account
+		this.checking.addTransaction(this.checking.getAccountBalance(), "Beginning balance");
+		this.saving.addTransaction(this.saving.getAccountBalance(), "Beginning balance");
+		this.loan.addTransaction(this.loan.getAccountBalance(), "Beginning balance");
+	}
 	
 	/**
 	 * Constructor for Customers requires all three parameters to create a new Customer object
@@ -43,7 +63,8 @@ public class Customer implements Comparable<Customer> {
 		this.loan.addTransaction(this.loan.getAccountBalance(), "Beginning balance");
 	}
 
-	//Accessors (no mutators provided - Customers are immutable objects)
+	//Accessors and mutators
+
 	/**
 	 * @return the firstName
 	 */
@@ -52,17 +73,17 @@ public class Customer implements Comparable<Customer> {
 	}
 
 	/**
-	 * @return the lastName
-	 */
-	public String getLastName() {
-		return lastName;
-	}
-
-	/**
 	 * @param firstName the firstName to set
 	 */
 	public void setFirstName(String firstName) {
 		this.firstName = firstName;
+	}
+
+	/**
+	 * @return the lastName
+	 */
+	public String getLastName() {
+		return lastName;
 	}
 
 	/**
@@ -78,33 +99,110 @@ public class Customer implements Comparable<Customer> {
 	public Date getDateOpened() {
 		return dateOpened;
 	}
-	
+
 	/**
-	 * @return the checking account object
+	 * @param dateOpened the dateOpened to set
+	 */
+	public void setDateOpened(Date dateOpened) {
+		this.dateOpened = dateOpened;
+	}
+
+	/**
+	 * @return the custId
+	 */
+	public int getCustId() {
+		return custId;
+	}
+
+	/**
+	 * @param custId the custId to set
+	 */
+	public void setCustId(int custId) {
+		this.custId = custId;
+	}
+
+	/**
+	 * @return the username
+	 */
+	public String getUsername() {
+		return username;
+	}
+
+	/**
+	 * @param username the username to set
+	 */
+	public void setUsername(String username) {
+		this.username = username;
+	}
+
+	/**
+	 * @return the phoneNumber
+	 */
+	public String getPhoneNumber() {
+		return phoneNumber;
+	}
+
+	/**
+	 * @param phoneNumber the phoneNumber to set
+	 */
+	public void setPhoneNumber(String phoneNumber) {
+		this.phoneNumber = phoneNumber;
+	}
+
+	/**
+	 * @return the emailAddress
+	 */
+	public String getEmailAddress() {
+		return emailAddress;
+	}
+
+	/**
+	 * @param emailAddress the emailAddress to set
+	 */
+	public void setEmailAddress(String emailAddress) {
+		this.emailAddress = emailAddress;
+	}
+
+	/**
+	 * @return the checking
 	 */
 	public Checking getChecking() {
 		return checking;
 	}
 
 	/**
-	 * @return the saving account object
+	 * @param checking the checking to set
+	 */
+	public void setChecking(Checking checking) {
+		this.checking = checking;
+	}
+
+	/**
+	 * @return the saving
 	 */
 	public Saving getSaving() {
 		return saving;
 	}
 
 	/**
-	 * @return the loan account object
+	 * @param saving the saving to set
+	 */
+	public void setSaving(Saving saving) {
+		this.saving = saving;
+	}
+
+	/**
+	 * @return the loan
 	 */
 	public Loan getLoan() {
 		return loan;
 	}
 
 	/**
-	 * @return the custID
+	 * @param loan the loan to set
 	 */
-	public int getCustomerId() {
-		return custId;
+	public void setLoan(Loan loan) {
+		this.loan = loan;
 	}
 
 	/**

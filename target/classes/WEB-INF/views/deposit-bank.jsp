@@ -1,6 +1,5 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
-<%@ taglib prefix="format" uri="http://java.sun.com/jsp/jstl/core" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -9,7 +8,7 @@
 	<spring:url value="/resources/images/header.jpg" var="headerImg" />
 	<spring:url value="/resources/images/footer.jpg" var="footerImg" />
 	<meta charset="UTF-8">
-	<title>Customer Dashboard</title>
+	<title>Deposit</title>
 	<link rel="stylesheet" href="${mainCss}" />
 </head>
 
@@ -17,16 +16,17 @@
 	<div class="container">
 		<%@ include file="common/header-common.jspf" %>
 		<section>
-			<h1>Customer Dashboard: ${username}, ${customerid}</h1>
-			<table class="table table-striped">
-				<tr><th>Checking</th><th>Saving</th><th>Cash Advance</th></tr>
-				<tr>
-					<td class="content">${chkbal}</td>
-					<td class="content">${savbal}</td>
-					<td class="content">${loanbal}</td>
-				</tr>
-			</table>
-			<p><a class="btn btn-success" href="/statements-bank">Transactions</a></p>
+			<h1>DEPOSIT INTO ACCOUNT ${username}, ${customerid}</h1>
+			<form action="/deposit-bank" method="POST">
+				<p>Select Account:<br />
+					<input type="radio" name="account" value="chk" checked>Checking (${acctchk})<br />
+					<input type="radio" name="account" value="sav">Saving (${acctsav})<br />
+					<input type="radio" name="account" value="loan">Payment to Cash Advance (${acctloan})<br />
+				</p>
+				<p>Amount to deposit:<br /><input type="text" name="amountdeposit"/></p>
+			<!--  submit button -->
+			<p><input class="btn btn-primary" type="submit" value="Submit Deposit"></p>
+			</form>
 		</section>
 		<%@ include file="common/footer-common.jspf" %>
 	</div>

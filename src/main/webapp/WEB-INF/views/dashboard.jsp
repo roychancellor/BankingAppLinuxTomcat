@@ -26,7 +26,7 @@
 					<td class="content">${loanbal}</td>
 				</tr>
 			</table>
-			<p><a class="btn btn-success" href="/transactions">Transactions</a></p>
+			<p><a class="btn btn-success" href="/statements-bank">Transactions</a></p>
 		</section>
 		<%@ include file="common/footer-common.jspf" %>
 	</div>

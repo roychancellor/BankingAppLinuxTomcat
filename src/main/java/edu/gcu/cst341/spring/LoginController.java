@@ -1,5 +1,9 @@
 package edu.gcu.cst341.spring;
 
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
@@ -10,11 +14,14 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.SessionAttributes;
 
+import edu.gcu.cst341.model.Transaction;
+
 @Controller
 @Scope("session")
-@SessionAttributes("username")  //gives access to the name attribute in any page we access in this controller
+@SessionAttributes({"username","customerid"})  //gives access to the name attribute in any page we access in this controller
 public class LoginController {
 	//Allows Spring to take over control of making these objects
+	//TODO: ADD A CUSTOMER OBJECT HERE WHICH WILL CONTAIN ALL CUSTOMER INFO
 	@Autowired
 	LoginService LoginService;
 	@Autowired
@@ -24,6 +31,8 @@ public class LoginController {
 	public String username() {
 		return null;
 	}
+	//WHEN CLICKING ON THE DEPOSIT BUTTON IN THE NAV BAR, SPRING MAKES A NEW customerid
+	//WHICH RESETS IT TO 0
 	@ModelAttribute("customerid")
 	public int customerid() {
 		return 0;
@@ -32,12 +41,13 @@ public class LoginController {
 	//NOTE: return statements are names of .jsp files
 	
 	@RequestMapping(value = "/login", method = RequestMethod.GET)
-	public String showLoginScreen() {
+	public String showLoginScreen(ModelMap map) {
 		return "login";
 	}
 	
 	@RequestMapping(value = "/login", method = RequestMethod.POST)
 	public String processLoginScreen(@RequestParam String username, @RequestParam String password, ModelMap map) {
+//		String pageToReturn = "redirect:dashboard";
 		String pageToReturn = "dashboard";
 		int custId = 0;
 		if(username == null || password == null) {
@@ -49,9 +59,10 @@ public class LoginController {
 			if(custId > 0) {
 				map.put("username", username);
 				map.put("customerid", custId);
-				map.put("chkbal", 100);
-				map.put("savbal", 200);
-				map.put("loanbal", 300);
+				//Put the current balances into the model
+				map.addAttribute("chkbal", 200.0);
+				map.addAttribute("savbal", 300.0);
+				map.addAttribute("loanbal", 400.0);
 				BankService.setCustIndex(custId);
 //				BankService.doCustomerTransactions();
 			}
@@ -73,12 +84,23 @@ public class LoginController {
 	}
 	
 	@RequestMapping(value = "/dashboard", method = RequestMethod.GET)
-	public String showListScreen(@ModelAttribute("customerid") int custId, ModelMap map) {
-		String jspToAccess = null;
+	public String showDashboardScreen(
+		@RequestParam("username") String username,
+		@RequestParam("customerid") int custId,
+		@RequestParam("chkbal") double chkBal,
+		@RequestParam("savbal") double savBal,
+		@RequestParam("loanbal") double loanBal,
+		ModelMap map) {
+		String jspToAccess = "dashboard";
 		
 		//Verify there is a logged-in customer
 		if(custId != 0) {
-			jspToAccess = "redirect:dashboard";
+			//Put the current balances into the model
+			map.put("username", username);
+			map.put("customerid", custId);
+			map.put("chkbal", chkBal);
+			map.put("savbal", savBal);
+			map.put("loanbal", loanBal);
 		}
 		else {
 			jspToAccess = "login";
@@ -87,97 +109,210 @@ public class LoginController {
 		return jspToAccess;
 	}
 	
-	/**
-	 * Opens the addstudent.jsp file if admin is logged in or else returns to login
-	 * @param m the ModelMap
-	 * @return a redirect to the studentlistadmin page
-	 */
-	@RequestMapping(value="/addstudent", method = RequestMethod.GET)
-	public String processAddStudent(ModelMap m) {
-		if(m.get("username").equals("admin")) {
-			return "addstudent";
+	@RequestMapping(value = "/deposit-bank", method = RequestMethod.GET)
+	public String showDepositScreen(@ModelAttribute("username") String username,
+		@ModelAttribute("customerid") int custId,
+		ModelMap map) {
+		String jspToAccess = "deposit-bank";
+		//Verify there is a logged-in customer
+		if(custId != 0) {
+			//Put the account numbers into the model
+			map.addAttribute("acctchk", 1234);
+			map.addAttribute("acctsav", 2345);
+			map.addAttribute("acctloan", 3456);
 		}
 		else {
-			return "login";
+			jspToAccess = "login";
 		}
+		
+		return jspToAccess;
 	}
+	
+	@RequestMapping(value = "/deposit-bank", method = RequestMethod.POST)
+	public String processDeposit(@ModelAttribute("customerid") int custId,
+			@ModelAttribute("username") String username,
+			@RequestParam("account") String accountType,
+			@RequestParam("amountdeposit") double amountToDeposit,
+			ModelMap map) {
+		String jspToAccess = "login";
+		
+		//Verify there is a logged-in customer
+		if(custId != 0) {
+			jspToAccess = "dashboard";
+			//Do the deposit for the customer
+			
+			//Update the dashboard values
+			switch(accountType) {
+				case "chk":
+					map.put("chkbal", 333.0);
+					map.put("savbal", 444.0);
+					map.put("loanbal", 555.0);
+					break;
+				case "sav":
+					map.put("chkbal", 300.0);
+					map.put("savbal", 400.0);
+					map.put("loanbal", 500.0);
+					break;
+				case "loan":
+					map.put("chkbal", 300.0);
+					map.put("savbal", 400.0);
+					map.put("loanbal", 500.0);
+					break;
+				default:
+			}
+		}
+		
+		return jspToAccess;
+	}	
 
-	/**
-	 * Adds a new student to the admin list
-	 * @param lastname student last name
-	 * @param firstname student first name
-	 * @param username the username of the logged-in user
-	 * @param map a ModelMap object
-	 * @return a redirect to the student list page appropriate for the logged-in user
-	 */
-	@RequestMapping(value="/addstudent", method = RequestMethod.POST)
-	public String processReturnToList(
-		@RequestParam String lastname,
-		@RequestParam String firstname,
-		@ModelAttribute("username") String username,
+	@RequestMapping(value = "/withdraw-bank", method = RequestMethod.GET)
+	public String showWithdrawScreen(@ModelAttribute("username") String username,
+		@ModelAttribute("customerid") int custId,
 		ModelMap map) {
-		String jspToReturn = "login";
-		
-		if(username.equals("admin")) {
-//			StudentService.addStudentToRoster(lastname, firstname, false, username);
-			//Redirect to the student list page for admin
-			jspToReturn = "redirect:studentlist";
+		String jspToAccess = "withdraw-bank";
+		//Verify there is a logged-in customer
+		if(custId != 0) {
+			//Put the account numbers into the model
+			map.addAttribute("acctchk", 1234);
+			map.addAttribute("acctsav", 2345);
+			map.addAttribute("acctloan", 3456);
 		}
-		else if(map.get("username").equals("faculty")) {
-			//Redirect to the student list page for faculty
-			jspToReturn = "redirect:studentlist";
+		else {
+			jspToAccess = "login";
 		}
 		
-		return jspToReturn;
+		return jspToAccess;
 	}
 	
-	private static final int ENROLL = 1;
-	private static final int DELETE = -1;
-	/**
-	 * If admin logged in, calls enrollStudent; otherwise, just shows the student list
-	 * @param id the index number of the student in the student list
-	 * @param map a ModelMap object
-	 * @return a redirect to the student list appropriate for the logged-in user
-	 */
-	@RequestMapping(value="/enroll", method=RequestMethod.GET)
-	public String processEnrollStudent(@RequestParam int id, ModelMap map) {
-		return processEnrollDelete((String)map.get("username"), id, ENROLL);
+	@RequestMapping(value = "/withdraw-bank", method = RequestMethod.POST)
+	public String processWithdrawal(@ModelAttribute("customerid") int custId,
+			@ModelAttribute("username") String username,
+			@RequestParam("account") String accountType,
+			@RequestParam("amountwithdraw") double amountToWithdraw,
+			ModelMap map) {
+		String jspToAccess = "login";
+		
+		//Verify there is a logged-in customer
+		if(custId != 0) {
+			jspToAccess = "dashboard";
+			//Do the withdrawal for the customer
+			
+			//Update the dashboard values
+			switch(accountType) {
+				case "chk":
+					map.put("chkbal", 222.0);
+					map.put("savbal", 333.0);
+					map.put("loanbal", 444.0);
+					break;
+				case "sav":
+					map.put("chkbal", 300.0);
+					map.put("savbal", 400.0);
+					map.put("loanbal", 500.0);
+					break;
+				case "loan":
+					map.put("chkbal", 300.0);
+					map.put("savbal", 400.0);
+					map.put("loanbal", 500.0);
+					break;
+				default:
+			}
+		}
+		
+		return jspToAccess;
 	}
 
-	/**
-	 * If admin logged in, calls enrollStudent; otherwise, just shows the student list
-	 * @param id the index number of the student in the student list
-	 * @param map a ModelMap object
-	 * @return a redirect to the student list appropriate for the logged-in user
-	 */
-	@RequestMapping(value="/delete", method=RequestMethod.GET)
-	public String processDeleteStudent(@RequestParam int id, ModelMap map) {
-		return processEnrollDelete((String)map.get("username"), id, DELETE);
+	@RequestMapping(value = "/transfer-bank", method = RequestMethod.GET)
+	public String showTransferScreen(@ModelAttribute("username") String username,
+		@ModelAttribute("customerid") int custId,
+		ModelMap map) {
+		String jspToAccess = "transfer-bank";
+		//Verify there is a logged-in customer
+		if(custId != 0) {
+			//Put the account numbers into the model
+			map.addAttribute("acctchk", 1234);
+			map.addAttribute("acctsav", 2345);
+			map.addAttribute("acctloan", 3456);
+		}
+		else {
+			jspToAccess = "login";
+		}
+		
+		return jspToAccess;
 	}
 	
-	/**
-	 * Helper method to process a student enrollmeent or deletion
-	 * @param username the username of the logged-in user
-	 * @param id the index of the student in the student list
-	 * @param action an integer that if > 0 will cause an enrollment or < 0 will cause a deletion
-	 * @return a string representing either a redirect or a jsp file for the caller to return
-	 */
-	private String processEnrollDelete(String username, int id, int action) {
-		String jspToReturn = "redirect:studentlist";
+	@RequestMapping(value = "/transfer-bank", method = RequestMethod.POST)
+	public String processTransfer(@ModelAttribute("customerid") int custId,
+			@ModelAttribute("username") String username,
+			@RequestParam("accountfrom") String accountFrom,
+			@RequestParam("accountto") String accountTo,
+			@RequestParam("amounttransfer") double amountToTransfer,
+			ModelMap map) {
+		String jspToAccess = "login";
 		
-		//If admin is logged in, perform the action
-		if(username.equals("admin")) {
-			if(action > 0) {
-//				StudentService.enrollStudent(id);
-			}
-			else if(action < 0) {
-//				StudentService.removeStudentFromRoster(id);
+		//Verify there is a logged-in customer
+		if(custId != 0) {
+			jspToAccess = "dashboard";
+			//Do the transfer for the customer
+			
+			//Update the dashboard values
+			switch(accountFrom) {
+				case "chk":
+					map.put("chkbal", 444.0);
+					map.put("savbal", 222.0);
+					map.put("loanbal", 444.0);
+					break;
+				case "sav":
+					map.put("chkbal", 300.0);
+					map.put("savbal", 400.0);
+					map.put("loanbal", 500.0);
+					break;
+				case "loan":
+					map.put("chkbal", 300.0);
+					map.put("savbal", 400.0);
+					map.put("loanbal", 500.0);
+					break;
+				default:
 			}
 		}
-		else if(!username.equals("faculty") && !username.equals("admin")) {
-			jspToReturn = "login";
+		
+		return jspToAccess;
+	}
+	
+	@RequestMapping(value = "/statements-bank", method = RequestMethod.GET)
+	public String showStatementsScreen(@ModelAttribute("username") String username,
+		@ModelAttribute("customerid") int custId,
+		ModelMap map) {
+		String jspToAccess = "statements-bank";
+		//Verify there is a logged-in customer
+		if(custId != 0) {
+			//Get the transaction lists from each account
+			List<Transaction> transchk = new ArrayList<Transaction>();
+			transchk.add(new Transaction(new Date(), "chk1234", 123.45, "Test Transaction"));
+			transchk.add(new Transaction(new Date(), "chk1234", 234.56, "Test Transaction"));
+			transchk.add(new Transaction(new Date(), "chk1234", 345.67, "Test Transaction"));
+			List<Transaction> transsav = new ArrayList<Transaction>();
+			transsav.add(new Transaction(new Date(), "sav1234", 123.45, "Test Transaction"));
+			transsav.add(new Transaction(new Date(), "sav1234", 234.56, "Test Transaction"));
+			transsav.add(new Transaction(new Date(), "sav1234", 345.67, "Test Transaction"));
+			List<Transaction> transloan = new ArrayList<Transaction>();
+			transloan.add(new Transaction(new Date(), "loan1234", 123.45, "Test Transaction"));
+			transloan.add(new Transaction(new Date(), "loan1234", 234.56, "Test Transaction"));
+			transloan.add(new Transaction(new Date(), "loan1234", 345.67, "Test Transaction"));
+
+			//Put the data into the model
+			map.addAttribute("transchk", transchk);
+			map.addAttribute("transsav", transsav);
+			map.addAttribute("transloan", transloan);
+		}
+		else {
+			jspToAccess = "login";
 		}
 		
-		return jspToReturn;
+		return jspToAccess;
+	}
+	
+	@RequestMapping(value = "/about-bank", method = RequestMethod.GET)
+	public String showAboutScreen(ModelMap map) {
+		return "about-bank";
 	}
 }
