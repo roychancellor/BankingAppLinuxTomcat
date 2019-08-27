@@ -1,16 +1,14 @@
 /Users/roy/git/BankingApp341/src/main/java/edu/gcu/cst341/model/Saving.java
-/Users/roy/git/BankingApp341/src/main/java/edu/gcu/cst341/spring/StudentService.java
 /Users/roy/git/BankingApp341/src/main/java/edu/gcu/cst341/view/Menus.java
 /Users/roy/git/BankingApp341/src/main/java/edu/gcu/cst341/application/BankingApp.java
 /Users/roy/git/BankingApp341/src/main/java/edu/gcu/cst341/spring/BankService.java
 /Users/roy/git/BankingApp341/src/main/java/edu/gcu/cst341/spring/LoginService.java
+/Users/roy/git/BankingApp341/src/main/java/edu/gcu/cst341/spring/DataService.java
 /Users/roy/git/BankingApp341/src/main/java/edu/gcu/cst341/controller/iActions.java
-/Users/roy/git/BankingApp341/src/main/java/edu/gcu/cst341/spring/Student.java
 /Users/roy/git/BankingApp341/src/main/java/edu/gcu/cst341/spring/LoginController.java
 /Users/roy/git/BankingApp341/src/main/java/edu/gcu/cst341/controller/Bank.java
 /Users/roy/git/BankingApp341/src/main/java/edu/gcu/cst341/model/Customer.java
 /Users/roy/git/BankingApp341/src/main/java/edu/gcu/cst341/model/Loan.java
-/Users/roy/git/BankingApp341/src/main/java/edu/gcu/cst341/database/DataSource.java
 /Users/roy/git/BankingApp341/src/main/java/edu/gcu/cst341/view/MenuUtils.java
 /Users/roy/git/BankingApp341/src/main/java/edu/gcu/cst341/database/DbConstants.java
 /Users/roy/git/BankingApp341/src/main/java/edu/gcu/cst341/model/Account.java

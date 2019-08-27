@@ -38,7 +38,7 @@ public class LoginController {
 	
 	@RequestMapping(value = "/login", method = RequestMethod.POST)
 	public String processLoginScreen(@RequestParam String username, @RequestParam String password, ModelMap map) {
-		String pageToReturn = "redirect:studentlist";
+		String pageToReturn = "dashboard";
 		int custId = 0;
 		if(username == null || password == null) {
 			map.put("errormessage", "Username and password must not be blank");
@@ -47,10 +47,13 @@ public class LoginController {
 		else {
 			custId = LoginService.validateCredentials(username, password);
 			if(custId > 0) {
-				BankService.setCustIndex(custId);
-				BankService.doCustomerTransactions();
-				//Keeps track of the username to be able to pass to other methods
 				map.put("username", username);
+				map.put("customerid", custId);
+				map.put("chkbal", 100);
+				map.put("savbal", 200);
+				map.put("loanbal", 300);
+				BankService.setCustIndex(custId);
+//				BankService.doCustomerTransactions();
 			}
 			else {
 				map.put("errormessage", "Invalid login credentials");
@@ -60,22 +63,27 @@ public class LoginController {
 		return pageToReturn;
 	}
 	
-	@RequestMapping(value = "/studentlist", method = RequestMethod.GET)
-	public String showListScreen(@ModelAttribute("username") String username, ModelMap map) {
+	@RequestMapping(value = "/logout", method = RequestMethod.GET)
+	public String showLogoutScreen(@ModelAttribute("customerid") int custId, ModelMap map) {
+		//Reset the model map to a logged-out state
+		map.put("username", null);
+		map.put("customerid", 0);
+		
+		return "login";
+	}
+	
+	@RequestMapping(value = "/dashboard", method = RequestMethod.GET)
+	public String showListScreen(@ModelAttribute("customerid") int custId, ModelMap map) {
 		String jspToAccess = null;
 		
-		//Determine which page to open depending on who is logged in
-		if(username.equals("admin")) {
-			jspToAccess = "studentlistadmin";
-		}
-		else if(username.equals("faculty")) {
-			jspToAccess = "studentlistfaculty";
+		//Verify there is a logged-in customer
+		if(custId != 0) {
+			jspToAccess = "redirect:dashboard";
 		}
 		else {
 			jspToAccess = "login";
 		}
 		
-//		map.addAttribute("stulist", StudentService.getStudentList("admin"));
 		return jspToAccess;
 	}
 	

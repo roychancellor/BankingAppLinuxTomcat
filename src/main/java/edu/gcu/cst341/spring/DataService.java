@@ -31,7 +31,7 @@ public class DataService {
 	 * @param productionDb when true will open the AWS-hosted bank db; false opens the local bank db for testing
 	 */
 	public DataService() {
-		this.verboseSQL = false;
+		this.verboseSQL = true;
 		this.productionDb = false;
 		if(connectToDatabase()) {
 			System.out.println("\nDataSource CONNECTED TO DB...");

@@ -9,31 +9,26 @@
 	<spring:url value="/resources/images/header.jpg" var="headerImg" />
 	<spring:url value="/resources/images/footer.jpg" var="footerImg" />
 	<meta charset="UTF-8">
-	<title>Student List</title>
+	<title>Customer Dashboard</title>
 	<link rel="stylesheet" href="${mainCss}" />
 </head>
 
 <body>
-	<div id="page">
-		<header><img src="${headerImg}" /></header>
+	<div class="container">
+		<%@ include file="common/header-common.jspf" %>
 		<section>
-			<h1>Student List (${username})</h1>
-			<table>
-				<tr><th>ID</th> <th>Last Name</th> <th>First Name</th> <th>Enrolled?</th> <th>Actions</th></tr>
-				<!-- MUST BE CALLED items -->
-				<format:forEach items="${stulist}" var="student">
-					<tr>
-						<td>${student.id}</td>
-						<td>${student.lastname}</td>
-						<td>${student.firstname}</td>
-						<td>${student.enrolled}</td>
-						<td><a href="/enroll?id=${student.id}">Enroll</a><a href="/delete?id=${student.id}">Delete</a></td>
-					</tr>
-				</format:forEach>
+			<h1>Customer Dashboard: ${username}, ${customerid}</h1>
+			<table class="table table-striped">
+				<tr><th>Checking</th><th>Saving</th><th>Cash Advance</th></tr>
+				<tr>
+					<td class="content">${chkbal}</td>
+					<td class="content">${savbal}</td>
+					<td class="content">${loanbal}</td>
+				</tr>
 			</table>
-			<p><a href="/addstudent">Add a student</a> <a href="/login">Log out</a></p>
+			<p><a class="btn btn-success" href="/transactions">Transactions</a></p>
 		</section>
-		<footer><img src="${footerImg}" /></footer>
+		<%@ include file="common/footer-common.jspf" %>
 	</div>
 	<script src="webjars/jquery/1.9.1/jquery.min.js"></script>
     <script src="webjars/bootstrap/3.3.6/js/bootstrap.min.js"></script>

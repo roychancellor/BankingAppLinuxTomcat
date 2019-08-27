@@ -37,24 +37,25 @@ public class BankService {
 	public BankService() {
 		this.bankName = "Roy Bank 4.0";
 		
-//		System.out.println("BankService constructor opening DB connection...");
-//		this.db = new DataSource(DbConstants.SILENT, DbConstants.LOCAL);
-//		if(db.connectToDatabase()) {
-//			//Create the list of customers from the customers database
-//			customers = db.makeCustomerListFromDatabase();
-//			//Sort the customer list
-//			Collections.sort(customers);
-//			//Make a map of customerId from the database to the index of the customers list
-//			//which is necessary after the sort
-//			mapIdtoIndex();
-//			//Set the money format
-//			money.applyPattern(MONEY_FORMAT);
-//			System.out.println("BankService constructor closing DB connection...");
-//			db.close();
-//		}
-//		else {
-//			System.out.println("FATAL ERROR: Unable to open database. BANK IS CLOSED FOR BUSINESS!");
-//		}
+		System.out.println("BankService constructor opening DB connection...");
+//		this.db = new DataService(DbConstants.SILENT, DbConstants.LOCAL);
+		this.db = new DataService();
+		if(db.connectToDatabase()) {
+			//Create the list of customers from the customers database
+			customers = db.makeCustomerListFromDatabase();
+			//Sort the customer list
+			Collections.sort(customers);
+			//Make a map of customerId from the database to the index of the customers list
+			//which is necessary after the sort
+			mapIdtoIndex();
+			//Set the money format
+			money.applyPattern(MONEY_FORMAT);
+			System.out.println("BankService constructor closing DB connection...");
+			db.close();
+		}
+		else {
+			System.out.println("FATAL ERROR: Unable to open database. BANK IS CLOSED FOR BUSINESS!");
+		}
 	}
 	
 	//Getters and setters
