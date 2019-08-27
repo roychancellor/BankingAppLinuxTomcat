@@ -13,8 +13,8 @@
 </head>
 
 <body>
-	<div id="page">
-		<header><img src="${headerImg}" /></header>
+	<div class="container">
+		<%@ include file="common/header-common.jspf" %>
 		<section>
 			<h1>Login</h1>
 			<p style="color:#f00">${errormessage}</p>
@@ -24,7 +24,7 @@
 				<p><input type="submit" /></p>
 			</form>
 		</section>
-		<footer><img src="${footerImg}" /></footer>
+		<%@ include file="common/footer-common.jspf" %>
 	</div>
 	<script src="webjars/jquery/1.9.1/jquery.min.js"></script>
     <script src="webjars/bootstrap/3.3.6/js/bootstrap.min.js"></script>

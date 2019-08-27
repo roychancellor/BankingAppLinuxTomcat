@@ -33,10 +33,10 @@ public class DataSource {
 		this.verboseSQL = verboseSQL;
 		this.productionDb = productionDb;
 		if(connectToDatabase()) {
-			System.out.println("\nCONNECTED TO DB...");
+			System.out.println("\nDataSource CONNECTED TO DB...");
 		}
 		else {
-			System.out.println("\nERROR: NOT CONNECTED!!!");
+			System.out.println("\nDataSource ERROR: NOT CONNECTED!!!");
 		}
 	}
 	

@@ -38,6 +38,8 @@ public class BankService {
 	public BankService() {
 		this.bankName = "Roy Bank 4.0";
 		
+		System.out.println("BankService constructor opening DB connection...");
+//		this.db = new DataSource(DbConstants.SILENT, DbConstants.LOCAL);
 		this.db = new DataSource(DbConstants.SILENT, DbConstants.LOCAL);
 		if(db.connectToDatabase()) {
 			//Create the list of customers from the customers database
@@ -49,6 +51,8 @@ public class BankService {
 			mapIdtoIndex();
 			//Set the money format
 			money.applyPattern(MONEY_FORMAT);
+			System.out.println("BankService constructor closing DB connection...");
+			db.close();
 		}
 		else {
 			System.out.println("FATAL ERROR: Unable to open database. BANK IS CLOSED FOR BUSINESS!");

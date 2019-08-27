@@ -14,9 +14,11 @@ public class LoginService {
 	protected int validateCredentials(String username, String password) {
 		int customerId = Menus.MENU_EXIT;
 		//Query the credentials database for the customer credentials
+		System.out.println("validateCredentials opening a DB connection");
 		DataSource ds = new DataSource(false, false);
 		if(ds.isConnectedToDb()) {
 			customerId = ds.checkLoginCredentials(username, "salt", password);
+			System.out.println("validateCredentials closing a DB connection");
 			ds.close();
 		}
 		return customerId;

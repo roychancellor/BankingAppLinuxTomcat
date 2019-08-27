@@ -14,18 +14,18 @@ section {
 }
 
 header {
-	background-image:url(/resources/images/header.png);
+	background-image:url(/resources/images/header.jpg);
 	padding-top:20px;
 	padding-bottom:20px;
 }
 header h2 {
-	color:#fff;
+	color:#00f;
 	font-size:3.0em;
 	padding:10px;
 }
 
 footer {
-	background-image:url(/resources/images/header.png);
+	background-image:url(/resources/images/header.jpg);
 	padding-top:20px;
 	padding-bottom:20px;
 	font-size:.8em;

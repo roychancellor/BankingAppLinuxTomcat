@@ -74,6 +74,7 @@
                   <version>2.2</version>
                   <configuration>
                       <path>/</path>
+                      <port>8787</port>
                       <contextReloadable>true</contextReloadable>
                   </configuration>
               </plugin>
