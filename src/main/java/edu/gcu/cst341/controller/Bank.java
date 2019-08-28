@@ -61,7 +61,7 @@ public class Bank {
 	 */
 	private void mapIdtoIndex() {
 		for(int i = 0; i < customers.size(); i++) {
-			custIdToIndex.put(customers.get(i).getCustomerId(), i);
+			custIdToIndex.put(customers.get(i).getCustId(), i);
 		}
 	}
 	

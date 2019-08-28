@@ -4,16 +4,20 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.SessionAttributes;
 
+import edu.gcu.cst341.model.Customer;
 import edu.gcu.cst341.model.Transaction;
 
 @Controller
@@ -21,7 +25,6 @@ import edu.gcu.cst341.model.Transaction;
 @SessionAttributes({"username","customerid"})  //gives access to the name attribute in any page we access in this controller
 public class LoginController {
 	//Allows Spring to take over control of making these objects
-	//TODO: ADD A CUSTOMER OBJECT HERE WHICH WILL CONTAIN ALL CUSTOMER INFO
 	@Autowired
 	LoginService LoginService;
 	@Autowired
@@ -31,11 +34,69 @@ public class LoginController {
 	public String username() {
 		return null;
 	}
-	//WHEN CLICKING ON THE DEPOSIT BUTTON IN THE NAV BAR, SPRING MAKES A NEW customerid
+	//WHEN CLICKING ON A BUTTON IN THE NAV BAR, SPRING MAKES A NEW customerid
 	//WHICH RESETS IT TO 0
 	@ModelAttribute("customerid")
 	public int customerid() {
 		return 0;
+	}
+	
+	@Valid @ModelAttribute("customer")
+	public Customer customer() {
+		return new Customer();
+	}
+	
+	@RequestMapping(value = "/newcustomer", method = RequestMethod.GET)
+	public String showNewCustomerScreen(
+		@ModelAttribute("customer") Customer customer,
+		ModelMap map) {
+		System.out.println("/newcustomer GET: customer =\n" + customer.toString());
+		return "newcustomer";
+	}
+	
+	@RequestMapping(value="/newcustomer", method = RequestMethod.POST)
+	public String processNewCustomer(
+		@Valid @ModelAttribute("customer") Customer customer,
+		BindingResult result,
+		ModelMap map) {
+		
+		if(result.hasErrors()) {
+			System.out.println("processNewCustomer: result has errors");
+			return "newcustomer";
+		}
+		//Put the Customer object in the ModelMap
+		System.out.println("/newcustomer POST: customer =\n" + customer.toString());
+		map.put("customer", customer);
+		System.out.println("/newcustomer POST: customer from map.get =\n"
+			+ map.get("customer").toString());
+		//Put the customer information in the ModelMap fields
+		map.addAttribute("lastName", customer.getLastName());
+		map.addAttribute("firstName", customer.getFirstName());
+		map.addAttribute("username", customer.getUsername());
+		map.addAttribute("emailAddress", customer.getEmailAddress());
+		map.addAttribute("phoneNumber", customer.getPhoneNumber());
+		System.out.println("\nRedirecting to login");
+		
+		//Show the information to the customer - NOT WORKING YET - FIX LATER
+		
+		//Write the new customer to the database
+		
+		return "redirect:login";
+	}
+	
+	//THIS IS NOT WORKING YET...DEAL WITH CONFIRMING DATA LATER
+	@RequestMapping(value = "/confirmcustomer", method = RequestMethod.POST)
+	public String confirmcustomerScreen(
+		@ModelAttribute("customer") Customer customer,
+		@RequestParam("Submit") String submitBtn,
+		ModelMap map) {
+		System.out.println("\nBack from confirmcustomer.jsp:");
+		System.out.println("Submit button: " + submitBtn);
+		System.out.println("/confirmcustomer POST: customer =\n" + customer.toString());
+		
+		//Write the customer to the database
+		
+		return "redirect:login";
 	}
 	
 	//NOTE: return statements are names of .jsp files

@@ -2,19 +2,34 @@ package edu.gcu.cst341.model;
 
 import java.util.Date;
 
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+
 import edu.gcu.cst341.controller.Bank;
 
 /**
  * Customer class used to create Customer objects which will create Checking, Saving, and Loan objects
+ * NO LONGER NEEDS TO IMPLEMENT COMPARABLE BECAUSE THE APP WILL NO LONGER USE LISTS OF CUSTOMER OBJECTS
  */
 public class Customer implements Comparable<Customer> {
 	//Class data
+	@NotNull
+	@Size(min=1, message="Name must be at least one character")
 	private String firstName;
+	@NotNull
+	@Size(min=1, message="Name must be at least one character")
 	private String lastName;
 	private Date dateOpened;
 	private int custId;
+	@NotNull
+	@Size(min=6, message="Username must be at least 6 characters")
 	private String username;
+	@NotNull
+	@Size(min=8, message="Password must be at least 8 characters")
+	private String password;
+	@NotNull
 	private String phoneNumber;
+	@NotNull
 	private String emailAddress;
 	private Checking checking;
 	private Saving saving;
@@ -136,6 +151,20 @@ public class Customer implements Comparable<Customer> {
 	}
 
 	/**
+	 * @return the password
+	 */
+	public String getPassword() {
+		return password;
+	}
+
+	/**
+	 * @param password the password to set
+	 */
+	public void setPassword(String password) {
+		this.password = password;
+	}
+
+	/**
 	 * @return the phoneNumber
 	 */
 	public String getPhoneNumber() {
@@ -205,31 +234,31 @@ public class Customer implements Comparable<Customer> {
 		this.loan = loan;
 	}
 
-	/**
-	 *@return customer and account information
-	 */
-	@Override
-	public String toString() {
-		return "\n----------------------------------------------"
-			+ "\nAccount details for " + this.firstName + " " + this.lastName
-			//+ "\ncustomer ID " + this.custID.substring(this.custID.length() - 4, this.custID.length())
-			+ "\ncustomer ID " + this.custId
-			+ "\n----------------------------------------------"
-			+ "\n* Customer since " + this.dateOpened
-			+ balancesToString()
-			+ "\n----------------------------------------------";
-	}
-	
-	/**
-	 * creates a string of all account balances formatted for printing
-	 * @return string
-	 */
-	public String balancesToString() {
-		return "\n* " + this.checking.getAccountNumber() + "\tBalance: " + Bank.money.format(this.checking.getAccountBalance())
-		+ "\n* " + this.saving.getAccountNumber() + "\tBalance: " + Bank.money.format(this.saving.getAccountBalance())
-		+ "\n* " + this.loan.getAccountNumber() + "\tBalance: " + Bank.money.format(this.loan.getAccountBalance());
-	}
-	
+//	/**
+//	 *@return customer and account information
+//	 */
+//	@Override
+//	public String toString() {
+//		return "\n----------------------------------------------"
+//			+ "\nAccount details for " + this.firstName + " " + this.lastName
+//			//+ "\ncustomer ID " + this.custID.substring(this.custID.length() - 4, this.custID.length())
+//			+ "\ncustomer ID " + this.custId
+//			+ "\n----------------------------------------------"
+//			+ "\n* Customer since " + this.dateOpened
+//			+ balancesToString()
+//			+ "\n----------------------------------------------";
+//	}
+//	
+//	/**
+//	 * creates a string of all account balances formatted for printing
+//	 * @return string
+//	 */
+//	public String balancesToString() {
+//		return "\n* " + this.checking.getAccountNumber() + "\tBalance: " + Bank.money.format(this.checking.getAccountBalance())
+//		+ "\n* " + this.saving.getAccountNumber() + "\tBalance: " + Bank.money.format(this.saving.getAccountBalance())
+//		+ "\n* " + this.loan.getAccountNumber() + "\tBalance: " + Bank.money.format(this.loan.getAccountBalance());
+//	}
+//	
 	/**
 	 * overloaded toString to allow a boolean parameter for controlling whether loan details show or not
 	 * @param verbose boolean value to print details or not
@@ -251,6 +280,13 @@ public class Customer implements Comparable<Customer> {
 	}
 	
 	//Class methods
+
+	@Override
+	public String toString() {
+		return "Customer [firstName=" + firstName + ", lastName=" + lastName + ", dateOpened=" + dateOpened
+				+ ", custId=" + custId + ", username=" + username + ", password=" + password + ", phoneNumber="
+				+ phoneNumber + ", emailAddress=" + emailAddress + "]";
+	}
 
 	/**
 	 * Implementation of compareTo for comparing two Customer objects
@@ -316,6 +352,28 @@ public class Customer implements Comparable<Customer> {
 	 */
 	private String createAccountNumber() {
 		return ((Long)System.currentTimeMillis()).toString().substring(0, 9);
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + custId;
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Customer other = (Customer) obj;
+		if (custId != other.custId)
+			return false;
+		return true;
 	}
 	
 	/**
