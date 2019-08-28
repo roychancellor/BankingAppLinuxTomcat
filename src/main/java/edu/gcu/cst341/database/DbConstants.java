@@ -23,6 +23,8 @@ public class DbConstants {
 	public static final String CUSTOMER_ID = "customerId";
 	public static final String CUSTOMER_LAST_NAME = "lastName";
 	public static final String CUSTOMER_FIRST_NAME = "firstName";
+	public static final String CUSTOMER_EMAIL = "email";
+	public static final String CUSTOMER_PHONE = "phone";
 	public static final String CUSTOMER_DATE_OPENED = "dateOpened";
 	public static final String CUSTOMER_USER_NAME = "userName";
 	public static final String CUSTOMER_PASSWORD_SALT = "passwordSalt";
@@ -32,15 +34,25 @@ public class DbConstants {
 	public static final int DELETE = -1;
 	
 	//SQL command to CREATE a customer in the customers table
-	public static final String CREATE_CUSTOMER = "INSERT INTO "
+	public static final String CREATE_CUSTOMER =
+		"INSERT INTO "
 		+ DB_NAME + "." + CUSTOMER_TABLE
-		+ "(" + CUSTOMER_LAST_NAME + "," + CUSTOMER_FIRST_NAME + ")"
-		+ " VALUES(?,?)";
+		+ "(" + CUSTOMER_LAST_NAME
+		+ "," + CUSTOMER_FIRST_NAME
+		+ "," + CUSTOMER_EMAIL
+		+ "," + CUSTOMER_PHONE
+		+ ")"
+		+ " VALUES(?,?,?,?)";
 	
 	//SQL command to CREATE customer login credentials in the credentials table
-	public static final String CREATE_CREDENTIALS = "INSERT INTO "
+	public static final String CREATE_CREDENTIALS =
+		"INSERT INTO "
 		+ DB_NAME + "." + CREDENTIALS_TABLE
-		+ "(" + CUSTOMER_ID + "," + CUSTOMER_USER_NAME + "," + CUSTOMER_PASSWORD_SALT + "," + CUSTOMER_PASSWORD_HASH + ")"
+		+ "(" + CUSTOMER_ID
+		+ "," + CUSTOMER_USER_NAME
+		+ "," + CUSTOMER_PASSWORD_SALT
+		+ "," + CUSTOMER_PASSWORD_HASH
+		+ ")"
 		+ " VALUES(?,?,?,?)";
 	
 	//SQL command to RETRIEVE all customers unordered

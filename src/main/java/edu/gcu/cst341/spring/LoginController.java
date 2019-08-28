@@ -80,6 +80,24 @@ public class LoginController {
 		//Show the information to the customer - NOT WORKING YET - FIX LATER
 		
 		//Write the new customer to the database
+		DataService ds = new DataService();
+		int custId = ds.createCustomer(customer.getLastName(),
+			customer.getFirstName(),
+			customer.getEmailAddress(),
+			customer.getPhoneNumber(),
+			customer.getUsername(),
+			"salt",
+			customer.getPassword());
+		
+		if(custId > 0) {
+			//Set the Customer object field custId to the
+			//auto-generated customer_id from the database
+			customer.setCustId(custId);
+			System.out.println("/newcustomer POST: created new customer:\n" + customer.toString());
+			System.out.println("/newcustomer POST: retrieved the new customer from DB:\n"
+				+ ds.dbRetrieveUserById(custId).toString());
+		}
+		ds.close();
 		
 		return "redirect:login";
 	}

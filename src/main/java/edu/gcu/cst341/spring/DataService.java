@@ -9,6 +9,8 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.mysql.jdbc.Driver;
+
 import edu.gcu.cst341.database.DbConstants;
 import edu.gcu.cst341.model.Customer;
 
@@ -23,6 +25,7 @@ public class DataService {
 	private boolean verboseSQL;
 	private boolean connectedToDb;
 	private boolean productionDb;
+	private Driver mySQLDriver;
 	
 	//Constructor
 	/**
@@ -137,6 +140,8 @@ public class DataService {
 		try {
 			// load and register JDBC driver for MySQL
 //			Class.forName("com.mysql.jdbc.Driver");
+			this.mySQLDriver = new com.mysql.jdbc.Driver();
+			DriverManager.registerDriver(this.mySQLDriver);
 			Class.forName("com.mysql.cj.jdbc.Driver");
 
 			if(verboseSQL) System.out.print("Connecting to " + dbURL);
@@ -184,6 +189,7 @@ public class DataService {
 			if(verboseSQL) System.out.print("\nClosing connection to "
 				+ (this.isProductionDb() ? DbConstants.DB_URL_AWSDB : DbConstants.DB_URL_LOCALDB));
 			this.conn.close();
+			DriverManager.deregisterDriver(this.mySQLDriver);
 			if(verboseSQL) System.out.println("...SUCCESS!");
 		}
 		catch(SQLException e) {
@@ -201,7 +207,8 @@ public class DataService {
 	 * @param passHash the hashed customer password
 	 * @return the customerId of the created customer if successful; -1 if unsuccessful
 	 */
-	public int createCustomer(String lastName, String firstName, String username, String passSalt, String passHash) {
+	public int createCustomer(String lastName, String firstName, String email, String phone,
+		String username, String passSalt, String passHash) {
 		try {
 			if(verboseSQL) System.out.print("Adding customer " + lastName + ", " + firstName);
 			
@@ -213,6 +220,8 @@ public class DataService {
 			//Populate statement parameters
 			sql.setString(1, lastName);
 			sql.setString(2, firstName);
+			sql.setString(3, email);
+			sql.setString(4, phone);
 			
 			//Execute SQL statement
 			int numRec = sql.executeUpdate();
@@ -260,6 +269,46 @@ public class DataService {
 		return -1;
 	}
 
+	/**
+	 * Retrieves the user information from the users table with user_id = the passed value
+	 * @param customerIdToRetrieve the userId to retrieve from the database
+	 * @return a User object created from the database information
+	 */
+	public Customer dbRetrieveUserById(int customerIdToRetrieve) {
+		Customer cust = null;
+		String sql = "SELECT bank.customers.customerId,"
+				+ "bank.customers.lastName,"
+				+ "bank.customers.firstName,"
+				+ "bank.customers.email,"
+				+ "bank.customers.phone,"
+				+ "bank.credentials.userName,"
+				+ "bank.credentials.passwordHash from bank.customers, bank.credentials"
+				//+ " JOIN bank.credentials on bank.credentials.customerId = bank.customers.customerId";
+				+ " WHERE bank.credentials.customerId=" + customerIdToRetrieve
+				+ " AND bank.customers.customerId=" + customerIdToRetrieve;
+		if(this.connectedToDb) {
+			try {
+				//Execute SQL statement
+				rs = stmt.executeQuery(sql);
+				if(rs.next()) {
+					cust = new Customer();
+					cust.setLastName(rs.getString("lastName"));
+					cust.setFirstName(rs.getString("firstName"));
+					cust.setEmailAddress(rs.getString("email"));
+					cust.setPhoneNumber(rs.getString("phone"));
+					cust.setUsername(rs.getString("userName"));
+					cust.setPassword(rs.getString("passwordHash"));
+					return cust;
+				}
+			}
+			catch(SQLException e) {
+				System.out.println("\nERROR: UNABLE TO RETRIEVE CUSTOMER ID = " + customerIdToRetrieve + "!!!");
+				e.printStackTrace();
+			}
+		}
+		return cust;
+	}
+	
 	/**
 	 * gets all customers from the database and returns an ArrayList of Customer objects
 	 * sorted by last name, first name

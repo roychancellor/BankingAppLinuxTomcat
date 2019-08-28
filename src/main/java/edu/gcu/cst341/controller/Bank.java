@@ -8,7 +8,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import edu.gcu.cst341.database.DbConstants;
 import edu.gcu.cst341.model.Account;
 import edu.gcu.cst341.model.Customer;
 import edu.gcu.cst341.spring.DataService;
@@ -117,7 +116,7 @@ public class Bank {
 		int option = Menus.viewManageCustomerMenu();
 				
 		switch(option) {
-			case 1: doCreateCustomer(); break;
+//			case 1: doCreateCustomer(); break;
 			case 2: doUpdateCustomer(); break;
 		}
 	}
@@ -125,28 +124,28 @@ public class Bank {
 	/**
 	 * creates a new customer and adds to the customer database table
 	 */
-	private void doCreateCustomer() {
-		//Add a new customer to the database of customers
-		String lastName = Menus.getCustomerName("Enter LAST name:");
-		String firstName = Menus.getCustomerName("Enter FIRST name:");
-		String userName = Menus.getCustomerUserName("Enter a user name:");
-
-		//HASH PASSWORD WITH SALT
-		//HASHING STILL NEEDS TO BE IMPLEMENTED
-		String passHash = Menus.getCustomerPassword("Enter a password\n(8-200 letters and/or numbers):");
-		String passSalt = "salt";
-		
-		//WRITE NEW CUSTOMER AND CUSTOMER'S CREDENTIALS TO DATABASE TABLES
-		int custId = db.createCustomer(lastName, firstName, userName, passSalt, passHash);
-
-		//For now, also add a Customer object to the existing list until DB
-		//is fully implemented throughout the bank
-		customers.add(new Customer(custId, lastName, firstName, new Date()));
-		//Sort the customer list
-		Collections.sort(customers);
-		//Update the id to index map
-		mapIdtoIndex();
-	}
+//	private void doCreateCustomer() {
+//		//Add a new customer to the database of customers
+//		String lastName = Menus.getCustomerName("Enter LAST name:");
+//		String firstName = Menus.getCustomerName("Enter FIRST name:");
+//		String userName = Menus.getCustomerUserName("Enter a user name:");
+//
+//		//HASH PASSWORD WITH SALT
+//		//HASHING STILL NEEDS TO BE IMPLEMENTED
+//		String passHash = Menus.getCustomerPassword("Enter a password\n(8-200 letters and/or numbers):");
+//		String passSalt = "salt";
+//		
+//		//WRITE NEW CUSTOMER AND CUSTOMER'S CREDENTIALS TO DATABASE TABLES
+////		int custId = db.createCustomer(lastName, firstName, userName, passSalt, passHash);
+//
+//		//For now, also add a Customer object to the existing list until DB
+//		//is fully implemented throughout the bank
+////		customers.add(new Customer(custId, lastName, firstName, new Date()));
+//		//Sort the customer list
+//		Collections.sort(customers);
+//		//Update the id to index map
+//		mapIdtoIndex();
+//	}
 	
 	/**
 	 * updates customer first and last name,
