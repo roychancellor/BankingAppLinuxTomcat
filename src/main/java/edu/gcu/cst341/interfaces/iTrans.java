@@ -1,4 +1,4 @@
-package edu.gcu.cst341.controller;
+package edu.gcu.cst341.interfaces;
 
 /**
  * Interface of method declarations for logging banking transactions

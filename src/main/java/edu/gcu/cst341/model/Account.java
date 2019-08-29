@@ -5,8 +5,8 @@ import java.util.Date;
 import java.util.List;
 
 import edu.gcu.cst341.controller.Bank;
-import edu.gcu.cst341.controller.iActions;
-import edu.gcu.cst341.controller.iTrans;
+import edu.gcu.cst341.interfaces.iActions;
+import edu.gcu.cst341.interfaces.iTrans;
 import edu.gcu.cst341.view.Menus;
 
 /**

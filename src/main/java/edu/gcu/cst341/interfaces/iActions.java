@@ -1,4 +1,4 @@
-package edu.gcu.cst341.controller;
+package edu.gcu.cst341.interfaces;
 
 /**
  * Interface containing methods for banking actions

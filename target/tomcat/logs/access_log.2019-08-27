@@ -303,3 +303,15 @@
 0:0:0:0:0:0:0:1 - - [27/Aug/2019:19:55:03 -0700] "GET /statements-bank HTTP/1.1" 200 2537 http-bio-8787-exec-5 22
 0:0:0:0:0:0:0:1 - - [27/Aug/2019:19:55:05 -0700] "GET /about-bank HTTP/1.1" 200 1077 http-bio-8787-exec-5 8
 0:0:0:0:0:0:0:1 - - [27/Aug/2019:19:55:06 -0700] "GET /logout HTTP/1.1" 200 1365 http-bio-8787-exec-5 3
+0:0:0:0:0:0:0:1 - - [27/Aug/2019:19:57:50 -0700] "GET /newcustomer HTTP/1.1" 200 2016 http-bio-8787-exec-1 339
+0:0:0:0:0:0:0:1 - - [27/Aug/2019:19:58:20 -0700] "POST /newcustomer HTTP/1.1" 302 - http-bio-8787-exec-2 126
+0:0:0:0:0:0:0:1 - - [27/Aug/2019:19:58:20 -0700] "GET /login?customerid=0&username=rlc&lastName=Chancellor&firstName=Robyn&emailAddress=rlc%40rlc.org&phoneNumber=1234567890 HTTP/1.1" 200 1365 http-bio-8787-exec-3 14
+0:0:0:0:0:0:0:1 - - [27/Aug/2019:19:58:20 -0700] "GET /favicon.ico HTTP/1.1" 404 949 http-bio-8787-exec-5 5
+0:0:0:0:0:0:0:1 - - [27/Aug/2019:19:58:52 -0700] "POST /login HTTP/1.1" 200 1328 http-bio-8787-exec-4 91
+0:0:0:0:0:0:0:1 - - [27/Aug/2019:19:58:59 -0700] "GET /statements-bank HTTP/1.1" 200 2538 http-bio-8787-exec-7 24
+0:0:0:0:0:0:0:1 - - [27/Aug/2019:19:59:02 -0700] "GET /deposit-bank HTTP/1.1" 200 1517 http-bio-8787-exec-8 10
+0:0:0:0:0:0:0:1 - - [27/Aug/2019:19:59:03 -0700] "GET /withdraw-bank HTTP/1.1" 200 1519 http-bio-8787-exec-9 9
+0:0:0:0:0:0:0:1 - - [27/Aug/2019:19:59:05 -0700] "GET /transfer-bank HTTP/1.1" 200 1799 http-bio-8787-exec-10 10
+0:0:0:0:0:0:0:1 - - [27/Aug/2019:19:59:06 -0700] "GET /statements-bank HTTP/1.1" 200 2538 http-bio-8787-exec-10 5
+0:0:0:0:0:0:0:1 - - [27/Aug/2019:19:59:07 -0700] "GET /about-bank HTTP/1.1" 200 1077 http-bio-8787-exec-2 7
+0:0:0:0:0:0:0:1 - - [27/Aug/2019:19:59:09 -0700] "GET /logout HTTP/1.1" 200 1365 http-bio-8787-exec-2 4

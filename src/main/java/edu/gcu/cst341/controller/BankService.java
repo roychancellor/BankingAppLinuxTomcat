@@ -1,4 +1,4 @@
-package edu.gcu.cst341.spring;
+package edu.gcu.cst341.controller;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
