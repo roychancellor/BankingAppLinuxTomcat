@@ -1,5 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
+<%@ taglib prefix="depform" uri="http://www.springframework.org/tags/form"%>
 <!DOCTYPE html>
 <html>
 <head>
@@ -18,19 +19,22 @@
 		<section>
 			<h1>DEPOSIT Into Account</h1>
 			<h3>Welcome ${fullname}!</h3>
-			<form action="/deposit-bank" method="POST">
+			<depform:form modelAttribute="amount" action="/deposit-bank" method="POST">
 				<p>Select Account:<br />
 					<input type="radio" name="account" value="chk" checked> Checking (${acctchk})<br />
 					<input type="radio" name="account" value="sav"> Saving (${acctsav})<br />
 					<input type="radio" name="account" value="loan"> Payment to Cash Advance (${acctloan})<br />
 				</p>
-				<p>Amount to deposit:<br /><input type="text" name="amountdeposit"/></p>
-			<!--  submit button -->
-			<p>
-				<input class="btn btn-success" type="submit" value="Submit Deposit">
-				<a class="btn btn-primary" href="/dashboard">Cancel and Return to Dashboard</a>
-			</p>
-			</form>
+				<p><depform:label path="amount">Amount to deposit:</depform:label>
+				<br />
+				<depform:input type="text" path="amount"/>
+				<depform:errors path="amount" cssClass="error" /></p>				
+				<p class="error">${errormessage}</p>
+				<p>
+					<input class="btn btn-success" type="submit" value="Submit Deposit">
+					<a class="btn btn-primary" href="/dashboard">Cancel and Return to Dashboard</a>
+				</p>
+			</depform:form>
 		</section>
 		<%@ include file="common/footer-common.jspf" %>
 	</div>

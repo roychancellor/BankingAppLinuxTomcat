@@ -26,8 +26,8 @@ public class BankService {
 	private String bankName;
 	private List<Customer> customers = new ArrayList<Customer>();
 	private Map<Integer, Integer> custIdToIndex = new HashMap<Integer, Integer>();
-	private int custIndex = 0;
-	private DataService db;
+	private DataService ds;
+	private int custIndex;
 	
 	//Format for dates and money outputs in all classes
 	public static DecimalFormat money = new DecimalFormat();
@@ -39,19 +39,19 @@ public class BankService {
 		
 		System.out.println("BankService constructor opening DB connection...");
 //		this.db = new DataService(DbConstants.SILENT, DbConstants.LOCAL);
-		this.db = new DataService();
-		if(db.connectToDatabase()) {
-			//Create the list of customers from the customers database
-			customers = db.makeCustomerListFromDatabase();
-			//Sort the customer list
-			Collections.sort(customers);
-			//Make a map of customerId from the database to the index of the customers list
-			//which is necessary after the sort
-			mapIdtoIndex();
+		this.ds = new DataService();
+		if(ds.connectToDatabase()) {
+//			//Create the list of customers from the customers database
+//			customers = db.makeCustomerListFromDatabase();
+//			//Sort the customer list
+//			Collections.sort(customers);
+//			//Make a map of customerId from the database to the index of the customers list
+//			//which is necessary after the sort
+//			mapIdtoIndex();
 			//Set the money format
 			money.applyPattern(MONEY_FORMAT);
-			System.out.println("BankService constructor closing DB connection...");
-			db.close();
+//			System.out.println("BankService constructor closing DB connection...");
+//			db.close();
 		}
 		else {
 			System.out.println("FATAL ERROR: Unable to open database. BANK IS CLOSED FOR BUSINESS!");
@@ -103,128 +103,21 @@ public class BankService {
 	}
 
 	/**
-	 * @return the custIndex
-	 */
-	public int getCustIndex() {
-		return custIndex;
-	}
-
-	/**
-	 * @param custIndex the custIndex to set
-	 */
-	public void setCustIndex(int custIndex) {
-		this.custIndex = custIndex;
-	}
-
-	/**
-	 * @return the db
+	 * @return the ds
 	 */
 	public DataService getDb() {
-		return db;
+		return ds;
 	}
 
 	/**
 	 * @param db the db to set
 	 */
-	public void setDb(DataService db) {
-		this.db = db;
+	public void setDb(DataService ds) {
+		this.ds = ds;
 	}
 
 	//Class methods
 
-	/**
-	 * Helper method that maps database customerId to customer list index
-	 * so list can remain sorted without losing track of customerId
-	 */
-	private void mapIdtoIndex() {
-		for(int i = 0; i < customers.size(); i++) {
-			custIdToIndex.put(customers.get(i).getCustId(), i);
-		}
-	}
-	
-	/**
-	 * the highest level method that controls the bank execution
-	 * runs until user chooses to exit
-	 */
-	public void runBank() {
-		int selection;
-		
-		do {
-			selection = Menus.viewMainMenu(this.bankName);
-			processMainMenu(selection);
-		} while(selection != Menus.MENU_EXIT);
-
-		//Close the database connection
-		db.close();
-	}
-	
-	/**
-	 * Calls the Create Customer menu or the Customer Selection Menu based on the option selected
-	 * @param menuOption the menu option the user chose
-	 */
-	private void processMainMenu(int menuOption) {
-		switch(menuOption) {
-			case 1:
-				doManageCustomers();
-				break;
-			case 2:
-				doCustomerTransactions();
-				break;
-			case Menus.MENU_EXIT:
-				viewBankingAppExit();
-				break;
-			default:
-				Menus.viewMainMenu(this.bankName);
-		}
-	}
-	
-	/**
-	 * Outputs a message to the banker when exiting the banking application completely
-	 */
-	private void viewBankingAppExit() {
-		System.out.println("\nGoodbye banker. Application closed at "
-			+ Menus.dateFormat.format(new Date()) + ". Have a good day!\n");
-	}
-	
-	/**
-	 * Gets customer first and last name and creates a new customer object
-	 * Sorts the entire customer list
-	 */
-	private void doManageCustomers() {
-		int option = Menus.viewManageCustomerMenu();
-				
-		switch(option) {
-//			case 1: doCreateCustomer(); break;
-			case 2: doUpdateCustomer(); break;
-		}
-	}
-
-	/**
-	 * creates a new customer and adds to the customer database table
-	 */
-//	private void doCreateCustomer() {
-//		//Add a new customer to the database of customers
-//		String lastName = Menus.getCustomerName("Enter LAST name:");
-//		String firstName = Menus.getCustomerName("Enter FIRST name:");
-//		String userName = Menus.getCustomerUserName("Enter a user name:");
-//
-//		//HASH PASSWORD WITH SALT
-//		//HASHING STILL NEEDS TO BE IMPLEMENTED
-//		String passHash = Menus.getCustomerPassword("Enter a password\n(8-200 letters and/or numbers):");
-//		String passSalt = "salt";
-//		
-//		//WRITE NEW CUSTOMER AND CUSTOMER'S CREDENTIALS TO DATABASE TABLES
-//		int custId = db.createCustomer(lastName, firstName, userName, passSalt, passHash);
-//
-//		//For now, also add a Customer object to the existing list until DB
-//		//is fully implemented throughout the bank
-//		customers.add(new Customer(custId, lastName, firstName, new Date()));
-//		//Sort the customer list
-//		Collections.sort(customers);
-//		//Update the id to index map
-//		mapIdtoIndex();
-//	}
-	
 	/**
 	 * updates customer first and last name,
 	 * re-sorts customer list, and updates the id to index map
@@ -250,7 +143,7 @@ public class BankService {
 			//Sort the customer list
 			Collections.sort(customers);
 			//Update the id to index map
-			mapIdtoIndex();
+//			mapIdtoIndex();
 		}
 	}
 	
@@ -268,7 +161,7 @@ public class BankService {
 	public void doCustomerTransactions() {
 		//Get a customer logged in
 //		int customerIdFromDb = doCustomerLogin();
-		int customerIdFromDb = this.getCustIndex();
+		int customerIdFromDb = custIndex;
 		
 		if(customerIdFromDb != Menus.MENU_EXIT) {
 			custIndex = this.custIdToIndex.get(customerIdFromDb);

@@ -18,6 +18,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.SessionAttributes;
 
+import edu.gcu.cst341.model.Account;
+import edu.gcu.cst341.model.AmountForm;
 import edu.gcu.cst341.model.Customer;
 import edu.gcu.cst341.model.Transaction;
 
@@ -60,16 +62,9 @@ public class LoginController {
 		System.out.println("/newcustomer POST: customer from map.get =\n"
 			+ map.get("customer").toString());
 		
-		//Put the customer information in the ModelMap fields
-//		map.addAttribute("lastName", customer.getLastName());
-//		map.addAttribute("firstName", customer.getFirstName());
-//		map.addAttribute("username", customer.getUsername());
-//		map.addAttribute("emailAddress", customer.getEmailAddress());
-//		map.addAttribute("phoneNumber", customer.getPhoneNumber());
-		
 		//Show the information to the customer - NOT WORKING YET - FIX LATER
 		
-		//Write the new customer to the database
+		//Write the new customer object to the database
 		DataService ds = new DataService();
 		int custId = ds.createCustomer(customer.getLastName(),
 			customer.getFirstName(),
@@ -180,7 +175,7 @@ public class LoginController {
 		//Verify there is a logged-in customer
 		System.out.println("/dashboard GET: about do check custId != 0:\n" + customer.toString());
 		if(customer.getCustId() != 0) {
-			System.out.println("I/dashboard GET: AFTER check custId != 0:\n" + customer.toString());
+			System.out.println("In dashboard GET: AFTER check custId != 0:\n" + customer.toString());
 			//Put the customer information into the model
 			map.put("fullname", customer.getFirstName() + " " + customer.getLastName());
 			map.put("email", customer.getEmailAddress());
@@ -197,7 +192,9 @@ public class LoginController {
 	}
 	
 	@RequestMapping(value = "/deposit-bank", method = RequestMethod.GET)
-	public String showDepositScreen(@ModelAttribute("customer") Customer customer, ModelMap map) {
+	public String showDepositScreen(
+		@ModelAttribute("customer") Customer customer,
+		ModelMap map) {
 		String jspToAccess = "deposit-bank";
 		
 		//Verify there is a logged-in customer
@@ -209,6 +206,7 @@ public class LoginController {
 			map.addAttribute("acctchk", customer.getChecking().getAccountNumber());
 			map.addAttribute("acctsav", customer.getSaving().getAccountNumber());
 			map.addAttribute("acctloan", customer.getLoan().getAccountNumber());
+			map.addAttribute("amount", new AmountForm());
 		}
 		else {
 			jspToAccess = "login";
@@ -221,38 +219,46 @@ public class LoginController {
 	public String processDeposit(
 			@ModelAttribute("customer") Customer customer,
 			@RequestParam("account") String accountType,
-			@RequestParam("amountdeposit") double amountToDeposit,
+//			@RequestParam("amountdeposit") double amountToDeposit,
+			@Valid @ModelAttribute("amount") AmountForm amount,
+			BindingResult br,
 			ModelMap map) {
 		String jspToAccess = "login";
 		
+		System.out.println("/deposit-bank POST: amount = " + amount.getAmount());
+		System.out.println("br.hasErrors = " + br.hasErrors() + " " + br.toString());
+		//If the form had errors, go back to the form so the customer can make corrections
+        if (br.hasErrors()) {
+        	map.addAttribute("errormessge", "Error: Amount to deposit must be at least $0.01");
+            return "deposit-bank";
+        }
+
 		//Verify there is a logged-in customer
-		System.out.println("/deposit-bank POST: customer =\n" + customer.toString());
 		if(customer.getCustId() != 0) {
 			jspToAccess = "dashboard";
 			
-			//TODO: Do the deposit for the customer
-			
-			//Update the dashboard values
-			map.put("fullname", customer.getFirstName() + " " + customer.getLastName());
-			map.put("email", customer.getEmailAddress());
+			//Do the deposit and update the dashboard values
 			switch(accountType) {
 				case "chk":
-					map.put("chkbal", customer.getChecking().getAccountBalance());
-					map.put("savbal", customer.getSaving().getAccountBalance());
-					map.put("loanbal", customer.getLoan().getAccountBalance());
+//					customer.getChecking().doTransaction(Account.DEPOSIT, amountToDeposit);
+					customer.getChecking().doTransaction(Account.DEPOSIT, amount.getAmount());
 					break;
 				case "sav":
-					map.put("chkbal", customer.getChecking().getAccountBalance());
-					map.put("savbal", customer.getSaving().getAccountBalance());
-					map.put("loanbal", customer.getLoan().getAccountBalance());
 					break;
 				case "loan":
-					map.put("chkbal", customer.getChecking().getAccountBalance());
-					map.put("savbal", customer.getSaving().getAccountBalance());
-					map.put("loanbal", customer.getLoan().getAccountBalance());
 					break;
 				default:
 			}
+			
+			//Populate the dashboard with updated balances
+			map.put("fullname", customer.getFirstName() + " " + customer.getLastName());
+			map.put("email", customer.getEmailAddress());
+			map.put("chkbal", customer.getChecking().getAccountBalance());
+			map.put("savbal", customer.getSaving().getAccountBalance());
+			map.put("loanbal", customer.getLoan().getAccountBalance());
+		}
+		else {
+			jspToAccess = "redirect:login";
 		}
 		
 		return jspToAccess;
