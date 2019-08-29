@@ -219,7 +219,6 @@ public class LoginController {
 	public String processDeposit(
 			@ModelAttribute("customer") Customer customer,
 			@RequestParam("account") String accountType,
-//			@RequestParam("amountdeposit") double amountToDeposit,
 			@Valid @ModelAttribute("amount") AmountForm amount,
 			BindingResult br,
 			ModelMap map) {
@@ -229,7 +228,7 @@ public class LoginController {
 		System.out.println("br.hasErrors = " + br.hasErrors() + " " + br.toString());
 		//If the form had errors, go back to the form so the customer can make corrections
         if (br.hasErrors()) {
-        	map.addAttribute("errormessge", "Error: Amount to deposit must be at least $0.01");
+        	map.addAttribute("errormessge", "Amount must be at least $0.01");
             return "deposit-bank";
         }
 
@@ -240,12 +239,13 @@ public class LoginController {
 			//Do the deposit and update the dashboard values
 			switch(accountType) {
 				case "chk":
-//					customer.getChecking().doTransaction(Account.DEPOSIT, amountToDeposit);
 					customer.getChecking().doTransaction(Account.DEPOSIT, amount.getAmount());
 					break;
 				case "sav":
+					customer.getSaving().doTransaction(Account.DEPOSIT, amount.getAmount());
 					break;
 				case "loan":
+					customer.getLoan().doTransaction(Account.DEPOSIT, amount.getAmount());
 					break;
 				default:
 			}
