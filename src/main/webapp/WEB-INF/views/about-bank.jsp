@@ -19,6 +19,8 @@
 			<h1>About</h1>
 			<p>This is the coolest online bank ever.
 			It is built with HTML, CSS, Bootstrap, Spring, and Java.</p>
+			<br>
+			<p><a class="btn btn-success" href="/dashboard">Dashboard</a></p>
 		</section>
 		<%@ include file="common/footer-common.jspf" %>
 	</div>

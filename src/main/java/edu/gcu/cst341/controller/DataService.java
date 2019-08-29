@@ -270,11 +270,11 @@ public class DataService {
 	}
 
 	/**
-	 * Retrieves the user information from the users table with user_id = the passed value
-	 * @param customerIdToRetrieve the userId to retrieve from the database
-	 * @return a User object created from the database information
+	 * Retrieves the customer information from the customers table where customerId = the passed value
+	 * @param customerIdToRetrieve the customerId to retrieve from the database
+	 * @return a Customer object created from the database information
 	 */
-	public Customer dbRetrieveUserById(int customerIdToRetrieve) {
+	public Customer dbRetrieveCustomerById(int customerIdToRetrieve) {
 		Customer cust = null;
 		String sql = "SELECT bank.customers.customerId,"
 				+ "bank.customers.lastName,"
@@ -283,7 +283,6 @@ public class DataService {
 				+ "bank.customers.phone,"
 				+ "bank.credentials.userName,"
 				+ "bank.credentials.passwordHash from bank.customers, bank.credentials"
-				//+ " JOIN bank.credentials on bank.credentials.customerId = bank.customers.customerId";
 				+ " WHERE bank.credentials.customerId=" + customerIdToRetrieve
 				+ " AND bank.customers.customerId=" + customerIdToRetrieve;
 		if(this.connectedToDb) {
@@ -292,6 +291,7 @@ public class DataService {
 				rs = stmt.executeQuery(sql);
 				if(rs.next()) {
 					cust = new Customer();
+					cust.setCustId(rs.getInt("customerId"));
 					cust.setLastName(rs.getString("lastName"));
 					cust.setFirstName(rs.getString("firstName"));
 					cust.setEmailAddress(rs.getString("email"));

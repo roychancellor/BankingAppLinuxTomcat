@@ -16,7 +16,7 @@
 	<div class="container">
 		<%@ include file="common/header-common.jspf" %>
 		<section>
-			<h1>TRANSFER BETWEEN ACCOUNTS ${username}, ${customerid}</h1>
+			<h1>TRANSFER BETWEEN ACCOUNTS ${fullname}, ${email}</h1>
 			<form action="/transfer-bank" method="POST">
 				<p>FROM Account:<br />
 					<input type="radio" name="accountfrom" value="chk" checked>Checking (${acctchk})<br />

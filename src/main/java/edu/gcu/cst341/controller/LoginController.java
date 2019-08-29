@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +23,8 @@ import edu.gcu.cst341.model.Transaction;
 
 @Controller
 @Scope("session")
-@SessionAttributes({"username","customerid"})  //gives access to the name attribute in any page we access in this controller
+//Give access to the customer object throughout the session
+@SessionAttributes("customer")
 public class LoginController {
 	//Allows Spring to take over control of making these objects
 	@Autowired
@@ -30,27 +32,15 @@ public class LoginController {
 	@Autowired
 	BankService BankService;
 	
-	@ModelAttribute("username")
-	public String username() {
-		return null;
-	}
-	//WHEN CLICKING ON A BUTTON IN THE NAV BAR, SPRING MAKES A NEW customerid
-	//WHICH RESETS IT TO 0
-	@ModelAttribute("customerid")
-	public int customerid() {
-		return 0;
-	}
-	
+	//Spring will make this object when needed and will keep it in the session
+	//until the session is completed
 	@Valid @ModelAttribute("customer")
 	public Customer customer() {
 		return new Customer();
 	}
 	
 	@RequestMapping(value = "/newcustomer", method = RequestMethod.GET)
-	public String showNewCustomerScreen(
-		@ModelAttribute("customer") Customer customer,
-		ModelMap map) {
-		System.out.println("/newcustomer GET: customer =\n" + customer.toString());
+	public String showNewCustomerScreen(ModelMap map) {
 		return "newcustomer";
 	}
 	
@@ -69,13 +59,13 @@ public class LoginController {
 		map.put("customer", customer);
 		System.out.println("/newcustomer POST: customer from map.get =\n"
 			+ map.get("customer").toString());
+		
 		//Put the customer information in the ModelMap fields
-		map.addAttribute("lastName", customer.getLastName());
-		map.addAttribute("firstName", customer.getFirstName());
-		map.addAttribute("username", customer.getUsername());
-		map.addAttribute("emailAddress", customer.getEmailAddress());
-		map.addAttribute("phoneNumber", customer.getPhoneNumber());
-		System.out.println("\nRedirecting to login");
+//		map.addAttribute("lastName", customer.getLastName());
+//		map.addAttribute("firstName", customer.getFirstName());
+//		map.addAttribute("username", customer.getUsername());
+//		map.addAttribute("emailAddress", customer.getEmailAddress());
+//		map.addAttribute("phoneNumber", customer.getPhoneNumber());
 		
 		//Show the information to the customer - NOT WORKING YET - FIX LATER
 		
@@ -90,15 +80,13 @@ public class LoginController {
 			customer.getPassword());
 		
 		if(custId > 0) {
-			//Set the Customer object field custId to the
-			//auto-generated customer_id from the database
-			customer.setCustId(custId);
 			System.out.println("/newcustomer POST: created new customer:\n" + customer.toString());
 			System.out.println("/newcustomer POST: retrieved the new customer from DB:\n"
-				+ ds.dbRetrieveUserById(custId).toString());
+				+ ds.dbRetrieveCustomerById(custId).toString());
 		}
 		ds.close();
-		
+
+		System.out.println("\nRedirecting to login");
 		return "redirect:login";
 	}
 	
@@ -125,8 +113,11 @@ public class LoginController {
 	}
 	
 	@RequestMapping(value = "/login", method = RequestMethod.POST)
-	public String processLoginScreen(@RequestParam String username, @RequestParam String password, ModelMap map) {
-//		String pageToReturn = "redirect:dashboard";
+	public String processLoginScreen(
+		@ModelAttribute("customer") Customer customer,
+		@RequestParam String username,
+		@RequestParam String password,
+		ModelMap map) {
 		String pageToReturn = "dashboard";
 		int custId = 0;
 		if(username == null || password == null) {
@@ -134,16 +125,29 @@ public class LoginController {
 			pageToReturn = "login";
 		}
 		else {
+			System.out.println("About to validate credentials with the database...");
 			custId = LoginService.validateCredentials(username, password);
+			System.out.println("DONE validating credentials with the database...");
+			
+			//If the credentials matched the database, custId should be > 0
 			if(custId > 0) {
-				map.put("username", username);
-				map.put("customerid", custId);
+				System.out.println("/login POST: About to get the customer information from the database...");
+				DataService ds = new DataService();
+				System.out.println("\n\nRight before hitting DB, custId = " + custId + "\n\n");
+				customer = ds.dbRetrieveCustomerById(custId);
+				ds.close();
+				System.out.println("/login POST: After hitting the DB, the customer object is:\n"
+					+ customer.toString());
+				
+				//Put the customer's full name and e-mail in the model
+				map.addAttribute("fullname", customer.getFirstName() + " " + customer.getLastName());
+				map.addAttribute("email", customer.getEmailAddress());
+				
 				//Put the current balances into the model
-				map.addAttribute("chkbal", 200.0);
-				map.addAttribute("savbal", 300.0);
-				map.addAttribute("loanbal", 400.0);
-				BankService.setCustIndex(custId);
-//				BankService.doCustomerTransactions();
+				map.addAttribute("chkbal", customer.getChecking().getAccountBalance());
+				map.addAttribute("savbal", customer.getSaving().getAccountBalance());
+				map.addAttribute("loanbal", customer.getLoan().getAccountBalance());
+				map.addAttribute("customer", customer);
 			}
 			else {
 				map.put("errormessage", "Invalid login credentials");
@@ -154,32 +158,36 @@ public class LoginController {
 	}
 	
 	@RequestMapping(value = "/logout", method = RequestMethod.GET)
-	public String showLogoutScreen(@ModelAttribute("customerid") int custId, ModelMap map) {
+	public String showLogoutScreen(
+		@ModelAttribute("customer") Customer customer,
+		HttpSession session,
+		ModelMap map) {
 		//Reset the model map to a logged-out state
 		map.put("username", null);
 		map.put("customerid", 0);
+		map.put("customer", null);
+		
+		//Remove session attiributes from the session
+		session.removeAttribute("customer");
 		
 		return "login";
 	}
 	
 	@RequestMapping(value = "/dashboard", method = RequestMethod.GET)
-	public String showDashboardScreen(
-		@RequestParam("username") String username,
-		@RequestParam("customerid") int custId,
-		@RequestParam("chkbal") double chkBal,
-		@RequestParam("savbal") double savBal,
-		@RequestParam("loanbal") double loanBal,
-		ModelMap map) {
+	public String showDashboardScreen(@ModelAttribute("customer") Customer customer, ModelMap map) {
 		String jspToAccess = "dashboard";
 		
 		//Verify there is a logged-in customer
-		if(custId != 0) {
-			//Put the current balances into the model
-			map.put("username", username);
-			map.put("customerid", custId);
-			map.put("chkbal", chkBal);
-			map.put("savbal", savBal);
-			map.put("loanbal", loanBal);
+		System.out.println("/dashboard GET: about do check custId != 0:\n" + customer.toString());
+		if(customer.getCustId() != 0) {
+			System.out.println("I/dashboard GET: AFTER check custId != 0:\n" + customer.toString());
+			//Put the customer information into the model
+			map.put("fullname", customer.getFirstName() + " " + customer.getLastName());
+			map.put("email", customer.getEmailAddress());
+			map.put("chkbal", customer.getChecking().getAccountBalance());
+			map.put("savbal", customer.getSaving().getAccountBalance());
+			map.put("loanbal", customer.getLoan().getAccountBalance());
+			map.put("customer", customer);
 		}
 		else {
 			jspToAccess = "login";
@@ -189,16 +197,18 @@ public class LoginController {
 	}
 	
 	@RequestMapping(value = "/deposit-bank", method = RequestMethod.GET)
-	public String showDepositScreen(@ModelAttribute("username") String username,
-		@ModelAttribute("customerid") int custId,
-		ModelMap map) {
+	public String showDepositScreen(@ModelAttribute("customer") Customer customer, ModelMap map) {
 		String jspToAccess = "deposit-bank";
+		
 		//Verify there is a logged-in customer
-		if(custId != 0) {
+		if(customer.getCustId() != 0) {
+			System.out.println("/deposit-bank GET: customer =\n" + customer.toString());
 			//Put the account numbers into the model
-			map.addAttribute("acctchk", 1234);
-			map.addAttribute("acctsav", 2345);
-			map.addAttribute("acctloan", 3456);
+			map.put("fullname", customer.getFirstName() + " " + customer.getLastName());
+			map.put("email", customer.getEmailAddress());
+			map.addAttribute("acctchk", customer.getChecking().getAccountNumber());
+			map.addAttribute("acctsav", customer.getSaving().getAccountNumber());
+			map.addAttribute("acctloan", customer.getLoan().getAccountNumber());
 		}
 		else {
 			jspToAccess = "login";
@@ -208,34 +218,38 @@ public class LoginController {
 	}
 	
 	@RequestMapping(value = "/deposit-bank", method = RequestMethod.POST)
-	public String processDeposit(@ModelAttribute("customerid") int custId,
-			@ModelAttribute("username") String username,
+	public String processDeposit(
+			@ModelAttribute("customer") Customer customer,
 			@RequestParam("account") String accountType,
 			@RequestParam("amountdeposit") double amountToDeposit,
 			ModelMap map) {
 		String jspToAccess = "login";
 		
 		//Verify there is a logged-in customer
-		if(custId != 0) {
+		System.out.println("/deposit-bank POST: customer =\n" + customer.toString());
+		if(customer.getCustId() != 0) {
 			jspToAccess = "dashboard";
-			//Do the deposit for the customer
+			
+			//TODO: Do the deposit for the customer
 			
 			//Update the dashboard values
+			map.put("fullname", customer.getFirstName() + " " + customer.getLastName());
+			map.put("email", customer.getEmailAddress());
 			switch(accountType) {
 				case "chk":
-					map.put("chkbal", 333.0);
-					map.put("savbal", 444.0);
-					map.put("loanbal", 555.0);
+					map.put("chkbal", customer.getChecking().getAccountBalance());
+					map.put("savbal", customer.getSaving().getAccountBalance());
+					map.put("loanbal", customer.getLoan().getAccountBalance());
 					break;
 				case "sav":
-					map.put("chkbal", 300.0);
-					map.put("savbal", 400.0);
-					map.put("loanbal", 500.0);
+					map.put("chkbal", customer.getChecking().getAccountBalance());
+					map.put("savbal", customer.getSaving().getAccountBalance());
+					map.put("loanbal", customer.getLoan().getAccountBalance());
 					break;
 				case "loan":
-					map.put("chkbal", 300.0);
-					map.put("savbal", 400.0);
-					map.put("loanbal", 500.0);
+					map.put("chkbal", customer.getChecking().getAccountBalance());
+					map.put("savbal", customer.getSaving().getAccountBalance());
+					map.put("loanbal", customer.getLoan().getAccountBalance());
 					break;
 				default:
 			}
@@ -245,16 +259,18 @@ public class LoginController {
 	}	
 
 	@RequestMapping(value = "/withdraw-bank", method = RequestMethod.GET)
-	public String showWithdrawScreen(@ModelAttribute("username") String username,
-		@ModelAttribute("customerid") int custId,
-		ModelMap map) {
+	public String showWithdrawScreen(@ModelAttribute("customer") Customer customer, ModelMap map) {
 		String jspToAccess = "withdraw-bank";
+		
 		//Verify there is a logged-in customer
-		if(custId != 0) {
+		if(customer.getCustId() != 0) {
+			//Put customer name and email in map
+			map.put("fullname", customer.getFirstName() + " " + customer.getLastName());
+			map.put("email", customer.getEmailAddress());
 			//Put the account numbers into the model
-			map.addAttribute("acctchk", 1234);
-			map.addAttribute("acctsav", 2345);
-			map.addAttribute("acctloan", 3456);
+			map.addAttribute("acctchk", customer.getChecking().getAccountNumber());
+			map.addAttribute("acctsav", customer.getSaving().getAccountNumber());
+			map.addAttribute("acctloan", customer.getLoan().getAccountNumber());
 		}
 		else {
 			jspToAccess = "login";
@@ -264,34 +280,37 @@ public class LoginController {
 	}
 	
 	@RequestMapping(value = "/withdraw-bank", method = RequestMethod.POST)
-	public String processWithdrawal(@ModelAttribute("customerid") int custId,
-			@ModelAttribute("username") String username,
+	public String processWithdrawal(
+			@ModelAttribute("customer") Customer customer,
 			@RequestParam("account") String accountType,
 			@RequestParam("amountwithdraw") double amountToWithdraw,
 			ModelMap map) {
 		String jspToAccess = "login";
 		
 		//Verify there is a logged-in customer
-		if(custId != 0) {
+		if(customer.getCustId() != 0) {
 			jspToAccess = "dashboard";
-			//Do the withdrawal for the customer
+			
+			//TODO: Do the withdrawal for the customer
 			
 			//Update the dashboard values
+			map.put("fullname", customer.getFirstName() + " " + customer.getLastName());
+			map.put("email", customer.getEmailAddress());
 			switch(accountType) {
 				case "chk":
-					map.put("chkbal", 222.0);
-					map.put("savbal", 333.0);
-					map.put("loanbal", 444.0);
+					map.put("chkbal", customer.getChecking().getAccountBalance());
+					map.put("savbal", customer.getSaving().getAccountBalance());
+					map.put("loanbal", customer.getLoan().getAccountBalance());
 					break;
 				case "sav":
-					map.put("chkbal", 300.0);
-					map.put("savbal", 400.0);
-					map.put("loanbal", 500.0);
+					map.put("chkbal", customer.getChecking().getAccountBalance());
+					map.put("savbal", customer.getSaving().getAccountBalance());
+					map.put("loanbal", customer.getLoan().getAccountBalance());
 					break;
 				case "loan":
-					map.put("chkbal", 300.0);
-					map.put("savbal", 400.0);
-					map.put("loanbal", 500.0);
+					map.put("chkbal", customer.getChecking().getAccountBalance());
+					map.put("savbal", customer.getSaving().getAccountBalance());
+					map.put("loanbal", customer.getLoan().getAccountBalance());
 					break;
 				default:
 			}
@@ -301,16 +320,18 @@ public class LoginController {
 	}
 
 	@RequestMapping(value = "/transfer-bank", method = RequestMethod.GET)
-	public String showTransferScreen(@ModelAttribute("username") String username,
-		@ModelAttribute("customerid") int custId,
-		ModelMap map) {
+	public String showTransferScreen(@ModelAttribute("customer") Customer customer, ModelMap map) {
 		String jspToAccess = "transfer-bank";
+		
 		//Verify there is a logged-in customer
-		if(custId != 0) {
+		if(customer.getCustId() != 0) {
+			//Put customer name and email in the model
+			map.put("fullname", customer.getFirstName() + " " + customer.getLastName());
+			map.put("email", customer.getEmailAddress());
 			//Put the account numbers into the model
-			map.addAttribute("acctchk", 1234);
-			map.addAttribute("acctsav", 2345);
-			map.addAttribute("acctloan", 3456);
+			map.addAttribute("acctchk", customer.getChecking().getAccountNumber());
+			map.addAttribute("acctsav", customer.getSaving().getAccountNumber());
+			map.addAttribute("acctloan", customer.getLoan().getAccountNumber());
 		}
 		else {
 			jspToAccess = "login";
@@ -320,8 +341,8 @@ public class LoginController {
 	}
 	
 	@RequestMapping(value = "/transfer-bank", method = RequestMethod.POST)
-	public String processTransfer(@ModelAttribute("customerid") int custId,
-			@ModelAttribute("username") String username,
+	public String processTransfer(
+			@ModelAttribute("customer") Customer customer,
 			@RequestParam("accountfrom") String accountFrom,
 			@RequestParam("accountto") String accountTo,
 			@RequestParam("amounttransfer") double amountToTransfer,
@@ -329,26 +350,28 @@ public class LoginController {
 		String jspToAccess = "login";
 		
 		//Verify there is a logged-in customer
-		if(custId != 0) {
+		if(customer.getCustId() != 0) {
 			jspToAccess = "dashboard";
-			//Do the transfer for the customer
+			//TODO: Do the transfer for the customer
 			
 			//Update the dashboard values
+			map.put("fullname", customer.getFirstName() + " " + customer.getLastName());
+			map.put("email", customer.getEmailAddress());
 			switch(accountFrom) {
 				case "chk":
-					map.put("chkbal", 444.0);
-					map.put("savbal", 222.0);
-					map.put("loanbal", 444.0);
+					map.put("chkbal", customer.getChecking().getAccountBalance());
+					map.put("savbal", customer.getSaving().getAccountBalance());
+					map.put("loanbal", customer.getLoan().getAccountBalance());
 					break;
 				case "sav":
-					map.put("chkbal", 300.0);
-					map.put("savbal", 400.0);
-					map.put("loanbal", 500.0);
+					map.put("chkbal", customer.getChecking().getAccountBalance());
+					map.put("savbal", customer.getSaving().getAccountBalance());
+					map.put("loanbal", customer.getLoan().getAccountBalance());
 					break;
 				case "loan":
-					map.put("chkbal", 300.0);
-					map.put("savbal", 400.0);
-					map.put("loanbal", 500.0);
+					map.put("chkbal", customer.getChecking().getAccountBalance());
+					map.put("savbal", customer.getSaving().getAccountBalance());
+					map.put("loanbal", customer.getLoan().getAccountBalance());
 					break;
 				default:
 			}
@@ -358,13 +381,14 @@ public class LoginController {
 	}
 	
 	@RequestMapping(value = "/statements-bank", method = RequestMethod.GET)
-	public String showStatementsScreen(@ModelAttribute("username") String username,
-		@ModelAttribute("customerid") int custId,
-		ModelMap map) {
+	public String showStatementsScreen(@ModelAttribute("customer") Customer customer, ModelMap map) {
 		String jspToAccess = "statements-bank";
+		
 		//Verify there is a logged-in customer
-		if(custId != 0) {
-			//Get the transaction lists from each account
+		if(customer.getCustId() != 0) {
+			//TODO: Get the transaction lists from each account
+			
+			//Make some fake data for testing purposes
 			List<Transaction> transchk = new ArrayList<Transaction>();
 			transchk.add(new Transaction(new Date(), "chk1234", 123.45, "Test Transaction"));
 			transchk.add(new Transaction(new Date(), "chk1234", 234.56, "Test Transaction"));
@@ -379,6 +403,8 @@ public class LoginController {
 			transloan.add(new Transaction(new Date(), "loan1234", 345.67, "Test Transaction"));
 
 			//Put the data into the model
+			map.put("fullname", customer.getFirstName() + " " + customer.getLastName());
+			map.put("email", customer.getEmailAddress());
 			map.addAttribute("transchk", transchk);
 			map.addAttribute("transsav", transsav);
 			map.addAttribute("transloan", transloan);
@@ -391,7 +417,7 @@ public class LoginController {
 	}
 	
 	@RequestMapping(value = "/about-bank", method = RequestMethod.GET)
-	public String showAboutScreen(ModelMap map) {
+	public String showAboutScreen() {
 		return "about-bank";
 	}
 }

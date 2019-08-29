@@ -16,7 +16,7 @@
 	<div class="container">
 		<%@ include file="common/header-common.jspf" %>
 		<section>
-			<h1>WITHDRAW FROM ACCOUNT ${username}, ${customerid}</h1>
+			<h1>WITHDRAW FROM ACCOUNT ${fullname}, ${email}</h1>
 			<form action="/withdraw-bank" method="POST">
 				<p>Select Account:<br />
 					<input type="radio" name="account" value="chk" checked>Checking (${acctchk})<br />

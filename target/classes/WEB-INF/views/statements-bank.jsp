@@ -17,7 +17,7 @@
 	<div class="container">
 		<%@ include file="common/header-common.jspf" %>
 		<section>
-			<h1>Customer Statements: ${username}, ${customerid}</h1>
+			<h1>Customer Statements: ${fullname}, ${email}</h1>
 			<!-- Date transactionDate, String accountNumber, double amount, String transactionType -->
 			<table class="table table-striped">
 				<tr><th>Date</th><th>Amount</th><th>Description</th></tr>

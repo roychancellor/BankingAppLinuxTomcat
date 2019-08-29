@@ -17,7 +17,8 @@
 	<div class="container">
 		<%@ include file="common/header-common.jspf" %>
 		<section>
-			<h1>Customer Dashboard: ${username}, ${customerid}</h1>
+			<h1>Customer Dashboard: ${fullname}, ${email}</h1>
+			<p>${customer}</p>
 			<table class="table table-striped">
 				<tr><th>Checking</th><th>Saving</th><th>Cash Advance</th></tr>
 				<tr>
