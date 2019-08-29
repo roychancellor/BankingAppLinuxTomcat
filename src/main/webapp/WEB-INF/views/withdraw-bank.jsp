@@ -1,5 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
+<%@ taglib prefix="withform" uri="http://www.springframework.org/tags/form"%>
 <!DOCTYPE html>
 <html>
 <head>
@@ -18,19 +19,22 @@
 		<section>
 			<h1>WITHDRAW From Account</h1>
 			<h3>Welcome ${fullname}!</h3>
-			<form action="/withdraw-bank" method="POST">
+			<withform:form modelAttribute="amount" action="/withdraw-bank" method="POST">
 				<p>Select Account:<br />
 					<input type="radio" name="account" value="chk" checked> Checking (${acctchk})<br />
 					<input type="radio" name="account" value="sav"> Saving (${acctsav})<br />
 					<input type="radio" name="account" value="loan"> From Cash Advance (${acctloan})<br />
 				</p>
-				<p>Amount to withdraw:<br /><input type="text" name="amountwithdraw"/></p>
-			<!--  submit button -->
-			<p>
-				<input class="btn btn-success" type="submit" value="Submit Withdrawal">
-				<a class="btn btn-primary" href="/dashboard">Cancel and Return to Dashboard</a>
-			</p>
-			</form>
+				<p><withform:label path="amount">Amount to withdraw:</withform:label>
+				<br />
+				<withform:input type="text" path="amount"/>
+				<withform:errors path="amount" cssClass="error" /></p>				
+				<p class="error">${errormessage}</p>
+				<p>
+					<input class="btn btn-success" type="submit" value="Submit Withdrawal">
+					<a class="btn btn-primary" href="/dashboard">Cancel and Return to Dashboard</a>
+				</p>
+			</withform:form>
 		</section>
 		<%@ include file="common/footer-common.jspf" %>
 	</div>

@@ -1,5 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
+<%@ taglib prefix="withform" uri="http://www.springframework.org/tags/form"%>
 <!DOCTYPE html>
 <html>
 <head>
@@ -18,24 +19,27 @@
 		<section>
 			<h1>TRANSFER Between Accounts</h1>
 			<h3>Welcome ${fullname}!</h3>
-			<form action="/transfer-bank" method="POST">
+			<withform:form modelAttribute="amount" action="/withdraw-bank" method="POST">
 				<p>FROM Account:<br />
 					<input type="radio" name="accountfrom" value="chk" checked> Checking (${acctchk})<br />
 					<input type="radio" name="accountfrom" value="sav"> Saving (${acctsav})<br />
 					<input type="radio" name="accountfrom" value="loan"> Cash Advance (${acctloan})<br />
 				</p>
-				<p>Amount to transfer:<br /><input type="text" name="amounttransfer"/></p>
+				<p><withform:label path="amount">Amount to transfer:</withform:label>
+				<br />
+				<withform:input type="text" path="amount"/>
+				<withform:errors path="amount" cssClass="error" /></p>				
+				<p class="error">${errormessage}</p>
 				<p>TO Account:<br />
 					<input type="radio" name="accountto" value="chk"> Checking (${acctchk})<br />
 					<input type="radio" name="accountto" value="sav" checked> Saving (${acctsav})<br />
 					<input type="radio" name="accountto" value="loan"> Cash Advance (${acctloan})<br />
 				</p>
-			<!--  submit button -->
-			<p>
-				<input class="btn btn-success" type="submit" value="Submit Transfer">
-				<a class="btn btn-primary" href="/dashboard">Cancel and Return to Dashboard</a>
-			</p>
-			</form>
+				<p>
+					<input class="btn btn-success" type="submit" value="Submit Transfer">
+					<a class="btn btn-primary" href="/dashboard">Cancel and Return to Dashboard</a>
+				</p>
+			</withform:form>
 		</section>
 		<%@ include file="common/footer-common.jspf" %>
 	</div>
