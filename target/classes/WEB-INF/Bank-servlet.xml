@@ -8,7 +8,7 @@
     
     <!--  Where should Spring look for components -->
     <context:component-scan
-        base-package="edu.gcu.cst341.spring" />
+        base-package="edu.gcu.cst341.controller" />
 	<bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
         <property name="prefix">
             <value>/WEB-INF/views/</value>
