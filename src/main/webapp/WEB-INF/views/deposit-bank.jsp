@@ -16,16 +16,20 @@
 	<div class="container">
 		<%@ include file="common/header-common.jspf" %>
 		<section>
-			<h1>DEPOSIT INTO ACCOUNT ${fullname}, ${email}</h1>
+			<h1>DEPOSIT Into Account</h1>
+			<h3>Welcome ${fullname}!</h3>
 			<form action="/deposit-bank" method="POST">
 				<p>Select Account:<br />
-					<input type="radio" name="account" value="chk" checked>Checking (${acctchk})<br />
-					<input type="radio" name="account" value="sav">Saving (${acctsav})<br />
-					<input type="radio" name="account" value="loan">Payment to Cash Advance (${acctloan})<br />
+					<input type="radio" name="account" value="chk" checked> Checking (${acctchk})<br />
+					<input type="radio" name="account" value="sav"> Saving (${acctsav})<br />
+					<input type="radio" name="account" value="loan"> Payment to Cash Advance (${acctloan})<br />
 				</p>
 				<p>Amount to deposit:<br /><input type="text" name="amountdeposit"/></p>
 			<!--  submit button -->
-			<p><input class="btn btn-primary" type="submit" value="Submit Deposit"></p>
+			<p>
+				<input class="btn btn-success" type="submit" value="Submit Deposit">
+				<a class="btn btn-primary" href="/dashboard">Cancel and Return to Dashboard</a>
+			</p>
 			</form>
 		</section>
 		<%@ include file="common/footer-common.jspf" %>

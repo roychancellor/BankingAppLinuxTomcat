@@ -17,8 +17,8 @@
 	<div class="container">
 		<%@ include file="common/header-common.jspf" %>
 		<section>
-			<h1>Customer Dashboard: ${fullname}, ${email}</h1>
-			<p>${customer}</p>
+			<h1>Customer Dashboard</h1>
+			<h3>Welcome ${fullname}!</h3>
 			<table class="table table-striped">
 				<tr><th>Checking</th><th>Saving</th><th>Cash Advance</th></tr>
 				<tr>
@@ -27,7 +27,7 @@
 					<td class="content">${loanbal}</td>
 				</tr>
 			</table>
-			<p><a class="btn btn-success" href="/statements-bank">Transactions</a></p>
+			<p><a class="btn btn-success" href="/statements-bank">Reports</a></p>
 		</section>
 		<%@ include file="common/footer-common.jspf" %>
 	</div>

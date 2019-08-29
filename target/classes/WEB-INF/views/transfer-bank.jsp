@@ -16,21 +16,25 @@
 	<div class="container">
 		<%@ include file="common/header-common.jspf" %>
 		<section>
-			<h1>TRANSFER BETWEEN ACCOUNTS ${fullname}, ${email}</h1>
+			<h1>TRANSFER Between Accounts</h1>
+			<h3>Welcome ${fullname}!</h3>
 			<form action="/transfer-bank" method="POST">
 				<p>FROM Account:<br />
-					<input type="radio" name="accountfrom" value="chk" checked>Checking (${acctchk})<br />
-					<input type="radio" name="accountfrom" value="sav">Saving (${acctsav})<br />
-					<input type="radio" name="accountfrom" value="loan">Cash Advance (${acctloan})<br />
+					<input type="radio" name="accountfrom" value="chk" checked> Checking (${acctchk})<br />
+					<input type="radio" name="accountfrom" value="sav"> Saving (${acctsav})<br />
+					<input type="radio" name="accountfrom" value="loan"> Cash Advance (${acctloan})<br />
 				</p>
 				<p>Amount to transfer:<br /><input type="text" name="amounttransfer"/></p>
 				<p>TO Account:<br />
-					<input type="radio" name="accountto" value="chk" checked>Checking (${acctchk})<br />
-					<input type="radio" name="accountto" value="sav">Saving (${acctsav})<br />
-					<input type="radio" name="accountto" value="loan">Cash Advance (${acctloan})<br />
+					<input type="radio" name="accountto" value="chk"> Checking (${acctchk})<br />
+					<input type="radio" name="accountto" value="sav" checked> Saving (${acctsav})<br />
+					<input type="radio" name="accountto" value="loan"> Cash Advance (${acctloan})<br />
 				</p>
 			<!--  submit button -->
-			<p><input class="btn btn-primary" type="submit" value="Submit Transfer"></p>
+			<p>
+				<input class="btn btn-success" type="submit" value="Submit Transfer">
+				<a class="btn btn-primary" href="/dashboard">Cancel and Return to Dashboard</a>
+			</p>
 			</form>
 		</section>
 		<%@ include file="common/footer-common.jspf" %>

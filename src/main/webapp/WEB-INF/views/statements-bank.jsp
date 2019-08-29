@@ -17,9 +17,11 @@
 	<div class="container">
 		<%@ include file="common/header-common.jspf" %>
 		<section>
-			<h1>Customer Statements: ${fullname}, ${email}</h1>
+			<h1>Customer Statements</h1>
+			<h3>Welcome ${fullname}!</h3>
 			<!-- Date transactionDate, String accountNumber, double amount, String transactionType -->
 			<table class="table table-striped">
+				<tr><td><b>CHECKING</b></td></tr>
 				<tr><th>Date</th><th>Amount</th><th>Description</th></tr>
 				<format:forEach items="${transchk}" var="tran">
 					<tr>
@@ -28,6 +30,7 @@
 						<td>${tran.transactionType}</td>
 					</tr>
 				</format:forEach>
+				<tr><td><b>SAVINGS</b></td></tr>
 				<tr><th>Date</th><th>Amount</th><th>Description</th></tr>
 				<format:forEach items="${transsav}" var="tran">
 					<tr>
@@ -36,6 +39,7 @@
 						<td>${tran.transactionType}</td>
 					</tr>
 				</format:forEach>
+				<tr><td><b>CASH ADVANCE</b></td></tr>
 				<tr><th>Date</th><th>Amount</th><th>Description</th></tr>
 				<format:forEach items="${transloan}" var="tran">
 					<tr>
