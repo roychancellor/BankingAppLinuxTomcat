@@ -60,10 +60,12 @@ public class Checking extends Account {
 		//Once validated, process the transaction
 		setAccountBalance(getAccountBalance() + transType * (amount + feeAmount));
 		//Record the transaction
-		if(transType == Account.WITHDRAWAL)
+		if(transType == Account.WITHDRAWAL) {
 			this.addTransaction(-amount, "Withdrawal");
-		if(transType == Account.DEPOSIT)
+		}
+		if(transType == Account.DEPOSIT) {
 			this.addTransaction(amount, "Deposit");
+		}
 	}
 	
 	/**

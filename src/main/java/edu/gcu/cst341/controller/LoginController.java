@@ -237,19 +237,36 @@ public class LoginController {
 			jspToAccess = "dashboard";
 			
 			//Do the deposit and update the dashboard values
+			DataService ds = new DataService();
+			boolean dbSuccess = false;
 			switch(accountType) {
 				case "chk":
-					customer.getChecking().doTransaction(Account.DEPOSIT, amount.getAmount());
+					//Write to the database
+					dbSuccess = ds.dbUpdateBalanceAndTransaction(customer.getCustId(), customer.getChecking());
+					//Update the model
+					if(dbSuccess) {
+						customer.getChecking().doTransaction(Account.DEPOSIT, amount.getAmount());
+					}
 					break;
 				case "sav":
-					customer.getSaving().doTransaction(Account.DEPOSIT, amount.getAmount());
+					//Write to the database
+					dbSuccess = ds.dbUpdateBalanceAndTransaction(customer.getCustId(), customer.getSaving());
+					//Update the model
+					if(dbSuccess) {
+						customer.getSaving().doTransaction(Account.DEPOSIT, amount.getAmount());
+					}
 					break;
 				case "loan":
-					customer.getLoan().doTransaction(Account.DEPOSIT, amount.getAmount());
+					//Write to the database
+					dbSuccess = ds.dbUpdateBalanceAndTransaction(customer.getCustId(), customer.getLoan());
+					//Update the model
+					if(dbSuccess) {
+						customer.getLoan().doTransaction(Account.DEPOSIT, amount.getAmount());
+					}
 					break;
 				default:
 			}
-			
+			System.out.println("/deposit-bank POST: the database result is " + dbSuccess);
 			//Populate the dashboard with updated balances
 			map.put("fullname", customer.getFirstName() + " " + customer.getLastName());
 			map.put("email", customer.getEmailAddress());

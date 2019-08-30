@@ -20,6 +20,7 @@ public abstract class Account implements iActions, iTrans {
 	private double accountBalance;
 	public static final String AMOUNT_MESSAGE = "Enter dollar amount you would like to ";
 	private List<Transaction> transList = new ArrayList<Transaction>();
+	private Transaction lastTrans;
 
 	/**
 	 * Constructor gets called when making child objects
@@ -54,6 +55,20 @@ public abstract class Account implements iActions, iTrans {
 
 	public void setTransList(List<Transaction> transList) {
 		this.transList = transList;
+	}
+
+	/**
+	 * @return the lastTrans
+	 */
+	public Transaction getLastTrans() {
+		return lastTrans;
+	}
+
+	/**
+	 * @param lastTrans the lastTrans to set
+	 */
+	public void setLastTrans(Transaction lastTrans) {
+		this.lastTrans = lastTrans;
 	}
 
 	@Override
@@ -110,6 +125,7 @@ public abstract class Account implements iActions, iTrans {
 	 */
 	public void addTransaction(double amount, String transType) {
 		this.transList.add(new Transaction(new Date(), this.accountNumber, amount, transType));
+		this.lastTrans = new Transaction(new Date(), this.accountNumber, amount, transType);
 	}
 
 	/**

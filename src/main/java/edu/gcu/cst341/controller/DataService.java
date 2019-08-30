@@ -12,7 +12,11 @@ import java.util.List;
 import com.mysql.jdbc.Driver;
 
 import edu.gcu.cst341.database.DbConstants;
+import edu.gcu.cst341.model.Account;
+import edu.gcu.cst341.model.Checking;
 import edu.gcu.cst341.model.Customer;
+import edu.gcu.cst341.model.Loan;
+import edu.gcu.cst341.model.Saving;
 
 /**
  * Class contains SQL CRUD functions for the banking application
@@ -275,22 +279,33 @@ public class DataService {
 	 * @return a Customer object created from the database information
 	 */
 	public Customer dbRetrieveCustomerById(int customerIdToRetrieve) {
-		Customer cust = null;
-		String sql = "SELECT bank.customers.customerId,"
-				+ "bank.customers.lastName,"
-				+ "bank.customers.firstName,"
-				+ "bank.customers.email,"
-				+ "bank.customers.phone,"
-				+ "bank.credentials.userName,"
-				+ "bank.credentials.passwordHash from bank.customers, bank.credentials"
-				+ " WHERE bank.credentials.customerId=" + customerIdToRetrieve
-				+ " AND bank.customers.customerId=" + customerIdToRetrieve;
+		Customer cust = new Customer();
+//		String sql = "SELECT bank.customers.customerId,"
+//				+ "bank.customers.lastName,"
+//				+ "bank.customers.firstName,"
+//				+ "bank.customers.email,"
+//				+ "bank.customers.phone,"
+//				+ "bank.credentials.userName,"
+//				+ "bank.credentials.passwordHash from bank.customers, bank.credentials"
+//				+ " WHERE bank.credentials.customerId=" + customerIdToRetrieve
+//				+ " AND bank.customers.customerId=" + customerIdToRetrieve;
 		if(this.connectedToDb) {
+			//GET THE CUSTOMER INFORMATION
 			try {
+				//Prepare the SQL statement
+				sql = conn.prepareStatement(DbConstants.GET_CUSTOMER_BY_ID);
+				if(verboseSQL) printSQL();
+	
+				//Populate statement parameters
+				sql.setInt(1, customerIdToRetrieve);
+				sql.setInt(2, customerIdToRetrieve);
+				
 				//Execute SQL statement
-				rs = stmt.executeQuery(sql);
+//				numRec = sql.executeUpdate();
+				rs = sql.executeQuery();
+				//Execute SQL statement
+//				rs = stmt.executeQuery(sql);
 				if(rs.next()) {
-					cust = new Customer();
 					cust.setCustId(rs.getInt("customerId"));
 					cust.setLastName(rs.getString("lastName"));
 					cust.setFirstName(rs.getString("firstName"));
@@ -298,7 +313,30 @@ public class DataService {
 					cust.setPhoneNumber(rs.getString("phone"));
 					cust.setUsername(rs.getString("userName"));
 					cust.setPassword(rs.getString("passwordHash"));
-					return cust;
+				}
+			}
+			catch(SQLException e) {
+				System.out.println("\nERROR: UNABLE TO RETRIEVE CUSTOMER ID = " + customerIdToRetrieve + "!!!");
+				e.printStackTrace();
+			}
+			//GET THE CUSTOMER ACCOUNT BALANCE INFORMATION
+			try {
+				//Prepare the SQL statement
+				sql = conn.prepareStatement(DbConstants.GET_CUSTOMER_BALANCES_BY_ID);
+				if(verboseSQL) printSQL();
+	
+				//Populate statement parameters
+				sql.setInt(1, customerIdToRetrieve);
+				
+				//Execute SQL statement
+//				numRec = sql.executeUpdate();
+				rs = sql.executeQuery();
+				//Execute SQL statement
+//				rs = stmt.executeQuery(sql);
+				if(rs.next()) {
+					cust.getChecking().setAccountBalance(rs.getDouble("checkingBalance"));
+					cust.getSaving().setAccountBalance(rs.getDouble("savingBalance"));
+					cust.getLoan().setAccountBalance(rs.getDouble("loanBalance"));
 				}
 			}
 			catch(SQLException e) {
@@ -310,7 +348,94 @@ public class DataService {
 	}
 	
 	/**
-	 * gets all customers from the database and returns an ArrayList of Customer objects
+	 * Updates account balance and writes a transaction to the database
+	 * @param <E> an Account object (Checking, Saving, or Loan)
+	 * @param customerId The customerId being updated
+	 * @param account The Account object being updated (Checking, Saving, Loan)
+	 * @return true if successful SQL; false if the SQL failed
+	 */
+	public <E> boolean dbUpdateBalanceAndTransaction(int customerId, E account) {
+		boolean result = true;
+		String accountField = null;
+		String accountNumber = null;
+		double accountBalance = 0;
+		double transAmount = 0;
+		String transDescription = null;
+		try {
+			//WRITE TO CUSTOMER_ACCOUNTS TABLE
+			//Populate statement parameters
+			if(account instanceof Checking) {
+				accountField = "checkingBalance";
+				accountBalance = ((Checking) account).getAccountBalance();
+				accountNumber = ((Checking) account).getAccountNumber();
+				transAmount = ((Checking) account).getLastTrans().getAmount();
+				transDescription = ((Checking) account).getLastTrans().getTransactionType();
+			}
+			else if(account instanceof Saving) {
+				accountField = "savingBalance";
+				accountBalance = ((Saving) account).getAccountBalance();
+				accountNumber = ((Saving) account).getAccountNumber();
+				transAmount = ((Saving) account).getLastTrans().getAmount();
+				transDescription = ((Saving) account).getLastTrans().getTransactionType();
+			}
+			else if(account instanceof Loan) {
+				accountField = "loanBalance";
+				accountBalance = ((Loan) account).getAccountBalance();
+				accountNumber = ((Loan) account).getAccountNumber();
+				transAmount = ((Loan) account).getLastTrans().getAmount();
+				transDescription = ((Loan) account).getLastTrans().getTransactionType();
+			}
+			
+			//Prepare the SQL statement to UPDATE an account balance by customer id
+			final String UPDATE_BALANCE_BY_ID =
+				"UPDATE " + DbConstants.DB_NAME + "." + DbConstants.CUSTOMER_ACCOUNTS_TABLE
+				+ " SET " + accountField + "=?"
+				+ " WHERE " + DbConstants.CUSTOMER_ID + "=?";
+			
+			sql = conn.prepareStatement(UPDATE_BALANCE_BY_ID);
+			sql.setDouble(1, accountBalance);
+			sql.setInt(2, customerId);
+			if(verboseSQL) printSQL();
+			
+			//Execute SQL statement
+			int numRec = sql.executeUpdate();
+			
+			if(verboseSQL) System.out.println("...Success, " + numRec
+				+ " record(s) inserted into customer_accounts table.");
+			
+			//WRITE TO CUSTOMER_TRANSACTIONS TABLE
+			if(numRec > 0) {
+				//Prepare the SQL statement
+				sql = conn.prepareStatement(DbConstants.UPDATE_TRANSACTION);
+	
+				//Populate statement parameters
+				sql.setInt(1, customerId);
+				sql.setString(2, accountNumber);
+				sql.setDouble(3, transAmount);
+				sql.setString(4, transDescription);
+				
+				//Execute SQL statement
+				if(verboseSQL) printSQL();
+				numRec = sql.executeUpdate();
+				
+				if(verboseSQL) System.out.println("...Success, " + numRec
+					+ " record(s) inserted into customer_transactions table.");
+			}
+			else {
+				if(verboseSQL) System.out.println("\nNO DATA WRITTEN");
+			}
+		}
+		catch(SQLException e) {
+			printMethod(new Throwable().getStackTrace()[0].getMethodName());
+			e.printStackTrace();
+			result = false;
+		}
+		
+		return result;
+	}
+	
+	/**
+	 * Retrieves all customers from the database and returns an ArrayList of Customer objects
 	 * sorted by last name, first name
 	 * @return ArrayList of Customer objects
 	 */

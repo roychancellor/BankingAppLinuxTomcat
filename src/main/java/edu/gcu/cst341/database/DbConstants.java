@@ -20,6 +20,8 @@ public class DbConstants {
 	public static final String DB_NAME = "bank";
 	public static final String CUSTOMER_TABLE = "customers";
 	public static final String CREDENTIALS_TABLE = "credentials";
+	public static final String CUSTOMER_ACCOUNTS_TABLE = "customer_accounts";
+	public static final String CUSTOMER_TRANSACTIONS_TABLE = "customer_transactions";
 	public static final String CUSTOMER_ID = "customerId";
 	public static final String CUSTOMER_LAST_NAME = "lastName";
 	public static final String CUSTOMER_FIRST_NAME = "firstName";
@@ -56,26 +58,67 @@ public class DbConstants {
 		+ " VALUES(?,?,?,?)";
 	
 	//SQL command to RETRIEVE all customers unordered
-	public static final String GET_CUSTOMERS_ORDERED = "SELECT * FROM " + DB_NAME + "." + CUSTOMER_TABLE + " "
-		+ "ORDER BY " + CUSTOMER_LAST_NAME + "," + CUSTOMER_FIRST_NAME;	
+	public static final String GET_CUSTOMERS_ORDERED =
+		"SELECT * FROM " + DB_NAME + "." + CUSTOMER_TABLE
+		+ " ORDER BY " + CUSTOMER_LAST_NAME
+		+ "," + CUSTOMER_FIRST_NAME;	
 	
 	//SQL command to RETRIEVE all customers and ORDER BY lastName, firstName
-	public static final String GET_CUSTOMERS_UNORDERED = "SELECT * FROM " + DB_NAME + "." + CUSTOMER_TABLE;
+	public static final String GET_CUSTOMERS_UNORDERED =
+		"SELECT * FROM " + DB_NAME + "." + CUSTOMER_TABLE;
 	
 	//SQL command to RETRIEVE customerId from a username and password match in the credentials table
-	public static final String GET_CUSTOMER_ID_FROM_CREDENTIALS = "SELECT " + CUSTOMER_ID
+	public static final String GET_CUSTOMER_ID_FROM_CREDENTIALS =
+		"SELECT " + CUSTOMER_ID
 		+ " FROM " + DB_NAME + "." + CREDENTIALS_TABLE
-		+ " WHERE " + CUSTOMER_USER_NAME + "=? AND " + CUSTOMER_PASSWORD_SALT + "=? AND " + CUSTOMER_PASSWORD_HASH + "=?";
+		+ " WHERE " + CUSTOMER_USER_NAME + "=?"
+		+ " AND "
+		+ CUSTOMER_PASSWORD_SALT + "=?"
+		+ " AND "
+		+ CUSTOMER_PASSWORD_HASH + "=?";
+	
+	//SQL command to RETRIEVE all customer information from customers table by customerId
+	public static final String GET_CUSTOMER_BY_ID =
+		"SELECT "
+		+ DB_NAME + "." + CUSTOMER_TABLE + ".customerId,"
+		+ DB_NAME + "." + CUSTOMER_TABLE + ".lastName,"
+		+ DB_NAME + "." + CUSTOMER_TABLE + ".firstName,"
+		+ DB_NAME + "." + CUSTOMER_TABLE + ".email,"
+		+ DB_NAME + "." + CUSTOMER_TABLE + ".phone,"
+		+ DB_NAME + "." + CUSTOMER_TABLE + ".userName,"
+		+ DB_NAME + "." + CUSTOMER_TABLE + ".passwordHash"
+		+ " FROM "
+		+ DB_NAME + "." + CUSTOMER_TABLE + "," + DB_NAME + "." + CREDENTIALS_TABLE
+		+ " WHERE "
+		+ DB_NAME + "." + CREDENTIALS_TABLE + "." + "customerId=?"
+		+ " AND "
+		+ DB_NAME + "." + CUSTOMER_TABLE + "." + "customerId=?";
+	
+	//SQL command to RETRIEVE account balances by customerId
+	public static final String GET_CUSTOMER_BALANCES_BY_ID =
+		"SELECT checkingBalance, savingBalance, loanBalance"
+		+ " FROM " + DB_NAME + "." + CUSTOMER_ACCOUNTS_TABLE 
+		+ " WHERE customerId=?";
 	
 	//SQL command to UPDATE a customer by id
-	public static final String UPDATE_CUSTOMER_BY_ID = "UPDATE " + DB_NAME + "." + CUSTOMER_TABLE + " "
+	public static final String UPDATE_CUSTOMER_BY_ID =
+		"UPDATE " + DB_NAME + "." + CUSTOMER_TABLE + " "
 		+ "SET " + CUSTOMER_LAST_NAME + "=?," + CUSTOMER_FIRST_NAME + "=? "
 		+ "WHERE " + CUSTOMER_ID + "=?";
 	
 	//SQL command to UPDATE a credentials by customer id
-	public static final String UPDATE_CREDENTIALS_BY_ID = "UPDATE " + DB_NAME + "." + CREDENTIALS_TABLE + " "
+	public static final String UPDATE_CREDENTIALS_BY_ID =
+		"UPDATE " + DB_NAME + "." + CREDENTIALS_TABLE + " "
 		+ "SET " + CUSTOMER_USER_NAME + "=?," + CUSTOMER_PASSWORD_SALT + "=? " + CUSTOMER_PASSWORD_HASH + "=? "
 		+ "WHERE " + CUSTOMER_ID + "=?";
+	
+	//SQL command to UPDATE the customer_transactions table with a single transaction
+	public static final String UPDATE_TRANSACTION = 
+		"INSERT INTO "
+		+ DB_NAME + "." + CUSTOMER_TRANSACTIONS_TABLE
+		+ " (customerId, accountNumber, transAmount, transDescription)"
+		+ " VALUES"
+		+ " (?,?,?,?)";
 	
 	//SQL command to DELETE a customer by id
 	public static final String DELETE_CUSTOMER_BY_ID = "DELETE FROM " + DB_NAME + "." + CUSTOMER_TABLE + " "
