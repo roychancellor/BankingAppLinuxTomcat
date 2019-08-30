@@ -94,13 +94,20 @@ public class DbConstants {
 		+ " AND "
 		+ DB_NAME + "." + CUSTOMER_TABLE + "." + "customerId=?";
 	
-	//SQL command to RETRIEVE account balances by customerId
+	//SQL command to RETRIEVE account numbers and balances by customerId
 	public static final String GET_CUSTOMER_ACCOUNTS_BY_ID =
 		"SELECT checkingNumber,checkingBalance,"
 		+ "savingNumber,savingBalance,"
 		+ "loanNumber,loanBalance"
 		+ " FROM " + DB_NAME + "." + CUSTOMER_ACCOUNTS_TABLE 
 		+ " WHERE customerId=?";
+	
+	//SQL command to RETRIEVE all transactions by customerId
+	public static final String GET_CUSTOMER_TRANSACTIONS_BY_ID =
+		"SELECT accountNumber, transTimestamp, transAmount, transDescription"
+		+ " FROM " + DB_NAME + "." + CUSTOMER_TRANSACTIONS_TABLE
+		+ " WHERE customerId=?"
+		+ " ORDER BY accountNumber, transTimestamp";
 	
 	//SQL command to UPDATE a customer by id
 	public static final String UPDATE_CUSTOMER_BY_ID =

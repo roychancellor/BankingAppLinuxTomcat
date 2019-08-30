@@ -37,7 +37,7 @@ public class Bank {
 //		this.db = new DataService(DbConstants.SILENT, DbConstants.LOCAL);
 		if(db.connectToDatabase()) {
 			//Create the list of customers from the customers database
-			customers = db.makeCustomerListFromDatabase();
+			customers = db.dbRetrieveCustomerListFromDatabase();
 			//Sort the customer list
 			Collections.sort(customers);
 			//Make a map of customerId from the database to the index of the customers list

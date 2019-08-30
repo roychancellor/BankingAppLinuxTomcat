@@ -7,6 +7,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import com.mysql.jdbc.Driver;
@@ -17,6 +18,7 @@ import edu.gcu.cst341.model.Checking;
 import edu.gcu.cst341.model.Customer;
 import edu.gcu.cst341.model.Loan;
 import edu.gcu.cst341.model.Saving;
+import edu.gcu.cst341.model.Transaction;
 
 /**
  * Class contains SQL CRUD functions for the banking application
@@ -211,7 +213,7 @@ public class DataService {
 	 * @param passHash the hashed customer password
 	 * @return the customerId of the created customer if successful; -1 if unsuccessful
 	 */
-	public int createCustomer(String lastName, String firstName, String email, String phone,
+	public int dbCreateCustomer(String lastName, String firstName, String email, String phone,
 		String username, String passSalt, String passHash) {
 		try {
 			if(verboseSQL) System.out.print("Adding customer " + lastName + ", " + firstName);
@@ -319,20 +321,26 @@ public class DataService {
 				System.out.println("\nERROR: UNABLE TO RETRIEVE CUSTOMER ID = " + customerIdToRetrieve + "!!!");
 				e.printStackTrace();
 			}
-			//GET THE CUSTOMER ACCOUNT INFORMATION
+		}
+		return cust;
+	}
+	
+	public boolean dbRetrieveCustomerBalancesById(Customer cust) {
+		boolean dbResult = false;
+
+		if(this.connectedToDb) {
+			//GET THE CUSTOMER BALANCE INFORMATION
 			try {
 				//Prepare the SQL statement
 				sql = conn.prepareStatement(DbConstants.GET_CUSTOMER_ACCOUNTS_BY_ID);
 				if(verboseSQL) printSQL();
 	
 				//Populate statement parameters
-				sql.setInt(1, customerIdToRetrieve);
+				sql.setInt(1, cust.getCustId());
 				
 				//Execute SQL statement
-//				numRec = sql.executeUpdate();
 				rs = sql.executeQuery();
-				//Execute SQL statement
-//				rs = stmt.executeQuery(sql);
+				dbResult = true;
 				if(rs.next()) {
 					cust.getChecking().setAccountNumber(rs.getString("checkingNumber"));
 					cust.getChecking().setAccountBalance(rs.getDouble("checkingBalance"));
@@ -343,11 +351,12 @@ public class DataService {
 				}
 			}
 			catch(SQLException e) {
-				System.out.println("\nERROR: UNABLE TO RETRIEVE CUSTOMER ID = " + customerIdToRetrieve + "!!!");
+				System.out.println("\nERROR: UNABLE TO RETRIEVE CUSTOMER BALANCES FOR ID = " + cust.getCustId() + "!!!");
 				e.printStackTrace();
 			}
 		}
-		return cust;
+
+		return dbResult;
 	}
 	
 	/**
@@ -437,12 +446,50 @@ public class DataService {
 		return result;
 	}
 	
+	public List<Transaction> dbRetrieveTransactionsById(int custId) {
+		List<Transaction> transList = null;
+		
+		if(this.connectedToDb) {
+			//GET THE CUSTOMER INFORMATION
+			try {
+				//Prepare the SQL statement
+				sql = conn.prepareStatement(DbConstants.GET_CUSTOMER_TRANSACTIONS_BY_ID);
+	
+				//Populate statement parameters
+				sql.setInt(1, custId);
+				if(verboseSQL) printSQL();
+				
+				//Execute SQL statement
+				rs = sql.executeQuery();
+				
+				//Set the list
+				transList = new ArrayList<Transaction>();
+				
+				//Read data from the query result set into the transaction list
+				while(rs.next()) {
+					//Date transactionDate, String accountNumber, double amount, String transactionType
+					transList.add(new Transaction(
+						rs.getTimestamp("transTimestamp"),
+						rs.getString("accountNumber"),
+						rs.getDouble("transAmount"),
+						rs.getString("transDescription"))
+					);
+				}
+			}
+			catch(SQLException e) {
+				System.out.println("\nERROR: UNABLE TO RETRIEVE TRANSACTIONS FOR CUSTOMER ID = " + custId + "!!!");
+				e.printStackTrace();
+			}
+		}
+		return transList;
+	}
+	
 	/**
 	 * Retrieves all customers from the database and returns an ArrayList of Customer objects
 	 * sorted by last name, first name
 	 * @return ArrayList of Customer objects
 	 */
-	public List<Customer> makeCustomerListFromDatabase() {
+	public List<Customer> dbRetrieveCustomerListFromDatabase() {
 		List <Customer> customerList = new ArrayList<Customer>();
 		try {
 			//Prepare the SQL statement

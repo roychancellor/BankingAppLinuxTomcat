@@ -33,6 +33,8 @@ public class LoginController {
 	LoginService LoginService;
 	@Autowired
 	BankService BankService;
+	@Autowired
+	CustomerService CustomerService;
 	
 	//Spring will make this object when needed and will keep it in the session
 	//until the session is completed
@@ -66,7 +68,7 @@ public class LoginController {
 		
 		//Write the new customer object to the database
 		DataService ds = new DataService();
-		int custId = ds.createCustomer(customer.getLastName(),
+		int custId = ds.dbCreateCustomer(customer.getLastName(),
 			customer.getFirstName(),
 			customer.getEmailAddress(),
 			customer.getPhoneNumber(),
@@ -127,22 +129,23 @@ public class LoginController {
 			//If the credentials matched the database, custId should be > 0
 			if(custId > 0) {
 				System.out.println("/login POST: About to get the customer information from the database...");
-				DataService ds = new DataService();
-				System.out.println("\n\nRight before hitting DB, custId = " + custId + "\n\n");
-				customer = ds.dbRetrieveCustomerById(custId);
-				ds.close();
+				
+				//Get the customer object data from the database
+				customer = CustomerService.getCustomerInfoAndBalances(custId);
+				
 				System.out.println("/login POST: After hitting the DB, the customer object is:\n"
 					+ customer.toString());
-				
-				//Put the customer's full name and e-mail in the model
+					
+				//Put the customer into the model
+				map.addAttribute("customer", customer);
+
+				//Put the customer's full name in the model
 				map.addAttribute("fullname", customer.getFirstName() + " " + customer.getLastName());
-				map.addAttribute("email", customer.getEmailAddress());
 				
 				//Put the current balances into the model
 				map.addAttribute("chkbal", customer.getChecking().getAccountBalance());
 				map.addAttribute("savbal", customer.getSaving().getAccountBalance());
 				map.addAttribute("loanbal", customer.getLoan().getAccountBalance());
-				map.addAttribute("customer", customer);
 			}
 			else {
 				map.put("errormessage", "Invalid login credentials");
@@ -162,7 +165,7 @@ public class LoginController {
 		map.put("customerid", 0);
 		map.put("customer", null);
 		
-		//Remove session attiributes from the session
+		//Remove session attributes from the session
 		session.removeAttribute("customer");
 		
 		return "login";
@@ -412,28 +415,39 @@ public class LoginController {
 		
 		//Verify there is a logged-in customer
 		if(customer.getCustId() != 0) {
-			//TODO: Get the transaction lists from each account
-			
-			//Make some fake data for testing purposes
+			//Lists that will store transactions by type and posted to the transactions view
 			List<Transaction> transchk = new ArrayList<Transaction>();
-			transchk.add(new Transaction(new Date(), "chk1234", 123.45, "Test Transaction"));
-			transchk.add(new Transaction(new Date(), "chk1234", 234.56, "Test Transaction"));
-			transchk.add(new Transaction(new Date(), "chk1234", 345.67, "Test Transaction"));
 			List<Transaction> transsav = new ArrayList<Transaction>();
-			transsav.add(new Transaction(new Date(), "sav1234", 123.45, "Test Transaction"));
-			transsav.add(new Transaction(new Date(), "sav1234", 234.56, "Test Transaction"));
-			transsav.add(new Transaction(new Date(), "sav1234", 345.67, "Test Transaction"));
 			List<Transaction> transloan = new ArrayList<Transaction>();
-			transloan.add(new Transaction(new Date(), "loan1234", 123.45, "Test Transaction"));
-			transloan.add(new Transaction(new Date(), "loan1234", 234.56, "Test Transaction"));
-			transloan.add(new Transaction(new Date(), "loan1234", 345.67, "Test Transaction"));
-
-			//Put the data into the model
-			map.put("fullname", customer.getFirstName() + " " + customer.getLastName());
-			map.put("email", customer.getEmailAddress());
-			map.addAttribute("transchk", transchk);
-			map.addAttribute("transsav", transsav);
-			map.addAttribute("transloan", transloan);
+			
+			//Get the transaction lists from the database
+			DataService ds = new DataService();
+			List<Transaction> transList = ds.dbRetrieveTransactionsById(customer.getCustId());
+			ds.close();
+			
+			//Separate transactions by account type and put in their respective lists
+			//The query returns transactions sorted by account and transaction date
+			if(transList != null) {
+				char acctType; 
+				for(Transaction t : transList) {
+					acctType = t.getAccountNumber().charAt(0);
+					if(acctType == 'C') {
+						transchk.add(t);
+					}
+					else if(acctType == 'S') {
+						transsav.add(t);
+					}
+					else if(acctType == 'L') {
+						transloan.add(t);
+					}
+				}
+				
+				//Put the data into the model
+				map.put("fullname", customer.getFirstName() + " " + customer.getLastName());
+				map.addAttribute("transchk", transchk);
+				map.addAttribute("transsav", transsav);
+				map.addAttribute("transloan", transloan);
+			}
 		}
 		else {
 			jspToAccess = "login";
