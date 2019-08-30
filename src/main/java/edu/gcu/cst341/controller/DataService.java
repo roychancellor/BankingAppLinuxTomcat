@@ -294,11 +294,11 @@ public class DataService {
 			try {
 				//Prepare the SQL statement
 				sql = conn.prepareStatement(DbConstants.GET_CUSTOMER_BY_ID);
-				if(verboseSQL) printSQL();
 	
 				//Populate statement parameters
 				sql.setInt(1, customerIdToRetrieve);
 				sql.setInt(2, customerIdToRetrieve);
+				if(verboseSQL) printSQL();
 				
 				//Execute SQL statement
 //				numRec = sql.executeUpdate();
@@ -319,10 +319,10 @@ public class DataService {
 				System.out.println("\nERROR: UNABLE TO RETRIEVE CUSTOMER ID = " + customerIdToRetrieve + "!!!");
 				e.printStackTrace();
 			}
-			//GET THE CUSTOMER ACCOUNT BALANCE INFORMATION
+			//GET THE CUSTOMER ACCOUNT INFORMATION
 			try {
 				//Prepare the SQL statement
-				sql = conn.prepareStatement(DbConstants.GET_CUSTOMER_BALANCES_BY_ID);
+				sql = conn.prepareStatement(DbConstants.GET_CUSTOMER_ACCOUNTS_BY_ID);
 				if(verboseSQL) printSQL();
 	
 				//Populate statement parameters
@@ -334,8 +334,11 @@ public class DataService {
 				//Execute SQL statement
 //				rs = stmt.executeQuery(sql);
 				if(rs.next()) {
+					cust.getChecking().setAccountNumber(rs.getString("checkingNumber"));
 					cust.getChecking().setAccountBalance(rs.getDouble("checkingBalance"));
+					cust.getSaving().setAccountNumber(rs.getString("savingNumber"));
 					cust.getSaving().setAccountBalance(rs.getDouble("savingBalance"));
+					cust.getLoan().setAccountNumber(rs.getString("loanNumber"));
 					cust.getLoan().setAccountBalance(rs.getDouble("loanBalance"));
 				}
 			}

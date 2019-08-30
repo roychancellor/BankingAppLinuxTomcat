@@ -85,8 +85,8 @@ public class DbConstants {
 		+ DB_NAME + "." + CUSTOMER_TABLE + ".firstName,"
 		+ DB_NAME + "." + CUSTOMER_TABLE + ".email,"
 		+ DB_NAME + "." + CUSTOMER_TABLE + ".phone,"
-		+ DB_NAME + "." + CUSTOMER_TABLE + ".userName,"
-		+ DB_NAME + "." + CUSTOMER_TABLE + ".passwordHash"
+		+ DB_NAME + "." + CREDENTIALS_TABLE + ".userName,"
+		+ DB_NAME + "." + CREDENTIALS_TABLE + ".passwordHash"
 		+ " FROM "
 		+ DB_NAME + "." + CUSTOMER_TABLE + "," + DB_NAME + "." + CREDENTIALS_TABLE
 		+ " WHERE "
@@ -95,8 +95,10 @@ public class DbConstants {
 		+ DB_NAME + "." + CUSTOMER_TABLE + "." + "customerId=?";
 	
 	//SQL command to RETRIEVE account balances by customerId
-	public static final String GET_CUSTOMER_BALANCES_BY_ID =
-		"SELECT checkingBalance, savingBalance, loanBalance"
+	public static final String GET_CUSTOMER_ACCOUNTS_BY_ID =
+		"SELECT checkingNumber,checkingBalance,"
+		+ "savingNumber,savingBalance,"
+		+ "loanNumber,loanBalance"
 		+ " FROM " + DB_NAME + "." + CUSTOMER_ACCOUNTS_TABLE 
 		+ " WHERE customerId=?";
 	

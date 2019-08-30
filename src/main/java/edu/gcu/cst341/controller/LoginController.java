@@ -241,27 +241,30 @@ public class LoginController {
 			boolean dbSuccess = false;
 			switch(accountType) {
 				case "chk":
+					//Update the model
+					customer.getChecking().doTransaction(Account.DEPOSIT, amount.getAmount());
 					//Write to the database
 					dbSuccess = ds.dbUpdateBalanceAndTransaction(customer.getCustId(), customer.getChecking());
-					//Update the model
-					if(dbSuccess) {
-						customer.getChecking().doTransaction(Account.DEPOSIT, amount.getAmount());
+					if(!dbSuccess) {
+						System.err.println("ERROR!!! Unable to write transaction to DB");
 					}
 					break;
 				case "sav":
+					//Update the model
+					customer.getSaving().doTransaction(Account.DEPOSIT, amount.getAmount());
 					//Write to the database
 					dbSuccess = ds.dbUpdateBalanceAndTransaction(customer.getCustId(), customer.getSaving());
-					//Update the model
-					if(dbSuccess) {
-						customer.getSaving().doTransaction(Account.DEPOSIT, amount.getAmount());
+					if(!dbSuccess) {
+						System.err.println("ERROR!!! Unable to write transaction to DB");
 					}
 					break;
 				case "loan":
+					//Update the model
+					customer.getLoan().doTransaction(Account.DEPOSIT, amount.getAmount());
 					//Write to the database
 					dbSuccess = ds.dbUpdateBalanceAndTransaction(customer.getCustId(), customer.getLoan());
-					//Update the model
-					if(dbSuccess) {
-						customer.getLoan().doTransaction(Account.DEPOSIT, amount.getAmount());
+					if(!dbSuccess) {
+						System.err.println("ERROR!!! Unable to write transaction to DB");
 					}
 					break;
 				default:
