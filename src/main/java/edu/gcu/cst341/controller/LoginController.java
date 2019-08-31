@@ -32,6 +32,9 @@ public class LoginController {
 	LoginService LoginService;
 	@Autowired
 	CustomerService CustomerService;
+	@Autowired
+	BankService BankService;
+	//TODO: Investigate auto-wiring a DataService object here
 	
 	//Spring will make this object when needed and will keep it in the session
 	//until the session is completed
@@ -237,39 +240,8 @@ public class LoginController {
 			jspToAccess = "dashboard";
 			
 			//Do the deposit and update the dashboard values
-			DataService ds = new DataService();
-			boolean dbSuccess = false;
-			switch(accountType) {
-				case "chk":
-					//Update the model
-					customer.getChecking().doTransaction(Account.DEPOSIT, amount.getAmount());
-					//Write to the database
-					dbSuccess = ds.dbUpdateBalanceAndTransaction(customer.getCustId(), customer.getChecking());
-					if(!dbSuccess) {
-						System.err.println("ERROR!!! Unable to write transaction to DB");
-					}
-					break;
-				case "sav":
-					//Update the model
-					customer.getSaving().doTransaction(Account.DEPOSIT, amount.getAmount());
-					//Write to the database
-					dbSuccess = ds.dbUpdateBalanceAndTransaction(customer.getCustId(), customer.getSaving());
-					if(!dbSuccess) {
-						System.err.println("ERROR!!! Unable to write transaction to DB");
-					}
-					break;
-				case "loan":
-					//Update the model
-					customer.getLoan().doTransaction(Account.DEPOSIT, amount.getAmount());
-					//Write to the database
-					dbSuccess = ds.dbUpdateBalanceAndTransaction(customer.getCustId(), customer.getLoan());
-					if(!dbSuccess) {
-						System.err.println("ERROR!!! Unable to write transaction to DB");
-					}
-					break;
-				default:
-			}
-			System.out.println("/deposit-bank POST: the database result is " + dbSuccess);
+			BankService.executeTransaction(customer, accountType, Account.DEPOSIT, amount.getAmount());
+			
 			//Populate the dashboard with updated balances
 			map.put("fullname", customer.getFirstName() + " " + customer.getLastName());
 			map.put("email", customer.getEmailAddress());
@@ -309,41 +281,39 @@ public class LoginController {
 	public String processWithdrawal(
 			@ModelAttribute("customer") Customer customer,
 			@RequestParam("account") String accountType,
-			@RequestParam("amountwithdraw") double amountToWithdraw,
+			@Valid @ModelAttribute("amount") AmountForm amount,
+			BindingResult br,
 			ModelMap map) {
 		String jspToAccess = "login";
 		
+		System.out.println("/withdraw-bank POST: amount = " + amount.getAmount());
+		System.out.println("br.hasErrors = " + br.hasErrors() + " " + br.toString());
+		//If the form had errors, go back to the form so the customer can make corrections
+        if (br.hasErrors()) {
+        	map.addAttribute("errormessge", "Amount must be at least $0.01");
+            return "withdraw-bank";
+        }
+
 		//Verify there is a logged-in customer
 		if(customer.getCustId() != 0) {
 			jspToAccess = "dashboard";
 			
-			//TODO: Do the withdrawal for the customer
+			//Do the deposit and update the dashboard values
+			BankService.executeTransaction(customer, accountType, Account.WITHDRAWAL, amount.getAmount());
 			
-			//Update the dashboard values
+			//Populate the dashboard with updated balances
 			map.put("fullname", customer.getFirstName() + " " + customer.getLastName());
 			map.put("email", customer.getEmailAddress());
-			switch(accountType) {
-				case "chk":
-					map.put("chkbal", customer.getChecking().getAccountBalance());
-					map.put("savbal", customer.getSaving().getAccountBalance());
-					map.put("loanbal", customer.getLoan().getAccountBalance());
-					break;
-				case "sav":
-					map.put("chkbal", customer.getChecking().getAccountBalance());
-					map.put("savbal", customer.getSaving().getAccountBalance());
-					map.put("loanbal", customer.getLoan().getAccountBalance());
-					break;
-				case "loan":
-					map.put("chkbal", customer.getChecking().getAccountBalance());
-					map.put("savbal", customer.getSaving().getAccountBalance());
-					map.put("loanbal", customer.getLoan().getAccountBalance());
-					break;
-				default:
-			}
+			map.put("chkbal", customer.getChecking().getAccountBalance());
+			map.put("savbal", customer.getSaving().getAccountBalance());
+			map.put("loanbal", customer.getLoan().getAccountBalance());
+		}
+		else {
+			jspToAccess = "redirect:login";
 		}
 		
 		return jspToAccess;
-	}
+	}	
 
 	@RequestMapping(value = "/transfer-bank", method = RequestMethod.GET)
 	public String showTransferScreen(@ModelAttribute("customer") Customer customer, ModelMap map) {
