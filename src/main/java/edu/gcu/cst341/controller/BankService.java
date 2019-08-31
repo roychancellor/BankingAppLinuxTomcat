@@ -51,7 +51,7 @@ public class BankService {
 			//Set the money format
 			money.applyPattern(MONEY_FORMAT);
 //			System.out.println("BankService constructor closing DB connection...");
-//			db.close();
+			ds.close();
 		}
 		else {
 			System.out.println("FATAL ERROR: Unable to open database. BANK IS CLOSED FOR BUSINESS!");

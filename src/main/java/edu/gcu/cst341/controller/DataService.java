@@ -7,13 +7,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
-import com.mysql.jdbc.Driver;
-
 import edu.gcu.cst341.database.DbConstants;
-import edu.gcu.cst341.model.Account;
 import edu.gcu.cst341.model.Checking;
 import edu.gcu.cst341.model.Customer;
 import edu.gcu.cst341.model.Loan;
@@ -31,8 +27,6 @@ public class DataService {
 	private boolean verboseSQL;
 	private boolean connectedToDb;
 	private boolean productionDb;
-	private Driver mySQLDriver;
-	
 	//Constructor
 	/**
 	 * Constructor for class: Opens a MySQL database and creates a Statement object
@@ -43,10 +37,10 @@ public class DataService {
 		this.verboseSQL = true;
 		this.productionDb = false;
 		if(connectToDatabase()) {
-			System.out.println("\nDataSource CONNECTED TO DB...");
+			System.out.println("\nDataService CONNECTED TO DB...");
 		}
 		else {
-			System.out.println("\nDataSource ERROR: NOT CONNECTED!!!");
+			System.out.println("\nDataService ERROR: NOT CONNECTED!!!");
 		}
 	}
 	
@@ -145,10 +139,7 @@ public class DataService {
 		//Open connection to database
 		try {
 			// load and register JDBC driver for MySQL
-//			Class.forName("com.mysql.jdbc.Driver");
-			this.mySQLDriver = new com.mysql.jdbc.Driver();
-			DriverManager.registerDriver(this.mySQLDriver);
-			Class.forName("com.mysql.cj.jdbc.Driver");
+			DriverManager.registerDriver(new com.mysql.cj.jdbc.Driver());
 
 			if(verboseSQL) System.out.print("Connecting to " + dbURL);
 			this.conn = DriverManager.getConnection(dbURL, dbUser, dbPassword);
@@ -172,9 +163,6 @@ public class DataService {
 			e.printStackTrace();
 			this.connectedToDb = false;
 		}
-		catch (ClassNotFoundException e) {
-			e.printStackTrace();
-		}
 		return connectedToDb;
 	}
 	
@@ -192,10 +180,17 @@ public class DataService {
 	 */
 	public void close() {
 		try {
-			if(verboseSQL) System.out.print("\nClosing connection to "
+			if(verboseSQL) System.out.print("\nClosing connection and de-registering driver to "
 				+ (this.isProductionDb() ? DbConstants.DB_URL_AWSDB : DbConstants.DB_URL_LOCALDB));
 			this.conn.close();
-			DriverManager.deregisterDriver(this.mySQLDriver);
+			try {
+	            java.sql.Driver mySqlDriver =
+	            	DriverManager.getDriver(this.isProductionDb() ? DbConstants.DB_URL_AWSDB : DbConstants.DB_URL_LOCALDB);
+	            DriverManager.deregisterDriver(mySqlDriver);
+	        }
+			catch (SQLException ex) {
+	            System.out.println("Could not deregister driver:".concat(ex.getMessage()));
+	        }
 			if(verboseSQL) System.out.println("...SUCCESS!");
 		}
 		catch(SQLException e) {

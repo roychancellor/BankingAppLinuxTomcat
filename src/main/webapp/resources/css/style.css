@@ -23,7 +23,10 @@ header h2 {
 	font-size:3.0em;
 	padding:10px;
 	background:#fff;
-	border:#00f;
+	border:3px solid #00f;
+	width:25%;
+	margin:auto;
+	text-align:center;
 }
 
 footer {

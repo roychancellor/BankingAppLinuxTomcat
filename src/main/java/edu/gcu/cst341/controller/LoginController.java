@@ -1,7 +1,6 @@
 package edu.gcu.cst341.controller;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import javax.servlet.http.HttpSession;
@@ -31,8 +30,6 @@ public class LoginController {
 	//Allows Spring to take over control of making these objects
 	@Autowired
 	LoginService LoginService;
-	@Autowired
-	BankService BankService;
 	@Autowired
 	CustomerService CustomerService;
 	

@@ -11,7 +11,7 @@ public class DbConstants {
 	public static final boolean PRODUCTION = true;
 	public static final boolean VERBOSE = true;
 	public static final boolean SILENT = false;
-	public static final String DB_URL_LOCALDB = "jdbc:mysql://localhost:3306";
+	public static final String DB_URL_LOCALDB = "jdbc:mysql://localhost:3306/";
 	public static final String DB_URL_AWSDB = "jdbc:mysql://cst235-mysql.czz73jkkcnrj.us-east-2.rds.amazonaws.com:3306";
 	public static final String USER_NAME_LOCAL = "root";  //I KNOW THIS IS NOT OK...FOR DEMO ONLY
 	public static final String USER_NAME_AWS = "root";  //I KNOW THIS IS NOT OK...FOR DEMO ONLY
