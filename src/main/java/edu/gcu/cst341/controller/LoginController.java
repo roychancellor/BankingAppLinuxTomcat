@@ -67,15 +67,17 @@ public class LoginController {
 		//Show the information to the customer - NOT WORKING YET - FIX LATER
 		
 		//Write the new customer object to the database
-		DataService ds = new DataService();
-		int custId = ds.dbCreateCustomer(customer.getLastName(),
-			customer.getFirstName(),
-			customer.getEmailAddress(),
-			customer.getPhoneNumber(),
-			customer.getUsername(),
-			"salt",
-			customer.getPassword());
+		int custId = CustomerService.createNewCustomer(customer);
+//		DataService ds = new DataService();
+//		int custId = ds.dbCreateCustomer(customer.getLastName(),
+//			customer.getFirstName(),
+//			customer.getEmailAddress(),
+//			customer.getPhoneNumber(),
+//			customer.getUsername(),
+//			"salt",
+//			customer.getPassword());
 		
+		DataService ds = new DataService();
 		if(custId > 0) {
 			System.out.println("/newcustomer POST: created new customer:\n" + customer.toString());
 			System.out.println("/newcustomer POST: retrieved the new customer from DB:\n"
@@ -195,9 +197,7 @@ public class LoginController {
 	}
 	
 	@RequestMapping(value = "/deposit-bank", method = RequestMethod.GET)
-	public String showDepositScreen(
-		@ModelAttribute("customer") Customer customer,
-		ModelMap map) {
+	public String showDepositScreen(@ModelAttribute("customer") Customer customer, ModelMap map) {
 		String jspToAccess = "deposit-bank";
 		
 		//Verify there is a logged-in customer
@@ -260,6 +260,7 @@ public class LoginController {
 	public String showWithdrawScreen(@ModelAttribute("customer") Customer customer, ModelMap map) {
 		String jspToAccess = "withdraw-bank";
 		
+		System.out.println("\n/withdraw-bank GET: ready to populate map...");
 		//Verify there is a logged-in customer
 		if(customer.getCustId() != 0) {
 			//Put customer name and email in map
@@ -269,11 +270,12 @@ public class LoginController {
 			map.addAttribute("acctchk", customer.getChecking().getAccountNumber());
 			map.addAttribute("acctsav", customer.getSaving().getAccountNumber());
 			map.addAttribute("acctloan", customer.getLoan().getAccountNumber());
+			map.addAttribute("amount", new AmountForm());
 		}
 		else {
 			jspToAccess = "login";
 		}
-		
+		System.out.println("/withdraw-bank GET: LEAVING to go to JSP page...");
 		return jspToAccess;
 	}
 	
@@ -291,6 +293,14 @@ public class LoginController {
 		//If the form had errors, go back to the form so the customer can make corrections
         if (br.hasErrors()) {
         	map.addAttribute("errormessge", "Amount must be at least $0.01");
+			//TODO: Put this in a separate helper method to avoid code redundancy
+        	//Put customer name and email in map
+			map.put("fullname", customer.getFirstName() + " " + customer.getLastName());
+			map.put("email", customer.getEmailAddress());
+			//Put the account numbers into the model
+			map.addAttribute("acctchk", customer.getChecking().getAccountNumber());
+			map.addAttribute("acctsav", customer.getSaving().getAccountNumber());
+			map.addAttribute("acctloan", customer.getLoan().getAccountNumber());
             return "withdraw-bank";
         }
 

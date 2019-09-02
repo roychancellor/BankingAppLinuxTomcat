@@ -208,8 +208,9 @@ public class DataService {
 	 * @param passHash the hashed customer password
 	 * @return the customerId of the created customer if successful; -1 if unsuccessful
 	 */
-	public int dbCreateCustomer(String lastName, String firstName, String email, String phone,
-		String username, String passSalt, String passHash) {
+	public int dbCreateCustomer(String lastName, String firstName, String email, String phone) {
+		
+		int customerId = -1;
 		try {
 			if(verboseSQL) System.out.print("Adding customer " + lastName + ", " + firstName);
 			
@@ -230,7 +231,6 @@ public class DataService {
 			if(verboseSQL) System.out.println("...Success, " + numRec + " record(s) inserted into customers table.");
 			
 			//GET THE AUTO-GENERATED CUSTOMER ID FOR THE NEW CUSTOMER TO USE FOR WRITING CREDENTIALS
-			int customerId = -1;
 			rs = sql.getGeneratedKeys();
 			if(rs.next()) {
 				customerId = rs.getInt(1);
@@ -240,34 +240,142 @@ public class DataService {
 			}
 			
 			//WRITE TO CREDENTIALS TABLE
-			if(customerId > 0) {
-				//Prepare the SQL statement
-				sql = conn.prepareStatement(DbConstants.CREATE_CREDENTIALS);
-				if(verboseSQL) printSQL();
-	
-				//Populate statement parameters
-				sql.setInt(1, customerId);
-				sql.setString(2, username);
-				sql.setString(3, passSalt);
-				sql.setString(4, passHash);
-				
-				//Execute SQL statement
-				numRec = sql.executeUpdate();
-				
-				if(verboseSQL) System.out.println("...Success, " + numRec + " record(s) inserted into credentials table.");
-				return customerId;
-			}
-			else {
-				if(verboseSQL) System.out.println("\nNO CREDENTIALS WRITTEN");
-				return -1;
-			}
+//			if(customerId > 0) {
+//				//Prepare the SQL statement
+//				sql = conn.prepareStatement(DbConstants.CREATE_CREDENTIALS);
+//				if(verboseSQL) printSQL();
+//	
+//				//Populate statement parameters
+//				sql.setInt(1, customerId);
+//				sql.setString(2, username);
+//				sql.setString(3, passSalt);
+//				sql.setString(4, passHash);
+//				
+//				//Execute SQL statement
+//				numRec = sql.executeUpdate();
+//				
+//				if(verboseSQL) System.out.println("...Success, " + numRec + " record(s) inserted into credentials table.");
+//				return customerId;
+//			}
+//			else {
+//				if(verboseSQL) System.out.println("\nNO CREDENTIALS WRITTEN");
+//				return -1;
+//			}
 		}
 		catch(SQLException e) {
 			printMethod(new Throwable().getStackTrace()[0].getMethodName());
 			e.printStackTrace();
 		}
 		
-		return -1;
+		return customerId;
+	}
+	
+	/**
+	 * Writes login credentils to database for a new customer
+	 * @param customerId the customerId of the new customer
+	 * @param username ther username of hte new customer
+	 * @param passSalt the password salted hash of the new customer
+	 * @param passHash the hashed password of the new customer
+	 * @return the number of records written to the database (1 if successful, 0 if not)
+	 */
+	public int dbCreateCustomerCredentials(int customerId, String username,
+		String passSalt, String passHash) {
+		int numRec = 0;
+		try {
+			//Prepare the SQL statement
+			sql = conn.prepareStatement(DbConstants.CREATE_CREDENTIALS);
+			if(verboseSQL) printSQL();
+	
+			//Populate statement parameters
+			sql.setInt(1, customerId);
+			sql.setString(2, username);
+			sql.setString(3, passSalt);
+			sql.setString(4, passHash);
+			
+			//Execute SQL statement
+			numRec = sql.executeUpdate();
+			
+			if(verboseSQL) System.out.println("...Success, "
+				+ numRec
+				+ " record(s) inserted into credentials table.");
+		}
+		catch(SQLException e) {
+			printMethod(new Throwable().getStackTrace()[0].getMethodName());
+			e.printStackTrace();
+		}
+
+		return numRec;
+	}
+	
+	/**
+	 * Inserts customer accounts into the customer_accounts table for a new customer
+	 * @param cust a Customer object
+	 * @return the number of records inserted into the table (1 if successful, 0 if not)
+	 */
+	public int dbCreateCustomerAccounts(Customer cust) {
+		int numRec = 0;
+		try {
+			//Prepare the SQL statement
+			sql = conn.prepareStatement(DbConstants.CREATE_CUSTOMER_ACCOUNTS);
+			if(verboseSQL) printSQL();
+	
+			//Populate statement parameters
+			sql.setInt(1, cust.getCustId());
+			sql.setString(2, cust.getChecking().getAccountNumber());
+			sql.setDouble(3, cust.getChecking().getAccountBalance());
+			sql.setString(4, cust.getSaving().getAccountNumber());
+			sql.setDouble(5, cust.getSaving().getAccountBalance());
+			sql.setString(6, cust.getLoan().getAccountNumber());
+			sql.setDouble(7, cust.getLoan().getAccountBalance());
+			
+			//Execute SQL statement
+			numRec = sql.executeUpdate();
+			
+			if(verboseSQL) System.out.println("...Success, "
+				+ numRec
+				+ " record(s) inserted into customer_accounts table.");
+		}
+		catch(SQLException e) {
+			printMethod(new Throwable().getStackTrace()[0].getMethodName());
+			e.printStackTrace();
+		}
+
+		return numRec;
+	}
+	
+	/**
+	 * Creates a transaction record for an opening balance for a customer account
+	 * @param custId the customerId to insert into the table
+	 * @param accountNumber the account number to insert into the table
+	 * @param amount the opening balance to insert in the table
+	 * @return the number of records inserted into the table (1 if successful, 0 if not)
+	 */
+	public int dbCreateCustomerTransactions(int custId, String accountNumber, double amount) {
+		int numRec = 0;
+		try {
+			//Prepare the SQL statement
+			sql = conn.prepareStatement(DbConstants.CREATE_CUSTOMER_TRANSACTIONS);
+			if(verboseSQL) printSQL();
+	
+			//Populate statement parameters
+			sql.setInt(1, custId);
+			sql.setString(2, accountNumber);
+			sql.setDouble(3, amount);
+			sql.setString(4, "Opening balance");
+			
+			//Execute SQL statement
+			numRec = sql.executeUpdate();
+			
+			if(verboseSQL) System.out.println("...Success, "
+				+ numRec
+				+ " record(s) inserted into customer_transactions table.");
+		}
+		catch(SQLException e) {
+			printMethod(new Throwable().getStackTrace()[0].getMethodName());
+			e.printStackTrace();
+		}
+
+		return numRec;
 	}
 
 	/**
@@ -277,15 +385,6 @@ public class DataService {
 	 */
 	public Customer dbRetrieveCustomerById(int customerIdToRetrieve) {
 		Customer cust = new Customer();
-//		String sql = "SELECT bank.customers.customerId,"
-//				+ "bank.customers.lastName,"
-//				+ "bank.customers.firstName,"
-//				+ "bank.customers.email,"
-//				+ "bank.customers.phone,"
-//				+ "bank.credentials.userName,"
-//				+ "bank.credentials.passwordHash from bank.customers, bank.credentials"
-//				+ " WHERE bank.credentials.customerId=" + customerIdToRetrieve
-//				+ " AND bank.customers.customerId=" + customerIdToRetrieve;
 		if(this.connectedToDb) {
 			//GET THE CUSTOMER INFORMATION
 			try {
@@ -298,10 +397,7 @@ public class DataService {
 				if(verboseSQL) printSQL();
 				
 				//Execute SQL statement
-//				numRec = sql.executeUpdate();
 				rs = sql.executeQuery();
-				//Execute SQL statement
-//				rs = stmt.executeQuery(sql);
 				if(rs.next()) {
 					cust.setCustId(rs.getInt("customerId"));
 					cust.setLastName(rs.getString("lastName"));
@@ -320,6 +416,11 @@ public class DataService {
 		return cust;
 	}
 	
+	/**
+	 * Retrieves customer account balances by customerId
+	 * @param cust a Customer object
+	 * @return true if the database transaction is successful, false if not
+	 */
 	public boolean dbRetrieveCustomerBalancesById(Customer cust) {
 		boolean dbResult = false;
 

@@ -57,6 +57,28 @@ public class DbConstants {
 		+ ")"
 		+ " VALUES(?,?,?,?)";
 	
+	//SQL command to CREATE customer accounts and balances in the customer_accounts table
+	public static final String CREATE_CUSTOMER_ACCOUNTS =
+		"INSERT INTO "
+		+ DB_NAME + "." + CUSTOMER_ACCOUNTS_TABLE
+		+ "(" + CUSTOMER_ID
+		+ "," + "checkingNumber, checkingBalance"
+		+ "," + "savingNumber, savingBalance"
+		+ "," + "loanNumber, loanBalance"
+		+ ")"
+		+ " VALUES(?,?,?,?,?,?,?)";
+	
+	//SQL command to CREATE opening balance transactions in the customer_transactions table
+	public static final String CREATE_CUSTOMER_TRANSACTIONS =
+		"INSERT INTO "
+		+ DB_NAME + "." + CUSTOMER_TRANSACTIONS_TABLE
+		+ "(" + CUSTOMER_ID
+		+ "," + "accountNumber"
+		+ "," + "transAmount"
+		+ "," + "transDescription"
+		+ ")"
+		+ " VALUES(?,?,?,?)";
+	
 	//SQL command to RETRIEVE all customers unordered
 	public static final String GET_CUSTOMERS_ORDERED =
 		"SELECT * FROM " + DB_NAME + "." + CUSTOMER_TABLE
