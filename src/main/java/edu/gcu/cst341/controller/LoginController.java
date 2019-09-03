@@ -111,11 +111,11 @@ public class LoginController {
 		return "login";
 	}
 	
+	//TODO: Wire in Spring Security for validating credentials
 	@RequestMapping(value = "/login", method = RequestMethod.POST)
 	public String processLoginScreen(
 		@ModelAttribute("customer") Customer customer,
-		@RequestParam String username,
-		@RequestParam String password,
+		@RequestParam String username, @RequestParam String password,
 		ModelMap map) {
 		String pageToReturn = "dashboard";
 		int custId = 0;
@@ -203,9 +203,10 @@ public class LoginController {
 		//Verify there is a logged-in customer
 		if(customer.getCustId() != 0) {
 			System.out.println("/deposit-bank GET: customer =\n" + customer.toString());
-			//Put the account numbers into the model
+			//Put customer name and email in map
 			map.put("fullname", customer.getFirstName() + " " + customer.getLastName());
 			map.put("email", customer.getEmailAddress());
+			//Put the account numbers into the model
 			map.addAttribute("acctchk", customer.getChecking().getAccountNumber());
 			map.addAttribute("acctsav", customer.getSaving().getAccountNumber());
 			map.addAttribute("acctloan", customer.getLoan().getAccountNumber());
@@ -220,18 +221,27 @@ public class LoginController {
 	
 	@RequestMapping(value = "/deposit-bank", method = RequestMethod.POST)
 	public String processDeposit(
-			@ModelAttribute("customer") Customer customer,
-			@RequestParam("account") String accountType,
-			@Valid @ModelAttribute("amount") AmountForm amount,
-			BindingResult br,
-			ModelMap map) {
+		@ModelAttribute("customer") Customer customer,
+		@RequestParam("account") String accountType,
+		@Valid @ModelAttribute("amount") AmountForm amount,
+		BindingResult br,
+		ModelMap map) {
+		
 		String jspToAccess = "login";
 		
 		System.out.println("/deposit-bank POST: amount = " + amount.getAmount());
 		System.out.println("br.hasErrors = " + br.hasErrors() + " " + br.toString());
 		//If the form had errors, go back to the form so the customer can make corrections
         if (br.hasErrors()) {
-        	map.addAttribute("errormessge", "Amount must be at least $0.01");
+        	map.addAttribute("errormessage", "Amount must be at least $0.01");
+			//TODO: Put this in a separate helper method to avoid code redundancy
+        	//Put customer name and email in map
+			map.put("fullname", customer.getFirstName() + " " + customer.getLastName());
+			map.put("email", customer.getEmailAddress());
+			//Put the account numbers into the model
+			map.addAttribute("acctchk", customer.getChecking().getAccountNumber());
+			map.addAttribute("acctsav", customer.getSaving().getAccountNumber());
+			map.addAttribute("acctloan", customer.getLoan().getAccountNumber());
             return "deposit-bank";
         }
 
@@ -242,7 +252,7 @@ public class LoginController {
 			//Do the deposit and update the dashboard values
 			BankService.executeTransaction(customer, accountType, Account.DEPOSIT, amount.getAmount());
 			
-			//Populate the dashboard with updated balances
+			//Populate the dashboard with updated information
 			map.put("fullname", customer.getFirstName() + " " + customer.getLastName());
 			map.put("email", customer.getEmailAddress());
 			map.put("chkbal", customer.getChecking().getAccountBalance());
@@ -281,18 +291,19 @@ public class LoginController {
 	
 	@RequestMapping(value = "/withdraw-bank", method = RequestMethod.POST)
 	public String processWithdrawal(
-			@ModelAttribute("customer") Customer customer,
-			@RequestParam("account") String accountType,
-			@Valid @ModelAttribute("amount") AmountForm amount,
-			BindingResult br,
-			ModelMap map) {
+		@ModelAttribute("customer") Customer customer,
+		@RequestParam("account") String accountType,
+		@Valid @ModelAttribute("amount") AmountForm amountForm,
+		BindingResult br,
+		ModelMap map) {
+		
 		String jspToAccess = "login";
 		
-		System.out.println("/withdraw-bank POST: amount = " + amount.getAmount());
+		System.out.println("/withdraw-bank POST: amount = " + amountForm.getAmount());
 		System.out.println("br.hasErrors = " + br.hasErrors() + " " + br.toString());
 		//If the form had errors, go back to the form so the customer can make corrections
         if (br.hasErrors()) {
-        	map.addAttribute("errormessge", "Amount must be at least $0.01");
+//        	map.addAttribute("errormessage", "Amount must be at least $0.01");
 			//TODO: Put this in a separate helper method to avoid code redundancy
         	//Put customer name and email in map
 			map.put("fullname", customer.getFirstName() + " " + customer.getLastName());
@@ -308,15 +319,29 @@ public class LoginController {
 		if(customer.getCustId() != 0) {
 			jspToAccess = "dashboard";
 			
-			//Do the deposit and update the dashboard values
-			BankService.executeTransaction(customer, accountType, Account.WITHDRAWAL, amount.getAmount());
+			//Check for a valid withdrawal amount before executing the transaction
+			boolean validAmount = BankService.validateWithdrawal(customer, accountType, amountForm.getAmount());
 			
-			//Populate the dashboard with updated balances
-			map.put("fullname", customer.getFirstName() + " " + customer.getLastName());
-			map.put("email", customer.getEmailAddress());
-			map.put("chkbal", customer.getChecking().getAccountBalance());
-			map.put("savbal", customer.getSaving().getAccountBalance());
-			map.put("loanbal", customer.getLoan().getAccountBalance());
+			if(validAmount) {
+				//Do the withdrawal and update the dashboard values
+				BankService.executeTransaction(customer, accountType, Account.WITHDRAWAL, amountForm.getAmount());
+
+				//Update the dashboard information
+				map.put("fullname", customer.getFirstName() + " " + customer.getLastName());
+				map.put("email", customer.getEmailAddress());
+				map.put("chkbal", customer.getChecking().getAccountBalance());
+				map.put("savbal", customer.getSaving().getAccountBalance());
+				map.put("loanbal", customer.getLoan().getAccountBalance());
+			}
+			else {
+				//Populate the information needed for the error page
+				map.addAttribute("amount", amountForm.getAmount());
+				map.addAttribute("balance", customer.getChecking().getAccountBalance());
+				map.addAttribute("overdraft", customer.getChecking().getOverdraftFee());
+				
+				//Show error page and proceed based on user selection
+				jspToAccess = "checking-withdraw-error";
+			}
 		}
 		else {
 			jspToAccess = "redirect:login";

@@ -2,8 +2,10 @@ package edu.gcu.cst341.model;
 
 import java.util.Date;
 
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+
+import org.hibernate.validator.constraints.Email;
+import org.hibernate.validator.constraints.NotBlank;
 
 import edu.gcu.cst341.controller.Bank;
 
@@ -13,24 +15,25 @@ import edu.gcu.cst341.controller.Bank;
  */
 public class Customer implements Comparable<Customer> {
 	//Class data
-	@NotNull
-	@Size(min=1, message="Name must be at least one character")
+	private int custId;
+	@NotBlank(message = "Name must be at least one character")
 	private String firstName;
-	@NotNull
-	@Size(min=1, message="Name must be at least one character")
+	@NotBlank(message = "Name must be at least one character")
 	private String lastName;
 	private Date dateOpened;
-	private int custId;
-	@NotNull
+	@NotBlank
 	@Size(min=6, message="Username must be at least 6 characters")
 	private String username;
-	@NotNull
+	@NotBlank
 	@Size(min=8, message="Password must be at least 8 characters")
 	private String password;
-	@NotNull
+	@NotBlank
 	private String phoneNumber;
-	@NotNull
+	@NotBlank
+	@Email(message = "Must be a valid e-mail format")
 	private String emailAddress;
+	
+	//Customer accounts
 	private Checking checking;
 	private Saving saving;
 	private Loan loan;
@@ -47,9 +50,9 @@ public class Customer implements Comparable<Customer> {
 		this.loan = createLoanAccount();
 		
 		//Populate transaction list with opening balance for each account
-		this.checking.addTransaction(this.checking.getAccountBalance(), "Beginning balance");
-		this.saving.addTransaction(this.saving.getAccountBalance(), "Beginning balance");
-		this.loan.addTransaction(this.loan.getAccountBalance(), "Beginning balance");
+		this.checking.addTransaction(this.checking.getAccountBalance(), "Opening balance");
+		this.saving.addTransaction(this.saving.getAccountBalance(), "Opening balance");
+		this.loan.addTransaction(this.loan.getAccountBalance(), "Opening balance");
 	}
 	
 	/**
@@ -73,9 +76,9 @@ public class Customer implements Comparable<Customer> {
 		this.loan = createLoanAccount();
 		
 		//Populate transaction list with opening balance for each account
-		this.checking.addTransaction(this.checking.getAccountBalance(), "Beginning balance");
-		this.saving.addTransaction(this.saving.getAccountBalance(), "Beginning balance");
-		this.loan.addTransaction(this.loan.getAccountBalance(), "Beginning balance");
+		this.checking.addTransaction(this.checking.getAccountBalance(), "Opening balance");
+		this.saving.addTransaction(this.saving.getAccountBalance(), "Opening balance");
+		this.loan.addTransaction(this.loan.getAccountBalance(), "Opening balance");
 	}
 
 	//Accessors and mutators

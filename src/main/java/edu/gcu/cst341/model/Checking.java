@@ -44,17 +44,17 @@ public class Checking extends Account {
 		double feeAmount = 0;
 		//WITHDRAWAL: Determine if the account will be overdrawn; if so, alert the user and give choice to exit
 		if(transType == Account.WITHDRAWAL && amount > getAccountBalance()) {
-			System.out.println("An overdraft fee of " 
-				+ Bank.money.format(getOverdraftFee())
-				+ " will be assessed if you continue. Continue Y or N?");
-			//If the user chooses to continue, assess the overdraftFee fee; if not, return to the checking withdrawal screen
-			if(Menus.scan.nextLine().toLowerCase().equals("y")) {
+//			System.out.println("An overdraft fee of " 
+//				+ Bank.money.format(getOverdraftFee())
+//				+ " will be assessed if you continue. Continue Y or N?");
+//			//If the user chooses to continue, assess the overdraftFee fee; if not, return to the checking withdrawal screen
+//			if(Menus.scan.nextLine().toLowerCase().equals("y")) {
 				feeAmount = getOverdraftFee();
 				this.addTransaction(feeAmount, "Overdraft fee");
-			}
-			else {  //the user chose not to continue with the overdraft fee, so ask for a new amount to withdraw
-				doTransaction(Account.WITHDRAWAL, getTransactionValue(Account.AMOUNT_MESSAGE + "withdraw: "));
-			}
+//			}
+//			else {  //the user chose not to continue with the overdraft fee, so ask for a new amount to withdraw
+//				doTransaction(Account.WITHDRAWAL, getTransactionValue(Account.AMOUNT_MESSAGE + "withdraw: "));
+//			}
 		}
 		
 		//Once validated, process the transaction
