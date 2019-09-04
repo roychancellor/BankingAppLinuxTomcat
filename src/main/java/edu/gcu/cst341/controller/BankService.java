@@ -51,11 +51,7 @@ public class BankService {
 	 * @param amount the dollar amount of the transaction
 	 */
 	public int executeTransaction(Customer cust, String accountType, int transType, double amount) {
-//	public int executeTransaction(Customer cust, Account account, int transType, double amount) {
-//	public int executeTransaction(Customer cust, String accountType, int transType, double amount,
-//		boolean specialTrans) {
-		
-		//Get the account based on account type (chk, sav, or loan)
+		//Get the account based on accountType (chk, sav, or loan)
 		Account account = null;
 		switch(accountType) {
 		case "chk":
@@ -69,12 +65,12 @@ public class BankService {
 			break;
 		}
 
-		//Do the transaction and update the dashboard values
+		//Do the transaction
 		DataService ds = new DataService();
 		int numRec = 0;
 		
-		//Transact based on the account type
 		//Update the current Customer model object
+		//Transact based on the account type (Polymorphism)
 		account.doTransaction(transType, amount);
 		System.out.println("\t***executeTransaction: after doTransaction,\n" + account.getClass() + "\nbalance = "
 			+ account.getAccountBalance());
@@ -87,61 +83,6 @@ public class BankService {
 			System.err.println("ERROR!!! Unable to write transaction to DB");
 		}
 
-//		switch(accountType) {
-//			/**** CHECKING ****/	
-//			case "chk":
-//				//Update the current Customer model object
-//				cust.getChecking().doTransaction(transType, amount);
-//				System.out.println("\t***executeTransaction: after doTransaction, checking balance = "
-//					+ cust.getChecking().getAccountBalance());
-//				
-//				//Update the database: account balances
-//				numRec = ds.dbUpdateAccountBalances(cust.getCustId(), cust.getChecking());
-//				//Update the database: transactions
-//				numRec += ds.dbAddTransaction(cust.getCustId(), cust.getChecking().getLastTrans());
-//				
-//				//If an overdraft occurred, write the overdraft transaction
-//				if(specialTrans) {
-//	 				numRec += ds.dbAddTransaction(
-//						cust.getCustId(),
-//						new Transaction(new Date(),
-//						cust.getChecking().getAccountNumber(),
-//						cust.getChecking().getOverdraftFee(),
-//						"Overdraft fee")
-//					);
-//				}
-//
-//				if(numRec == 0) {
-//					System.err.println("ERROR!!! Unable to write transaction to DB");
-//				}
-//				break;
-//				/**** SAVINGS ****/	
-//			case "sav":
-//				//Update the current Customer model object
-//				cust.getSaving().doTransaction(transType, amount);
-//				//Update the database: account balances
-//				numRec = ds.dbUpdateAccountBalances(cust.getCustId(), cust.getSaving());
-//				//Update the database: transactions
-//				numRec += ds.dbAddTransaction(cust.getCustId(), cust.getSaving().getLastTrans());
-//				if(numRec == 0) {
-//					System.err.println("ERROR!!! Unable to write transaction to DB");
-//				}
-//				break;
-//			/**** CASH ADVANCE (LOAN) ****/
-//			case "loan":
-//				//Update the current Customer model object
-//				cust.getLoan().doTransaction(transType, amount);
-//				//Update the database: account balances
-//				numRec = ds.dbUpdateAccountBalances(cust.getCustId(), cust.getLoan());
-//				//Update the database: transactions
-//				numRec += ds.dbAddTransaction(cust.getCustId(), cust.getLoan().getLastTrans());
-//				if(numRec == 0) {
-//					System.err.println("ERROR!!! Unable to write transaction to DB");
-//				}
-//				break;
-//			default:
-//		}
-		
 		ds.close();
 		System.out.println("executeTransaction: SUCCESS, " + numRec + " records written");
 		
@@ -197,8 +138,10 @@ public class BankService {
 					}
 					break;
 				case "loan":
+					//Validate the business rule that cash advances (withdrawals)
+					//must be less that the difference between the maximum balance (principal)
+					//and the outstanding balance
 					if(amount <= Math.abs(cust.getLoan().getPrincipal()) - Math.abs(cust.getLoan().getAccountBalance())) {
-						//business rule: do not let customer the a cash advance greater than the principal
 						validAmount = true;
 					}
 					break;
@@ -211,4 +154,21 @@ public class BankService {
 		return validAmount;
 	}
 	
+	/**
+	 * Validates the business rule that cash advance payments (deposits)
+	 * must be less than the outstanding balance
+	 * @param cust the current Customer
+	 * @param amount the requested amount of payment to the cash advance
+	 * @return true if the rule is satisfied, false otherwise
+	 */
+	public boolean validateCashAdvancePayment(Customer cust, double amount) {
+		boolean validAmount = false;
+		
+		//Validate the business rule that cash advance payments (deposits)
+		//must be less than the outstanding balance
+		if(amount < Math.abs(cust.getLoan().getAccountBalance())) {
+			validAmount = true;
+		}
+		return validAmount;
+	}
 }

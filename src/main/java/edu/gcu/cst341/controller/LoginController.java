@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.SessionAttributes;
 
 import edu.gcu.cst341.model.Account;
 import edu.gcu.cst341.model.AmountForm;
+import edu.gcu.cst341.model.Checking;
 import edu.gcu.cst341.model.Customer;
 import edu.gcu.cst341.model.Transaction;
 
@@ -105,6 +106,7 @@ public class LoginController {
 	}
 	
 	//TODO: Wire in Spring Security for validating credentials
+	
 	@RequestMapping(value = "/login", method = RequestMethod.POST)
 	public String processLoginScreen(
 		@ModelAttribute("customer") Customer customer,
@@ -219,21 +221,6 @@ public class LoginController {
 			jspToAccess = "dashboard";
 			
 			//Do the deposit and update the dashboard values
-//			BankService.executeTransaction(customer, accountType, Account.DEPOSIT, amount.getAmount(), false);
-			//Customer cust, Account account, int transType, double amount
-//			Account account = null;
-//			switch(accountType) {
-//			case "chk":
-//				account = customer.getChecking();
-//				break;
-//			case "sav":
-//				account = customer.getSaving();
-//				break;
-//			case "loan":
-//				account = customer.getLoan();
-//				break;
-//			}
-//			BankService.executeTransaction(customer, account, Account.DEPOSIT, amount.getAmount());
 			BankService.executeTransaction(customer, accountType, Account.DEPOSIT, amount.getAmount());
 			
 			//Update all dashboard parameters
@@ -294,21 +281,6 @@ public class LoginController {
 			
 			if(validAmount) {
 				//Do the withdrawal and update the dashboard values
-//				BankService.executeTransaction(customer, accountType, Account.WITHDRAWAL, amountForm.getAmount(),
-//					false);
-//				Account account = null;
-//				switch(accountType) {
-//				case "chk":
-//					account = customer.getChecking();
-//					break;
-//				case "sav":
-//					account = customer.getSaving();
-//					break;
-//				case "loan":
-//					account = customer.getLoan();
-//					break;
-//				}
-//				BankService.executeTransaction(customer, account, Account.WITHDRAWAL, amount.getAmount());
 				BankService.executeTransaction(customer, accountType, Account.WITHDRAWAL, amount.getAmount());
 
 				System.out.println("\nwithdraw-bank POST: after transaction, balances are:\n"
@@ -320,15 +292,26 @@ public class LoginController {
 				updateDashboardModel(customer, map);
 			}
 			else {
+				if(accountType.equals("chk")) {
+					populateWithdrawalErrorModel(customer.getChecking(), amount.getAmount(), map);
+					jspToAccess = "withdraw-bank-error-checking";
+				}
+				else if(accountType.equals("sav")) {
+					populateWithdrawalErrorModel(customer.getSaving(), amount.getAmount(), map);
+					jspToAccess = "withdraw-bank-error-saving";
+				}
+				else if(accountType.equals("loan")) {
+					populateWithdrawalErrorModel(customer.getLoan(), amount.getAmount(), map);
+					jspToAccess = "withdraw-bank-error-loan";
+				}
 				//Populate the information needed for the error page
-				map.addAttribute("reqamount", amount.getAmount());
-				map.addAttribute("balance", customer.getChecking().getAccountBalance());
-				map.addAttribute("overdraft", customer.getChecking().getOverdraftFee());
+//				map.addAttribute("reqamount", amount.getAmount());
+//				map.addAttribute("balance", customer.getChecking().getAccountBalance());
+//				map.addAttribute("overdraft", customer.getChecking().getOverdraftFee());
 				
 				//Show error page and proceed based on user selection
-				System.out.println("/withdraw-bank POST: About to leave to checking-withdraw-error.jsp\n"
+				System.out.println("/withdraw-bank POST: About to leave to " + jspToAccess + "\n"
 					+ "amount = " + amount.getAmount());
-				jspToAccess = "checking-withdraw-error";
 			}
 		}
 		else {
@@ -338,7 +321,25 @@ public class LoginController {
 		return jspToAccess;
 	}
 
-	@RequestMapping(value = "/withdraw-overdraft-bank", method = RequestMethod.POST)
+	/**
+	 * Helper method that populates the parameters necessary for showing a withdrawal
+	 * error page for any of the three account types
+	 * @param account the account class with the error (Checking, Saving, Loan)
+	 * @param amount the requested withdrawal amount
+	 * @param map the ModelMap for the current session
+	 */
+	private void populateWithdrawalErrorModel(Account account, double amount, ModelMap map) {
+		//Requested withdrawal amount
+		map.addAttribute("reqamount", amount);
+		map.addAttribute("balance", account.getAccountBalance());
+		
+		//Other model parameters based on account type
+		if(account instanceof Checking) {
+			map.addAttribute("overdraft", ((Checking)account).getOverdraftFee());
+		}
+	}
+	
+	@RequestMapping(value = "/withdraw-bank-error-checking", method = RequestMethod.POST)
 	public String processWithdrawalCheckingOverdraft(
 		@ModelAttribute("customer") Customer customer,
 		@Valid @ModelAttribute("amount") AmountForm amountForm,
@@ -351,9 +352,6 @@ public class LoginController {
 		System.out.println("\n/withdraw-overdraft-bank: amount = " + amountForm.getAmount());
 		
 		//Update balance in Checking object and write transactions in database
-//		BankService.executeTransaction(customer, "chk", Account.WITHDRAWAL, amountForm.getAmount(),
-//			true);
-//		BankService.executeTransaction(customer, customer.getChecking(), Account.WITHDRAWAL, amountForm.getAmount());
 		BankService.executeTransaction(customer, "chk", Account.WITHDRAWAL, amountForm.getAmount());
 		BankService.executeCheckingOverdraft(customer);
 

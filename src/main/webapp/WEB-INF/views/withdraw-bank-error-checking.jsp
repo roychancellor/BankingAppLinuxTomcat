@@ -1,6 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
 <%@ taglib prefix="overdraftform" uri="http://www.springframework.org/tags/form"%>
+<%@ taglib prefix="money" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -18,7 +19,7 @@
 		<%@ include file="common/header-common.jspf" %>
 		<section>
 			<h1>Checking OVERDRAFT Notice</h1>
-			<overdraftform:form action="/withdraw-overdraft-bank?amount=${reqamount}" method="POST">
+			<overdraftform:form action="/withdraw-bank-error-checking?amount=${reqamount}" method="POST">
 <%-- 				<p>Select Account:<br />
 					<input type="radio" name="account" value="chk" checked> Checking (${acctchk})<br />
 					<input type="radio" name="account" value="sav"> Saving (${acctsav})<br />
@@ -30,8 +31,12 @@
 				<overdraftform:errors path="amount" cssClass="error" /></p>				
 				<p class="error">${errormessage}</p>
  --%>			<p>
- 					A withdrawal of ${reqamount} exceeds your available checking balance of ${balance}.<br>
- 					If you proceed, your account will receive an overdraft charge of ${overdraft}.<br>
+ 					A withdrawal of
+ 					<money:formatNumber value="${reqamount}" type="currency" pattern="$#,##0.00;($#,##0.00)" minFractionDigits="2"/>
+ 					exceeds your available checking balance of
+ 					<money:formatNumber value="${balance}" type="currency" pattern="$#,##0.00;($#,##0.00)" minFractionDigits="2"/>.<br>
+ 					If you proceed, your account will receive an overdraft charge of
+ 					<money:formatNumber value="${overdraft}" type="currency" pattern="$#,##0.00;($#,##0.00)" minFractionDigits="2"/>.<br>
  					Click <strong>Proceed</strong> to proceed with the withdrawal and receive the charge.<br>
  					Click <strong>Cancel</strong> to cancel the transaction and return to the withdrawal page.<br>
 					<input class="btn btn-success" type="submit" name="reqamount" value="Proceed">
