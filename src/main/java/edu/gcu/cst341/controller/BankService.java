@@ -54,21 +54,22 @@ public class BankService {
 		//Do the transaction and update the dashboard values
 		DataService ds = new DataService();
 		int numRec = 0;
+		
+		//Transact based on the account type
 		switch(accountType) {
+			/**** CHECKING ****/	
 			case "chk":
 				//Update the current Customer model object
 				cust.getChecking().doTransaction(transType, amount);
 				System.out.println("\t***executeTransaction: after doTransaction, checking balance = "
 					+ cust.getChecking().getAccountBalance());
 				
-				//Write to the database
-				//Update balance...
+				//Update the database: account balances
 				numRec = ds.dbUpdateAccountBalances(cust.getCustId(), cust.getChecking());
-				//Write the transaction...
+				//Update the database: transactions
 				numRec += ds.dbAddTransaction(cust.getCustId(), cust.getChecking().getLastTrans());
 				
 				//If an overdraft occurred, write the overdraft transaction
-				//Date transactionDate, String accountNumber, double amount, String transactionType
 				if(specialTrans) {
 	 				numRec += ds.dbAddTransaction(
 						cust.getCustId(),
@@ -83,23 +84,25 @@ public class BankService {
 					System.err.println("ERROR!!! Unable to write transaction to DB");
 				}
 				break;
+				/**** SAVINGS ****/	
 			case "sav":
 				//Update the current Customer model object
 				cust.getSaving().doTransaction(transType, amount);
-				//Write to the database
+				//Update the database: account balances
 				numRec = ds.dbUpdateAccountBalances(cust.getCustId(), cust.getSaving());
-				//Write the transaction...
+				//Update the database: transactions
 				numRec += ds.dbAddTransaction(cust.getCustId(), cust.getSaving().getLastTrans());
 				if(numRec == 0) {
 					System.err.println("ERROR!!! Unable to write transaction to DB");
 				}
 				break;
+			/**** CASH ADVANCE (LOAN) ****/
 			case "loan":
 				//Update the current Customer model object
 				cust.getLoan().doTransaction(transType, amount);
-				//Write to the database
+				//Update the database: account balances
 				numRec = ds.dbUpdateAccountBalances(cust.getCustId(), cust.getLoan());
-				//Write the transaction...
+				//Update the database: transactions
 				numRec += ds.dbAddTransaction(cust.getCustId(), cust.getLoan().getLastTrans());
 				if(numRec == 0) {
 					System.err.println("ERROR!!! Unable to write transaction to DB");
@@ -107,6 +110,7 @@ public class BankService {
 				break;
 			default:
 		}
+		
 		ds.close();
 		System.out.println("executeTransaction: SUCCESS, " + numRec + " records written");
 	}

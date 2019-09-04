@@ -19,12 +19,12 @@ header {
 	padding-bottom:20px;
 }
 header h2 {
-	color:#00f;
+	color:#fff;
 	font-size:3.0em;
 	padding:10px;
-	background:#fff;
-	border:3px solid #00f;
-	width:25%;
+	background:#00f;
+	border:3px solid #fff;
+	width:35%;
 	margin:auto;
 	text-align:center;
 }
