@@ -18,7 +18,7 @@
 		<%@ include file="common/header-common.jspf" %>
 		<section>
 			<h1>Checking OVERDRAFT Notice</h1>
-			<overdraftform:form modelAttribute="amount" action="/withdraw-overdraft-bank" method="POST">
+			<overdraftform:form action="/withdraw-overdraft-bank?amount=${reqamount}" method="POST">
 <%-- 				<p>Select Account:<br />
 					<input type="radio" name="account" value="chk" checked> Checking (${acctchk})<br />
 					<input type="radio" name="account" value="sav"> Saving (${acctsav})<br />
@@ -30,11 +30,11 @@
 				<overdraftform:errors path="amount" cssClass="error" /></p>				
 				<p class="error">${errormessage}</p>
  --%>			<p>
- 					A withdrawal of ${amount} exceeds your available checking balance of ${balance}.<br>
+ 					A withdrawal of ${reqamount} exceeds your available checking balance of ${balance}.<br>
  					If you proceed, your account will receive an overdraft charge of ${overdraft}.<br>
  					Click <strong>Proceed</strong> to proceed with the withdrawal and receive the charge.<br>
  					Click <strong>Cancel</strong> to cancel the transaction and return to the withdrawal page.<br>
-					<input class="btn btn-success" type="submit" name="choice" value="Proceed"><br>
+					<input class="btn btn-success" type="submit" name="reqamount" value="Proceed">
 					<a class="btn btn-primary" href="/withdraw-bank">Cancel</a>
 				</p>
 			</overdraftform:form>

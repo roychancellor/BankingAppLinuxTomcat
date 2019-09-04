@@ -68,14 +68,6 @@ public class LoginController {
 		
 		//Write the new customer object to the database
 		int custId = CustomerService.createNewCustomer(customer);
-//		DataService ds = new DataService();
-//		int custId = ds.dbCreateCustomer(customer.getLastName(),
-//			customer.getFirstName(),
-//			customer.getEmailAddress(),
-//			customer.getPhoneNumber(),
-//			customer.getUsername(),
-//			"salt",
-//			customer.getPassword());
 		
 		DataService ds = new DataService();
 		if(custId > 0) {
@@ -336,11 +328,15 @@ public class LoginController {
 			}
 			else {
 				//Populate the information needed for the error page
-				map.addAttribute("amount", amountForm.getAmount());
+				map.addAttribute("reqamount", amountForm.getAmount());
 				map.addAttribute("balance", customer.getChecking().getAccountBalance());
 				map.addAttribute("overdraft", customer.getChecking().getOverdraftFee());
 				
 				//Show error page and proceed based on user selection
+				System.out.println("/withdraw-bank POST: About to leave to checking-withdraw-error.jsp\n"
+					+ "amount = " + amountForm.getAmount());
+				map.addAttribute("amount", amountForm);
+				System.out.println("Right before leaving withdraw-bank POST, amount = " + map.get("amount"));
 				jspToAccess = "checking-withdraw-error";
 			}
 		}
@@ -361,6 +357,7 @@ public class LoginController {
 		
 		System.out.println("\n/withdraw-overdraft-bank: CHOICE = PROCEED");
 		System.out.println("\n/withdraw-overdraft-bank: customer = " + customer.toString());
+		System.out.println("\n/withdraw-overdraft-bank: amount = " + amountForm.getAmount());
 		
 		//Call the Checking doTransaction method to perform the transaction in the Checking object
 		customer.getChecking().doTransaction(Account.WITHDRAWAL, amountForm.getAmount());
