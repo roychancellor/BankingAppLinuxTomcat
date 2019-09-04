@@ -107,33 +107,46 @@ public class Loan extends Account {
 	 * @param amount the amount of loan payment
 	 */
 	public void doTransaction(final int transType, double amount) {
-		//WITHDRAWAL: Determine if the account will be overdrawn; if so, alert the user and try again
-		while(transType == Account.DEPOSIT && amount > Math.abs(getAccountBalance())) {
-			System.out.println(
-				"\n\t"
-				+ amount
-				+ " is greater than your outstanding balance of "
-				+ Bank.money.format(getAccountBalance())
-				+ ". Enter a new value or 0 to void transaction.\n"
-			);			
-			amount = getTransactionValue(Account.AMOUNT_MESSAGE + "pay: ");
+		//DEPOSITS are payments TO the loan balance, so only allow a deposit when there is a balance
+		if(transType == Account.DEPOSIT && amount > Math.abs(getAccountBalance())) {
+			System.out.println("\nLOAN DEPOSIT: Paying more than outstanding balance");
+//			System.out.println(
+//				"\n\t"
+//				+ amount
+//				+ " is greater than your outstanding balance of "
+//				+ Bank.money.format(getAccountBalance())
+//				+ ". Enter a new value or 0 to void transaction.\n"
+//			);			
+//			amount = getTransactionValue(Account.AMOUNT_MESSAGE + "pay: ");
+		}
+		//WITHDRAWALS are cash advances FROM the loan balance, so only allow a withdrawal
+		//up to the difference between the current balance and the available credit (principal)
+		if(transType == Account.WITHDRAWAL
+			&& amount > (Math.abs(this.principal) - Math.abs(getAccountBalance()))) {
+			System.out.println("\nLOAN WITHDRAWAL: Taking more than available");
 		}
 		//Process the transaction
+		String transMessage = "Loan payment";
+		if(transType == Account.WITHDRAWAL) {
+			//Withdrawals are negative, so change the sign of the amount
+			amount *= -1;
+			transMessage = "Cash advance";
+		}
 		setAccountBalance(getAccountBalance() + amount);
 		setAmountPaidThisMonth(getAmountPaidThisMonth() + amount);
 		//Record the transaction
-		this.addTransaction(amount, "Loan payment");
+		this.addTransaction(amount, transMessage);
 	}
 
-	/**
-	 * Overloads doTransaction to receive only the amount because the only allowable loan transactions are deposits
-	 * @param amount dollar amount of payment on the loan
-	 */
-	public void doTransaction(double amount) {
-			//Loan balances are negative amounts, so ADD the loan payment to make it less negative
-			this.doTransaction(Account.DEPOSIT, amount);
-	}
-
+//	/**
+//	 * Overloads doTransaction to receive only the amount because the only allowable loan transactions are deposits
+//	 * @param amount dollar amount of payment on the loan
+//	 */
+//	public void doTransaction(double amount) {
+//			//Loan balances are negative amounts, so ADD the loan payment to make it less negative
+//			this.doTransaction(Account.DEPOSIT, amount);
+//	}
+//
 	/**
 	 * Computes the monthly payment of a loan based on principal, term, and annual interest rate
 	 * @return the monthly payment amount for compounded interest
