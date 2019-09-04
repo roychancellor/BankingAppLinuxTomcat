@@ -310,6 +310,7 @@ public class LoginController {
 		//Verify there is a logged-in customer
 		if(customer.getCustId() != 0) {
 			jspToAccess = "dashboard";
+			System.out.println("\n/withdraw-bank: Before executing the transaction, amount = " + amountForm.getAmount());
 			
 			//Check for a valid withdrawal amount before executing the transaction
 			boolean validAmount = BankService.validateWithdrawal(customer, accountType, amountForm.getAmount());
@@ -318,6 +319,11 @@ public class LoginController {
 				//Do the withdrawal and update the dashboard values
 				BankService.executeTransaction(customer, accountType, Account.WITHDRAWAL, amountForm.getAmount(),
 					false);
+				
+				System.out.println("\nwithdraw-bank POST: after transaction, balances are:\n"
+					+ "checking:" + customer.getChecking().getAccountBalance()
+					+ "saving:" + customer.getSaving().getAccountBalance()
+					+ "loan:" + customer.getLoan().getAccountBalance());
 
 				//Update the dashboard information
 				map.put("fullname", customer.getFirstName() + " " + customer.getLastName());
@@ -335,8 +341,8 @@ public class LoginController {
 				//Show error page and proceed based on user selection
 				System.out.println("/withdraw-bank POST: About to leave to checking-withdraw-error.jsp\n"
 					+ "amount = " + amountForm.getAmount());
-				map.addAttribute("amount", amountForm);
-				System.out.println("Right before leaving withdraw-bank POST, amount = " + map.get("amount"));
+//				map.addAttribute("amount", amountForm);
+//				System.out.println("Right before leaving withdraw-bank POST, amount = " + map.get("amount"));
 				jspToAccess = "checking-withdraw-error";
 			}
 		}
@@ -359,12 +365,14 @@ public class LoginController {
 		System.out.println("\n/withdraw-overdraft-bank: customer = " + customer.toString());
 		System.out.println("\n/withdraw-overdraft-bank: amount = " + amountForm.getAmount());
 		
-		//Call the Checking doTransaction method to perform the transaction in the Checking object
-		customer.getChecking().doTransaction(Account.WITHDRAWAL, amountForm.getAmount());
-		
-		//Update balance and write transaction in database
+		//Update balance in Checking object and write transactions in database
 		BankService.executeTransaction(customer, "chk", Account.WITHDRAWAL, amountForm.getAmount(),
 			true);
+
+		System.out.println("\nwithdraw-overdraft-bank POST: after transaction, balances are:\n"
+			+ "checking:" + customer.getChecking().getAccountBalance()
+			+ "saving:" + customer.getSaving().getAccountBalance()
+			+ "loan:" + customer.getLoan().getAccountBalance());
 
 		//Update the model map for a return to the dashboard
 		map.put("fullname", customer.getFirstName() + " " + customer.getLastName());

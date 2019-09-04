@@ -41,10 +41,13 @@ public class BankService {
 			case "chk":
 				//Update the current Customer model object
 				cust.getChecking().doTransaction(transType, amount);
+				System.out.println("\t***executeTransaction: after doTransaction, checking balance = "
+					+ cust.getChecking().getAccountBalance());
+				
 				//Write to the database
 				//Update balance...
 				numRec = ds.dbUpdateAccountBalances(cust.getCustId(), cust.getChecking());
-				//Write the transaction
+				//Write the transaction...
 				numRec += ds.dbAddTransaction(cust.getCustId(), cust.getChecking().getLastTrans());
 				
 				//If an overdraft occurred, write the overdraft transaction

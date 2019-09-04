@@ -39,7 +39,7 @@ public class Checking extends Account {
 	 */
 	public void doTransaction(int transType, double amount) {
 		double feeAmount = 0;
-		
+		System.out.println("\t\t***doTransaction BEFORE setAccountBalance: " + getAccountBalance());
 		//WITHDRAWAL: If the amount is more than the balance, add the overdraft fee
 		//The customer will have been advised on the front end
 		if(transType == Account.WITHDRAWAL && amount > getAccountBalance()) {
@@ -49,6 +49,7 @@ public class Checking extends Account {
 		
 		//Once validated, process the transaction
 		setAccountBalance(getAccountBalance() + transType * (amount + feeAmount));
+		System.out.println("\t\t***doTransaction AFTER setAccountBalance: " + getAccountBalance());
 		
 		//Record the transaction
 		if(transType == Account.WITHDRAWAL) {
