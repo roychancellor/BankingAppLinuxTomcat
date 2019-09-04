@@ -250,7 +250,7 @@ public class LoginController {
 			jspToAccess = "dashboard";
 			
 			//Do the deposit and update the dashboard values
-			BankService.executeTransaction(customer, accountType, Account.DEPOSIT, amount.getAmount());
+			BankService.executeTransaction(customer, accountType, Account.DEPOSIT, amount.getAmount(), false);
 			
 			//Populate the dashboard with updated information
 			map.put("fullname", customer.getFirstName() + " " + customer.getLastName());
@@ -324,7 +324,8 @@ public class LoginController {
 			
 			if(validAmount) {
 				//Do the withdrawal and update the dashboard values
-				BankService.executeTransaction(customer, accountType, Account.WITHDRAWAL, amountForm.getAmount());
+				BankService.executeTransaction(customer, accountType, Account.WITHDRAWAL, amountForm.getAmount(),
+					false);
 
 				//Update the dashboard information
 				map.put("fullname", customer.getFirstName() + " " + customer.getLastName());
@@ -348,8 +349,36 @@ public class LoginController {
 		}
 		
 		return jspToAccess;
-	}	
+	}
 
+	@RequestMapping(value = "/withdraw-overdraft-bank", method = RequestMethod.POST)
+	public String processWithdrawalCheckingOverdraft(
+		@ModelAttribute("customer") Customer customer,
+		@Valid @ModelAttribute("amount") AmountForm amountForm,
+		ModelMap map) {
+		
+		String jspToAccess = "dashboard";
+		
+		System.out.println("\n/withdraw-overdraft-bank: CHOICE = PROCEED");
+		System.out.println("\n/withdraw-overdraft-bank: customer = " + customer.toString());
+		
+		//Call the Checking doTransaction method to perform the transaction in the Checking object
+		customer.getChecking().doTransaction(Account.WITHDRAWAL, amountForm.getAmount());
+		
+		//Update balance and write transaction in database
+		BankService.executeTransaction(customer, "chk", Account.WITHDRAWAL, amountForm.getAmount(),
+			true);
+
+		//Update the model map for a return to the dashboard
+		map.put("fullname", customer.getFirstName() + " " + customer.getLastName());
+		map.put("chkbal", customer.getChecking().getAccountBalance());
+		map.put("savbal", customer.getSaving().getAccountBalance());
+		map.put("loanbal", customer.getLoan().getAccountBalance());
+		
+		//Return to the dashboard
+		return jspToAccess;
+	}
+	
 	@RequestMapping(value = "/transfer-bank", method = RequestMethod.GET)
 	public String showTransferScreen(@ModelAttribute("customer") Customer customer, ModelMap map) {
 		String jspToAccess = "transfer-bank";

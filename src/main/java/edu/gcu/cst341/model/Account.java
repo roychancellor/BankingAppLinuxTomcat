@@ -120,6 +120,7 @@ public abstract class Account implements iActions, iTrans {
 
 	/**
 	 * Implements the iTrans interface: addTransaction method
+	 * Adds a transaction to the list of transactions and sets the lastTrans field
 	 * @param amount is the dollar amount of the transaction
 	 * @param transType is a description of the type of transaction
 	 */

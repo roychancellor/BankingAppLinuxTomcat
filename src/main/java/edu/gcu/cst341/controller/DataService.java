@@ -238,29 +238,6 @@ public class DataService {
 			else {
 				System.out.println("\nERROR: No key found!!!");
 			}
-			
-			//WRITE TO CREDENTIALS TABLE
-//			if(customerId > 0) {
-//				//Prepare the SQL statement
-//				sql = conn.prepareStatement(DbConstants.CREATE_CREDENTIALS);
-//				if(verboseSQL) printSQL();
-//	
-//				//Populate statement parameters
-//				sql.setInt(1, customerId);
-//				sql.setString(2, username);
-//				sql.setString(3, passSalt);
-//				sql.setString(4, passHash);
-//				
-//				//Execute SQL statement
-//				numRec = sql.executeUpdate();
-//				
-//				if(verboseSQL) System.out.println("...Success, " + numRec + " record(s) inserted into credentials table.");
-//				return customerId;
-//			}
-//			else {
-//				if(verboseSQL) System.out.println("\nNO CREDENTIALS WRITTEN");
-//				return -1;
-//			}
 		}
 		catch(SQLException e) {
 			printMethod(new Throwable().getStackTrace()[0].getMethodName());
@@ -460,38 +437,26 @@ public class DataService {
 	 * @param <E> an Account object (Checking, Saving, or Loan)
 	 * @param customerId The customerId being updated
 	 * @param account The Account object being updated (Checking, Saving, Loan)
-	 * @return true if successful SQL; false if the SQL failed
+	 * @return number of records inserted (1 if successful, 0 if not)
 	 */
-	public <E> boolean dbUpdateBalanceAndTransaction(int customerId, E account) {
-		boolean result = true;
+	public <E> int dbUpdateAccountBalances(int customerId, E account) {
+		int numRec = 0;
 		String accountField = null;
-		String accountNumber = null;
 		double accountBalance = 0;
-		double transAmount = 0;
-		String transDescription = null;
 		try {
 			//WRITE TO CUSTOMER_ACCOUNTS TABLE
 			//Populate statement parameters
 			if(account instanceof Checking) {
 				accountField = "checkingBalance";
 				accountBalance = ((Checking) account).getAccountBalance();
-				accountNumber = ((Checking) account).getAccountNumber();
-				transAmount = ((Checking) account).getLastTrans().getAmount();
-				transDescription = ((Checking) account).getLastTrans().getTransactionType();
 			}
 			else if(account instanceof Saving) {
 				accountField = "savingBalance";
 				accountBalance = ((Saving) account).getAccountBalance();
-				accountNumber = ((Saving) account).getAccountNumber();
-				transAmount = ((Saving) account).getLastTrans().getAmount();
-				transDescription = ((Saving) account).getLastTrans().getTransactionType();
 			}
 			else if(account instanceof Loan) {
 				accountField = "loanBalance";
 				accountBalance = ((Loan) account).getAccountBalance();
-				accountNumber = ((Loan) account).getAccountNumber();
-				transAmount = ((Loan) account).getLastTrans().getAmount();
-				transDescription = ((Loan) account).getLastTrans().getTransactionType();
 			}
 			
 			//Prepare the SQL statement to UPDATE an account balance by customer id
@@ -506,40 +471,73 @@ public class DataService {
 			if(verboseSQL) printSQL();
 			
 			//Execute SQL statement
-			int numRec = sql.executeUpdate();
+			numRec = sql.executeUpdate();
 			
 			if(verboseSQL) System.out.println("...Success, " + numRec
 				+ " record(s) inserted into customer_accounts table.");
 			
-			//WRITE TO CUSTOMER_TRANSACTIONS TABLE
-			if(numRec > 0) {
-				//Prepare the SQL statement
-				sql = conn.prepareStatement(DbConstants.UPDATE_TRANSACTION);
-	
-				//Populate statement parameters
-				sql.setInt(1, customerId);
-				sql.setString(2, accountNumber);
-				sql.setDouble(3, transAmount);
-				sql.setString(4, transDescription);
-				
-				//Execute SQL statement
-				if(verboseSQL) printSQL();
-				numRec = sql.executeUpdate();
-				
-				if(verboseSQL) System.out.println("...Success, " + numRec
-					+ " record(s) inserted into customer_transactions table.");
-			}
-			else {
-				if(verboseSQL) System.out.println("\nNO DATA WRITTEN");
-			}
+//			//WRITE TO CUSTOMER_TRANSACTIONS TABLE
+//			if(numRec > 0) {
+//				//Prepare the SQL statement
+//				sql = conn.prepareStatement(DbConstants.UPDATE_TRANSACTION);
+//	
+//				//Populate statement parameters
+//				sql.setInt(1, customerId);
+//				sql.setString(2, accountNumber);
+//				sql.setDouble(3, transAmount);
+//				sql.setString(4, transDescription);
+//				
+//				//Execute SQL statement
+//				if(verboseSQL) printSQL();
+//				numRec = sql.executeUpdate();
+//				
+//				if(verboseSQL) System.out.println("...Success, " + numRec
+//					+ " record(s) inserted into customer_transactions table.");
+//			}
+//			else {
+//				if(verboseSQL) System.out.println("\nNO DATA WRITTEN");
+//			}
 		}
 		catch(SQLException e) {
 			printMethod(new Throwable().getStackTrace()[0].getMethodName());
 			e.printStackTrace();
-			result = false;
 		}
 		
-		return result;
+		return numRec;
+	}
+	
+	/**
+	 * Adds a single transaction to the customer_transactions table
+	 * @param customerId the customerId of the current customer
+	 * @param trans a Transaction object for the transaction to be written
+	 * @return the number of records written 91 if successful, 0 if not)
+	 */
+	public int dbAddTransaction(int customerId, Transaction trans) {
+		int numRec = 0;
+		try {
+			//WRITE TO CUSTOMER_TRANSACTIONS TABLE
+			//Prepare the SQL statement
+			sql = conn.prepareStatement(DbConstants.UPDATE_TRANSACTION);
+
+			//Populate statement parameters
+			sql.setInt(1, customerId);
+			sql.setString(2, trans.getAccountNumber());
+			sql.setDouble(3, trans.getAmount());
+			sql.setString(4, trans.getTransactionType());
+			
+			//Execute SQL statement
+			if(verboseSQL) printSQL();
+			numRec = sql.executeUpdate();
+			
+			if(verboseSQL) System.out.println("...Success, " + numRec
+				+ " record(s) inserted into customer_transactions table.");
+		}
+		catch(SQLException e) {
+			printMethod(new Throwable().getStackTrace()[0].getMethodName());
+			e.printStackTrace();
+		}
+		
+		return numRec;
 	}
 	
 	public List<Transaction> dbRetrieveTransactionsById(int custId) {

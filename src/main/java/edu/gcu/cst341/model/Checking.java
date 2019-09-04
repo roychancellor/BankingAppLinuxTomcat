@@ -1,8 +1,5 @@
 package edu.gcu.cst341.model;
 
-import edu.gcu.cst341.controller.Bank;
-import edu.gcu.cst341.view.Menus;
-
 /**
  * Child class of Account that creates Checking account objects
  */
@@ -42,23 +39,17 @@ public class Checking extends Account {
 	 */
 	public void doTransaction(int transType, double amount) {
 		double feeAmount = 0;
-		//WITHDRAWAL: Determine if the account will be overdrawn; if so, alert the user and give choice to exit
+		
+		//WITHDRAWAL: If the amount is more than the balance, add the overdraft fee
+		//The customer will have been advised on the front end
 		if(transType == Account.WITHDRAWAL && amount > getAccountBalance()) {
-//			System.out.println("An overdraft fee of " 
-//				+ Bank.money.format(getOverdraftFee())
-//				+ " will be assessed if you continue. Continue Y or N?");
-//			//If the user chooses to continue, assess the overdraftFee fee; if not, return to the checking withdrawal screen
-//			if(Menus.scan.nextLine().toLowerCase().equals("y")) {
-				feeAmount = getOverdraftFee();
-				this.addTransaction(feeAmount, "Overdraft fee");
-//			}
-//			else {  //the user chose not to continue with the overdraft fee, so ask for a new amount to withdraw
-//				doTransaction(Account.WITHDRAWAL, getTransactionValue(Account.AMOUNT_MESSAGE + "withdraw: "));
-//			}
+			feeAmount = getOverdraftFee();
+			this.addTransaction(feeAmount, "Overdraft fee");
 		}
 		
 		//Once validated, process the transaction
 		setAccountBalance(getAccountBalance() + transType * (amount + feeAmount));
+		
 		//Record the transaction
 		if(transType == Account.WITHDRAWAL) {
 			this.addTransaction(-amount, "Withdrawal");

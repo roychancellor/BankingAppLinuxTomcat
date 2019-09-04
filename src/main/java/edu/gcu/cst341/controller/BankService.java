@@ -1,10 +1,12 @@
 package edu.gcu.cst341.controller;
 
 import java.text.DecimalFormat;
+import java.util.Date;
 
 import org.springframework.stereotype.Service;
 
 import edu.gcu.cst341.model.Customer;
+import edu.gcu.cst341.model.Transaction;
 
 /**
  * BankService provides methods and business logic for transactions
@@ -25,47 +27,64 @@ public class BankService {
 	/**
 	 * Executes a deposit or withdrawal from any of the three account types
 	 * (Checking, Saving, or Loan)
-	 * @param customer the current Customer object
+	 * @param cust the current Customer object
 	 * @param accountType the type of account for the transaction ("chk, "sav", or "loan")
 	 * @param transType the type of transaction (+1 = deposit, -1 = withdrawal, 0 = transfer)
 	 * @param amount the dollar amount of the transaction
 	 */
-	public void executeTransaction(Customer customer, String accountType, int transType, double amount) {
+	public void executeTransaction(Customer cust, String accountType, int transType, double amount,
+		boolean specialTrans) {
 		//Do the transaction and update the dashboard values
 		DataService ds = new DataService();
-		boolean dbSuccess = false;
+		int numRec = 0;
 		switch(accountType) {
 			case "chk":
 				//Update the current Customer model object
-				customer.getChecking().doTransaction(transType, amount);
+				cust.getChecking().doTransaction(transType, amount);
 				//Write to the database
-				dbSuccess = ds.dbUpdateBalanceAndTransaction(customer.getCustId(), customer.getChecking());
-				if(!dbSuccess) {
+				//Update balance...
+				numRec = ds.dbUpdateAccountBalances(cust.getCustId(), cust.getChecking());
+				//Write the transaction
+				numRec += ds.dbAddTransaction(cust.getCustId(), cust.getChecking().getLastTrans());
+				
+				//If an overdraft occurred, write the overdraft transaction
+				//Date transactionDate, String accountNumber, double amount, String transactionType
+				if(specialTrans) {
+	 				numRec += ds.dbAddTransaction(
+						cust.getCustId(),
+						new Transaction(new Date(),
+						cust.getChecking().getAccountNumber(),
+						cust.getChecking().getOverdraftFee(),
+						"Overdraft fee")
+					);
+				}
+
+				if(numRec == 0) {
 					System.err.println("ERROR!!! Unable to write transaction to DB");
 				}
 				break;
 			case "sav":
 				//Update the current Customer model object
-				customer.getSaving().doTransaction(transType, amount);
+				cust.getSaving().doTransaction(transType, amount);
 				//Write to the database
-				dbSuccess = ds.dbUpdateBalanceAndTransaction(customer.getCustId(), customer.getSaving());
-				if(!dbSuccess) {
+				numRec = ds.dbUpdateAccountBalances(cust.getCustId(), cust.getSaving());
+				if(numRec == 0) {
 					System.err.println("ERROR!!! Unable to write transaction to DB");
 				}
 				break;
 			case "loan":
 				//Update the current Customer model object
-				customer.getLoan().doTransaction(transType, amount);
+				cust.getLoan().doTransaction(transType, amount);
 				//Write to the database
-				dbSuccess = ds.dbUpdateBalanceAndTransaction(customer.getCustId(), customer.getLoan());
-				if(!dbSuccess) {
+				numRec = ds.dbUpdateAccountBalances(cust.getCustId(), cust.getLoan());
+				if(numRec == 0) {
 					System.err.println("ERROR!!! Unable to write transaction to DB");
 				}
 				break;
 			default:
 		}
 		ds.close();
-		System.out.println("executeTransaction: the database result is " + dbSuccess);
+		System.out.println("executeTransaction: SUCCESS, " + numRec + " records written");
 	}
 	
 	/**
