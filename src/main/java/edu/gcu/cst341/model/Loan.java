@@ -1,6 +1,6 @@
 package edu.gcu.cst341.model;
 
-import edu.gcu.cst341.controller.Bank;
+//import edu.gcu.cst341.controller.Bank;
 import edu.gcu.cst341.view.Menus;
 
 /**
@@ -170,14 +170,14 @@ public class Loan extends Account {
 		if (getAccountBalance() < 0) {
 			//Interest
 			double eomAdder = doEndOfMonthInterest();
-			System.out.println("* Loan interest charged: " + Bank.money.format(Math.abs(eomAdder)));
+//			System.out.println("* Loan interest charged: " + Bank.money.format(Math.abs(eomAdder)));
 			this.addTransaction(eomAdder, "Interest charged");
 			
 			//Late fee
 			if(isFeeRequired()) {
 				eomAdder -= getLateFee();
 				System.out.println("* Late fee charged: "
-					+ Bank.money.format(getLateFee())
+//					+ Bank.money.format(getLateFee())
 					+ " (failure to make the minimum payment)\n"
 				);
 				this.addTransaction(-getLateFee(), "Late fee");

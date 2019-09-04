@@ -338,18 +338,22 @@ public class LoginController {
 	}
 	
 	@RequestMapping(value = "/transfer-bank", method = RequestMethod.GET)
-	public String showTransferScreen(@ModelAttribute("customer") Customer customer, ModelMap map) {
+	public String showTransferScreen(
+		@ModelAttribute("customer") Customer customer,
+		ModelMap map) {
 		String jspToAccess = "transfer-bank";
 		
+		System.out.println("\n/transfer-bank GET: customer =\n" + customer.toString());
 		//Verify there is a logged-in customer
 		if(customer.getCustId() != 0) {
 			//Update all dashboard parameters
 			updateDashboardModel(customer, map);
+			map.addAttribute("amount", new AmountForm());
 		}
 		else {
 			jspToAccess = "login";
 		}
-		
+		System.out.println("/transfer-bank: about to go to transfer-bank.jsp");
 		return jspToAccess;
 	}
 	
@@ -358,7 +362,7 @@ public class LoginController {
 			@ModelAttribute("customer") Customer customer,
 			@RequestParam("accountfrom") String accountFrom,
 			@RequestParam("accountto") String accountTo,
-			@RequestParam("amounttransfer") double amountToTransfer,
+			@Valid @ModelAttribute("amount") AmountForm amountForm,
 			ModelMap map) {
 		String jspToAccess = "login";
 		

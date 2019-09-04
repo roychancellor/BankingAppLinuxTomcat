@@ -19,7 +19,7 @@
 		<section>
 			<h1>TRANSFER Between Accounts</h1>
 			<h3>Welcome ${fullname}!</h3>
-			<withform:form modelAttribute="amount" action="/withdraw-bank" method="POST">
+			<withform:form modelAttribute="amount" action="/transfer-bank" method="POST">
 				<p>FROM Account:<br />
 					<input type="radio" name="accountfrom" value="chk" checked> Checking (${acctchk})<br />
 					<input type="radio" name="accountfrom" value="sav"> Saving (${acctsav})<br />

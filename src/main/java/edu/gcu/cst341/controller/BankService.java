@@ -16,13 +16,30 @@ import edu.gcu.cst341.model.Transaction;
 public class BankService {
 
 	//Format for dates and money outputs in all classes
-	public static DecimalFormat money = new DecimalFormat();
-	public static final String MONEY_FORMAT = "$#,##0.00;($#,##0.00)";
+	private DecimalFormat money = new DecimalFormat();
+	private static final String MONEY_FORMAT = "$#,##0.00;($#,##0.00)";
+
+	//Constructor
+	public BankService() {
+		money.applyPattern(MONEY_FORMAT);
+	}
+	
+	//Getters and setters
+	/**
+	 * @return the money
+	 */
+	public DecimalFormat getMoney() {
+		return money;
+	}
+
+	/**
+	 * @param money the money to set
+	 */
+	public void setMoney(DecimalFormat money) {
+		this.money = money;
+	}
 
 	//Class methods
-//	private void setMoneyFormat() {
-//		money.applyPattern(MONEY_FORMAT);
-//	}
 	
 	/**
 	 * Executes a deposit or withdrawal from any of the three account types
@@ -71,6 +88,8 @@ public class BankService {
 				cust.getSaving().doTransaction(transType, amount);
 				//Write to the database
 				numRec = ds.dbUpdateAccountBalances(cust.getCustId(), cust.getSaving());
+				//Write the transaction...
+				numRec += ds.dbAddTransaction(cust.getCustId(), cust.getSaving().getLastTrans());
 				if(numRec == 0) {
 					System.err.println("ERROR!!! Unable to write transaction to DB");
 				}
@@ -80,6 +99,8 @@ public class BankService {
 				cust.getLoan().doTransaction(transType, amount);
 				//Write to the database
 				numRec = ds.dbUpdateAccountBalances(cust.getCustId(), cust.getLoan());
+				//Write the transaction...
+				numRec += ds.dbAddTransaction(cust.getCustId(), cust.getLoan().getLastTrans());
 				if(numRec == 0) {
 					System.err.println("ERROR!!! Unable to write transaction to DB");
 				}

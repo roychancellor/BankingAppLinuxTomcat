@@ -1,7 +1,8 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
 <%@ taglib prefix="format" uri="http://java.sun.com/jsp/jstl/core" %>
-<!DOCTYPE html>
+<%@ taglib prefix="money" uri="http://java.sun.com/jsp/jstl/fmt" %>
+ <!DOCTYPE html>
 <html>
 <head>
 	<link href="webjars/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet">
@@ -19,12 +20,14 @@
 		<section>
 			<h1>Customer Dashboard</h1>
 			<h3>Welcome ${fullname}!</h3>
+			<h5>Current Account Balances</h5>
 			<table class="table table-striped">
 				<tr><th>Checking</th><th>Saving</th><th>Cash Advance</th></tr>
 				<tr>
-					<td class="content">${chkbal}</td>
-					<td class="content">${savbal}</td>
-					<td class="content">${loanbal}</td>
+					<money:setLocale value="en_US"/>
+					<td class="content"><money:formatNumber value="${chkbal}" type="currency" pattern="$#,##0.00;($#,##0.00)" minFractionDigits="2"/></td>
+					<td class="content"><money:formatNumber value="${savbal}" type="currency" pattern="$#,##0.00;($#,##0.00)" minFractionDigits="2"/></td>
+					<td class="content"><money:formatNumber value="${loanbal}" type="currency" pattern="$#,##0.00;($#,##0.00)" minFractionDigits="2"/></td>
 				</tr>
 			</table>
 			<p><a class="btn btn-success" href="/statements-bank">Reports</a></p>

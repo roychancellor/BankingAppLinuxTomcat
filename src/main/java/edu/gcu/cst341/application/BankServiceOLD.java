@@ -216,9 +216,9 @@ public class BankServiceOLD {
 		case 5:
 			System.out.println("\nYour minimum monthly payment is "
 				+ money.format(customers.get(custIndex).getLoan().getMonthlyPaymentAmount()));
-			customers.get(custIndex).getLoan().doTransaction(
-				customers.get(custIndex).getLoan().getTransactionValue(Account.AMOUNT_MESSAGE + "pay on the loan: ")
-			);
+//			customers.get(custIndex).getLoan().doTransaction(
+//				customers.get(custIndex).getLoan().getTransactionValue(Account.AMOUNT_MESSAGE + "pay on the loan: ")
+//			);
 			Menus.viewBalances(customers.get(custIndex));
 			break;
 		case 6:
