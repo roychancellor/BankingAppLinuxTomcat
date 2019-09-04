@@ -34,6 +34,7 @@ public class LoginController {
 	CustomerService CustomerService;
 	@Autowired
 	BankService BankService;
+	
 	//TODO: Investigate auto-wiring a DataService object here
 	
 	//Spring will make this object when needed and will keep it in the session
@@ -130,16 +131,18 @@ public class LoginController {
 				System.out.println("/login POST: After hitting the DB, the customer object is:\n"
 					+ customer.toString());
 					
-				//Put the customer into the model
-				map.addAttribute("customer", customer);
-
-				//Put the customer's full name in the model
-				map.addAttribute("fullname", customer.getFirstName() + " " + customer.getLastName());
-				
-				//Put the current balances into the model
-				map.addAttribute("chkbal", customer.getChecking().getAccountBalance());
-				map.addAttribute("savbal", customer.getSaving().getAccountBalance());
-				map.addAttribute("loanbal", customer.getLoan().getAccountBalance());
+//				//Put the customer into the model
+//				map.addAttribute("customer", customer);
+//
+//				//Put the customer's full name in the model
+//				map.addAttribute("fullname", customer.getFirstName() + " " + customer.getLastName());
+//				
+//				//Put the current balances into the model
+//				map.addAttribute("chkbal", customer.getChecking().getAccountBalance());
+//				map.addAttribute("savbal", customer.getSaving().getAccountBalance());
+//				map.addAttribute("loanbal", customer.getLoan().getAccountBalance());
+				//Update all dashboard parameters
+				updateDashboardModel(customer, map);
 			}
 			else {
 				map.put("errormessage", "Invalid login credentials");
@@ -173,13 +176,14 @@ public class LoginController {
 		System.out.println("/dashboard GET: about do check custId != 0:\n" + customer.toString());
 		if(customer.getCustId() != 0) {
 			System.out.println("In dashboard GET: AFTER check custId != 0:\n" + customer.toString());
+			//Update all dashboard parameters
+			updateDashboardModel(customer, map);
 			//Put the customer information into the model
-			map.put("fullname", customer.getFirstName() + " " + customer.getLastName());
-			map.put("email", customer.getEmailAddress());
-			map.put("chkbal", customer.getChecking().getAccountBalance());
-			map.put("savbal", customer.getSaving().getAccountBalance());
-			map.put("loanbal", customer.getLoan().getAccountBalance());
-			map.put("customer", customer);
+//			map.put("fullname", customer.getFirstName() + " " + customer.getLastName());
+//			map.put("chkbal", customer.getChecking().getAccountBalance());
+//			map.put("savbal", customer.getSaving().getAccountBalance());
+//			map.put("loanbal", customer.getLoan().getAccountBalance());
+//			map.put("customer", customer);
 		}
 		else {
 			jspToAccess = "login";
@@ -195,13 +199,15 @@ public class LoginController {
 		//Verify there is a logged-in customer
 		if(customer.getCustId() != 0) {
 			System.out.println("/deposit-bank GET: customer =\n" + customer.toString());
-			//Put customer name and email in map
-			map.put("fullname", customer.getFirstName() + " " + customer.getLastName());
-			map.put("email", customer.getEmailAddress());
-			//Put the account numbers into the model
-			map.addAttribute("acctchk", customer.getChecking().getAccountNumber());
-			map.addAttribute("acctsav", customer.getSaving().getAccountNumber());
-			map.addAttribute("acctloan", customer.getLoan().getAccountNumber());
+			//Update all dashboard parameters
+			updateDashboardModel(customer, map);
+//			//Put customer name and email in map
+//			map.put("fullname", customer.getFirstName() + " " + customer.getLastName());
+//			map.put("email", customer.getEmailAddress());
+//			//Put the account numbers into the model
+//			map.addAttribute("acctchk", customer.getChecking().getAccountNumber());
+//			map.addAttribute("acctsav", customer.getSaving().getAccountNumber());
+//			map.addAttribute("acctloan", customer.getLoan().getAccountNumber());
 			map.addAttribute("amount", new AmountForm());
 		}
 		else {
@@ -226,14 +232,15 @@ public class LoginController {
 		//If the form had errors, go back to the form so the customer can make corrections
         if (br.hasErrors()) {
         	map.addAttribute("errormessage", "Amount must be at least $0.01");
-			//TODO: Put this in a separate helper method to avoid code redundancy
-        	//Put customer name and email in map
-			map.put("fullname", customer.getFirstName() + " " + customer.getLastName());
-			map.put("email", customer.getEmailAddress());
-			//Put the account numbers into the model
-			map.addAttribute("acctchk", customer.getChecking().getAccountNumber());
-			map.addAttribute("acctsav", customer.getSaving().getAccountNumber());
-			map.addAttribute("acctloan", customer.getLoan().getAccountNumber());
+			//Update all dashboard parameters
+			updateDashboardModel(customer, map);
+//        	//Put customer name and email in map
+//			map.put("fullname", customer.getFirstName() + " " + customer.getLastName());
+//			map.put("email", customer.getEmailAddress());
+//			//Put the account numbers into the model
+//			map.addAttribute("acctchk", customer.getChecking().getAccountNumber());
+//			map.addAttribute("acctsav", customer.getSaving().getAccountNumber());
+//			map.addAttribute("acctloan", customer.getLoan().getAccountNumber());
             return "deposit-bank";
         }
 
@@ -244,12 +251,14 @@ public class LoginController {
 			//Do the deposit and update the dashboard values
 			BankService.executeTransaction(customer, accountType, Account.DEPOSIT, amount.getAmount(), false);
 			
-			//Populate the dashboard with updated information
-			map.put("fullname", customer.getFirstName() + " " + customer.getLastName());
-			map.put("email", customer.getEmailAddress());
-			map.put("chkbal", customer.getChecking().getAccountBalance());
-			map.put("savbal", customer.getSaving().getAccountBalance());
-			map.put("loanbal", customer.getLoan().getAccountBalance());
+			//Update all dashboard parameters
+			updateDashboardModel(customer, map);
+//			//Populate the dashboard with updated information
+//			map.put("fullname", customer.getFirstName() + " " + customer.getLastName());
+//			map.put("email", customer.getEmailAddress());
+//			map.put("chkbal", customer.getChecking().getAccountBalance());
+//			map.put("savbal", customer.getSaving().getAccountBalance());
+//			map.put("loanbal", customer.getLoan().getAccountBalance());
 		}
 		else {
 			jspToAccess = "redirect:login";
@@ -265,13 +274,15 @@ public class LoginController {
 		System.out.println("\n/withdraw-bank GET: ready to populate map...");
 		//Verify there is a logged-in customer
 		if(customer.getCustId() != 0) {
-			//Put customer name and email in map
-			map.put("fullname", customer.getFirstName() + " " + customer.getLastName());
-			map.put("email", customer.getEmailAddress());
-			//Put the account numbers into the model
-			map.addAttribute("acctchk", customer.getChecking().getAccountNumber());
-			map.addAttribute("acctsav", customer.getSaving().getAccountNumber());
-			map.addAttribute("acctloan", customer.getLoan().getAccountNumber());
+			//Update all dashboard parameters
+			updateDashboardModel(customer, map);
+//			//Put customer name and email in map
+//			map.put("fullname", customer.getFirstName() + " " + customer.getLastName());
+//			map.put("email", customer.getEmailAddress());
+//			//Put the account numbers into the model
+//			map.addAttribute("acctchk", customer.getChecking().getAccountNumber());
+//			map.addAttribute("acctsav", customer.getSaving().getAccountNumber());
+//			map.addAttribute("acctloan", customer.getLoan().getAccountNumber());
 			map.addAttribute("amount", new AmountForm());
 		}
 		else {
@@ -296,14 +307,15 @@ public class LoginController {
 		//If the form had errors, go back to the form so the customer can make corrections
         if (br.hasErrors()) {
 //        	map.addAttribute("errormessage", "Amount must be at least $0.01");
-			//TODO: Put this in a separate helper method to avoid code redundancy
-        	//Put customer name and email in map
-			map.put("fullname", customer.getFirstName() + " " + customer.getLastName());
-			map.put("email", customer.getEmailAddress());
-			//Put the account numbers into the model
-			map.addAttribute("acctchk", customer.getChecking().getAccountNumber());
-			map.addAttribute("acctsav", customer.getSaving().getAccountNumber());
-			map.addAttribute("acctloan", customer.getLoan().getAccountNumber());
+			//Update all dashboard parameters
+			updateDashboardModel(customer, map);
+//        	//Put customer name and email in map
+//			map.put("fullname", customer.getFirstName() + " " + customer.getLastName());
+//			map.put("email", customer.getEmailAddress());
+//			//Put the account numbers into the model
+//			map.addAttribute("acctchk", customer.getChecking().getAccountNumber());
+//			map.addAttribute("acctsav", customer.getSaving().getAccountNumber());
+//			map.addAttribute("acctloan", customer.getLoan().getAccountNumber());
             return "withdraw-bank";
         }
 
@@ -325,12 +337,14 @@ public class LoginController {
 					+ "saving:" + customer.getSaving().getAccountBalance()
 					+ "loan:" + customer.getLoan().getAccountBalance());
 
-				//Update the dashboard information
-				map.put("fullname", customer.getFirstName() + " " + customer.getLastName());
-				map.put("email", customer.getEmailAddress());
-				map.put("chkbal", customer.getChecking().getAccountBalance());
-				map.put("savbal", customer.getSaving().getAccountBalance());
-				map.put("loanbal", customer.getLoan().getAccountBalance());
+				//Update all dashboard parameters
+				updateDashboardModel(customer, map);
+//				//Update the dashboard information
+//				map.put("fullname", customer.getFirstName() + " " + customer.getLastName());
+//				map.put("email", customer.getEmailAddress());
+//				map.put("chkbal", customer.getChecking().getAccountBalance());
+//				map.put("savbal", customer.getSaving().getAccountBalance());
+//				map.put("loanbal", customer.getLoan().getAccountBalance());
 			}
 			else {
 				//Populate the information needed for the error page
@@ -374,11 +388,13 @@ public class LoginController {
 			+ "saving:" + customer.getSaving().getAccountBalance()
 			+ "loan:" + customer.getLoan().getAccountBalance());
 
-		//Update the model map for a return to the dashboard
-		map.put("fullname", customer.getFirstName() + " " + customer.getLastName());
-		map.put("chkbal", customer.getChecking().getAccountBalance());
-		map.put("savbal", customer.getSaving().getAccountBalance());
-		map.put("loanbal", customer.getLoan().getAccountBalance());
+		//Update all dashboard parameters
+		updateDashboardModel(customer, map);
+//		//Update the model map for a return to the dashboard
+//		map.put("fullname", customer.getFirstName() + " " + customer.getLastName());
+//		map.put("chkbal", customer.getChecking().getAccountBalance());
+//		map.put("savbal", customer.getSaving().getAccountBalance());
+//		map.put("loanbal", customer.getLoan().getAccountBalance());
 		
 		//Return to the dashboard
 		return jspToAccess;
@@ -390,13 +406,15 @@ public class LoginController {
 		
 		//Verify there is a logged-in customer
 		if(customer.getCustId() != 0) {
-			//Put customer name and email in the model
-			map.put("fullname", customer.getFirstName() + " " + customer.getLastName());
-			map.put("email", customer.getEmailAddress());
-			//Put the account numbers into the model
-			map.addAttribute("acctchk", customer.getChecking().getAccountNumber());
-			map.addAttribute("acctsav", customer.getSaving().getAccountNumber());
-			map.addAttribute("acctloan", customer.getLoan().getAccountNumber());
+			//Update all dashboard parameters
+			updateDashboardModel(customer, map);
+//			//Put customer name and email in the model
+//			map.put("fullname", customer.getFirstName() + " " + customer.getLastName());
+//			map.put("email", customer.getEmailAddress());
+//			//Put the account numbers into the model
+//			map.addAttribute("acctchk", customer.getChecking().getAccountNumber());
+//			map.addAttribute("acctsav", customer.getSaving().getAccountNumber());
+//			map.addAttribute("acctloan", customer.getLoan().getAccountNumber());
 		}
 		else {
 			jspToAccess = "login";
@@ -420,23 +438,29 @@ public class LoginController {
 			//TODO: Do the transfer for the customer
 			
 			//Update the dashboard values
-			map.put("fullname", customer.getFirstName() + " " + customer.getLastName());
-			map.put("email", customer.getEmailAddress());
+//			map.put("fullname", customer.getFirstName() + " " + customer.getLastName());
+//			map.put("email", customer.getEmailAddress());
 			switch(accountFrom) {
 				case "chk":
-					map.put("chkbal", customer.getChecking().getAccountBalance());
-					map.put("savbal", customer.getSaving().getAccountBalance());
-					map.put("loanbal", customer.getLoan().getAccountBalance());
+					//Update all dashboard parameters
+					updateDashboardModel(customer, map);
+//					map.put("chkbal", customer.getChecking().getAccountBalance());
+//					map.put("savbal", customer.getSaving().getAccountBalance());
+//					map.put("loanbal", customer.getLoan().getAccountBalance());
 					break;
 				case "sav":
-					map.put("chkbal", customer.getChecking().getAccountBalance());
-					map.put("savbal", customer.getSaving().getAccountBalance());
-					map.put("loanbal", customer.getLoan().getAccountBalance());
+					//Update all dashboard parameters
+					updateDashboardModel(customer, map);
+//					map.put("chkbal", customer.getChecking().getAccountBalance());
+//					map.put("savbal", customer.getSaving().getAccountBalance());
+//					map.put("loanbal", customer.getLoan().getAccountBalance());
 					break;
 				case "loan":
-					map.put("chkbal", customer.getChecking().getAccountBalance());
-					map.put("savbal", customer.getSaving().getAccountBalance());
-					map.put("loanbal", customer.getLoan().getAccountBalance());
+					//Update all dashboard parameters
+					updateDashboardModel(customer, map);
+//					map.put("chkbal", customer.getChecking().getAccountBalance());
+//					map.put("savbal", customer.getSaving().getAccountBalance());
+//					map.put("loanbal", customer.getLoan().getAccountBalance());
 					break;
 				default:
 			}
@@ -478,8 +502,10 @@ public class LoginController {
 					}
 				}
 				
-				//Put the data into the model
-				map.put("fullname", customer.getFirstName() + " " + customer.getLastName());
+				//Update all dashboard parameters
+				updateDashboardModel(customer, map);
+//				//Put the data into the model
+//				map.put("fullname", customer.getFirstName() + " " + customer.getLastName());
 				map.addAttribute("transchk", transchk);
 				map.addAttribute("transsav", transsav);
 				map.addAttribute("transloan", transloan);
@@ -496,4 +522,23 @@ public class LoginController {
 	public String showAboutScreen() {
 		return "about-bank";
 	}
+	
+	/**
+	 * Updates the ModelMap parameters for the customer dashboard
+	 * @param customer the current Customer object
+	 * @param map the ModelMap for the LoginController
+	 */
+	private void updateDashboardModel(Customer customer, ModelMap map) {
+		//Put the customer information into the model
+		map.put("fullname", customer.getFirstName() + " " + customer.getLastName());
+		map.put("email", customer.getEmailAddress());
+		map.put("chkbal", customer.getChecking().getAccountBalance());
+		map.put("savbal", customer.getSaving().getAccountBalance());
+		map.put("loanbal", customer.getLoan().getAccountBalance());
+		map.put("acctchk", customer.getChecking().getAccountNumber());
+		map.put("acctsav", customer.getSaving().getAccountNumber());
+		map.put("acctloan", customer.getLoan().getAccountNumber());
+		map.put("customer", customer);
+	}
+
 }
