@@ -219,7 +219,22 @@ public class LoginController {
 			jspToAccess = "dashboard";
 			
 			//Do the deposit and update the dashboard values
-			BankService.executeTransaction(customer, accountType, Account.DEPOSIT, amount.getAmount(), false);
+//			BankService.executeTransaction(customer, accountType, Account.DEPOSIT, amount.getAmount(), false);
+			//Customer cust, Account account, int transType, double amount
+//			Account account = null;
+//			switch(accountType) {
+//			case "chk":
+//				account = customer.getChecking();
+//				break;
+//			case "sav":
+//				account = customer.getSaving();
+//				break;
+//			case "loan":
+//				account = customer.getLoan();
+//				break;
+//			}
+//			BankService.executeTransaction(customer, account, Account.DEPOSIT, amount.getAmount());
+			BankService.executeTransaction(customer, accountType, Account.DEPOSIT, amount.getAmount());
 			
 			//Update all dashboard parameters
 			updateDashboardModel(customer, map);
@@ -253,13 +268,13 @@ public class LoginController {
 	public String processWithdrawal(
 		@ModelAttribute("customer") Customer customer,
 		@RequestParam("account") String accountType,
-		@Valid @ModelAttribute("amount") AmountForm amountForm,
+		@Valid @ModelAttribute("amount") AmountForm amount,
 		BindingResult br,
 		ModelMap map) {
 		
 		String jspToAccess = "login";
 		
-		System.out.println("/withdraw-bank POST: amount = " + amountForm.getAmount());
+		System.out.println("/withdraw-bank POST: amount = " + amount.getAmount());
 		System.out.println("br.hasErrors = " + br.hasErrors() + " " + br.toString());
 		//If the form had errors, go back to the form so the customer can make corrections
         if (br.hasErrors()) {
@@ -272,16 +287,30 @@ public class LoginController {
 		//Verify there is a logged-in customer
 		if(customer.getCustId() != 0) {
 			jspToAccess = "dashboard";
-			System.out.println("\n/withdraw-bank: Before executing the transaction, amount = " + amountForm.getAmount());
+			System.out.println("\n/withdraw-bank: Before executing the transaction, amount = " + amount.getAmount());
 			
 			//Check for a valid withdrawal amount before executing the transaction
-			boolean validAmount = BankService.validateWithdrawal(customer, accountType, amountForm.getAmount());
+			boolean validAmount = BankService.validateWithdrawal(customer, accountType, amount.getAmount());
 			
 			if(validAmount) {
 				//Do the withdrawal and update the dashboard values
-				BankService.executeTransaction(customer, accountType, Account.WITHDRAWAL, amountForm.getAmount(),
-					false);
-				
+//				BankService.executeTransaction(customer, accountType, Account.WITHDRAWAL, amountForm.getAmount(),
+//					false);
+//				Account account = null;
+//				switch(accountType) {
+//				case "chk":
+//					account = customer.getChecking();
+//					break;
+//				case "sav":
+//					account = customer.getSaving();
+//					break;
+//				case "loan":
+//					account = customer.getLoan();
+//					break;
+//				}
+//				BankService.executeTransaction(customer, account, Account.WITHDRAWAL, amount.getAmount());
+				BankService.executeTransaction(customer, accountType, Account.WITHDRAWAL, amount.getAmount());
+
 				System.out.println("\nwithdraw-bank POST: after transaction, balances are:\n"
 					+ "checking:" + customer.getChecking().getAccountBalance()
 					+ "saving:" + customer.getSaving().getAccountBalance()
@@ -292,13 +321,13 @@ public class LoginController {
 			}
 			else {
 				//Populate the information needed for the error page
-				map.addAttribute("reqamount", amountForm.getAmount());
+				map.addAttribute("reqamount", amount.getAmount());
 				map.addAttribute("balance", customer.getChecking().getAccountBalance());
 				map.addAttribute("overdraft", customer.getChecking().getOverdraftFee());
 				
 				//Show error page and proceed based on user selection
 				System.out.println("/withdraw-bank POST: About to leave to checking-withdraw-error.jsp\n"
-					+ "amount = " + amountForm.getAmount());
+					+ "amount = " + amount.getAmount());
 				jspToAccess = "checking-withdraw-error";
 			}
 		}
@@ -322,8 +351,11 @@ public class LoginController {
 		System.out.println("\n/withdraw-overdraft-bank: amount = " + amountForm.getAmount());
 		
 		//Update balance in Checking object and write transactions in database
-		BankService.executeTransaction(customer, "chk", Account.WITHDRAWAL, amountForm.getAmount(),
-			true);
+//		BankService.executeTransaction(customer, "chk", Account.WITHDRAWAL, amountForm.getAmount(),
+//			true);
+//		BankService.executeTransaction(customer, customer.getChecking(), Account.WITHDRAWAL, amountForm.getAmount());
+		BankService.executeTransaction(customer, "chk", Account.WITHDRAWAL, amountForm.getAmount());
+		BankService.executeCheckingOverdraft(customer);
 
 		System.out.println("\nwithdraw-overdraft-bank POST: after transaction, balances are:\n"
 			+ "checking:" + customer.getChecking().getAccountBalance()
