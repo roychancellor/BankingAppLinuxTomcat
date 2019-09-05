@@ -17,16 +17,19 @@
 	<div class="container">
 		<%@ include file="common/header-common.jspf" %>
 		<section>
-			<h1>Login</h1>
+			<h1>Existing Customer Login</h1>
 			<p style="color:#f00">${errormessage}</p>
 			<form action="/login" method="POST">
-				<p>Username:<br /><input type="text" name="username"/></p>
-				<p>Password:<br /><input type="password" name="password"/></p>
-				<p><input type="submit" /></p>
+				<div class="loginform">
+					<p><strong>Username:</strong><br /><input type="text" name="username"/></p>
+					<p><strong>Password:</strong><br /><input type="password" name="password"/></p>
+				</div>
+				<p><input class="btn btn-primary" type="submit" /></p>
 			</form>
 			
 			<!-- <h3><a href="/newcustomer">Become a Customer</a></h3> -->
-			<p><a class="btn btn-success" href="/newcustomer">Become a Customer</a></p>
+			<br>
+			<p><a style="font-size:1.25em" class="btn btn-success" href="/newcustomer">Become a Customer</a></p>
 		</section>
 		<%@ include file="common/footer-common.jspf" %>
 	</div>
