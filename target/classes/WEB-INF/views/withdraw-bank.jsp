@@ -1,6 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
-<%@ taglib prefix="withform" uri="http://www.springframework.org/tags/form"%>
+<%@ taglib prefix="depform" uri="http://www.springframework.org/tags/form"%>
+<%@ taglib prefix="money" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -17,24 +18,43 @@
 	<div class="container">
 		<%@ include file="common/header-common.jspf" %>
 		<section>
-			<h1>WITHDRAW From Account</h1>
-			<h3>Welcome ${fullname}!</h3>
-			<withform:form modelAttribute="amount" action="/withdraw-bank" method="POST">
-				<p>Select Account:<br />
-					<input type="radio" name="account" value="chk" checked> Checking (${acctchk})<br />
-					<input type="radio" name="account" value="sav"> Saving (${acctsav})<br />
-					<input type="radio" name="account" value="loan"> From Cash Advance (${acctloan})<br />
-				</p>
-				<p><withform:label path="amount">Amount to withdraw:</withform:label>
-				<br />
-				<withform:input type="text" path="amount"/>
-				<withform:errors path="amount" cssClass="error" /></p>				
+			<h1>Welcome ${fullname}!</h1>
+			<h2><strong>WITHDRAW From Account</strong></h2>
+			<depform:form modelAttribute="amount" action="/withdraw-bank" method="POST">
+				<div class="radioform">
+					<p><strong>Select Account:</strong><br />
+						<input type="radio" name="account" value="chk" checked> Checking (${acctchk})
+							<strong>Available:
+							<money:formatNumber value=" ${chkbal}" type="currency" pattern="$#,##0.00;($#,##0.00)" minFractionDigits="2"/>
+							</strong>
+							<br />
+							<br />
+						<input type="radio" name="account" value="sav"> Saving (${acctsav})
+							<strong>Available:
+							<money:formatNumber value=" ${savbal}" type="currency" pattern="$#,##0.00;($#,##0.00)" minFractionDigits="2"/>
+							</strong>
+							<br />
+							<br />
+						<input type="radio" name="account" value="loan"> Payment to Cash Advance (${acctloan})
+							<strong>Available:
+							<money:formatNumber value=" ${loanavail}" type="currency" pattern="$#,##0.00;($#,##0.00)" minFractionDigits="2"/>
+							</strong>
+							<br />
+							<br />
+					</p>
+				</div>
+				<div class="amountinput">
+					<p><depform:label path="amount">Amount to withdraw:</depform:label>
+					<br />
+					<depform:input type="text" path="amount"/>
+					<depform:errors path="amount" cssClass="error" /></p>	
+				</div>			
 				<p class="error">${errormessage}</p>
 				<p>
 					<input class="btn btn-success" type="submit" value="Submit Withdrawal">
 					<a class="btn btn-primary" href="/dashboard">Cancel and Return to Dashboard</a>
 				</p>
-			</withform:form>
+			</depform:form>
 		</section>
 		<%@ include file="common/footer-common.jspf" %>
 	</div>

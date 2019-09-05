@@ -19,28 +19,15 @@
 		<%@ include file="common/header-common.jspf" %>
 		<section>
 			<h1>Loan INSUFFICIENT CREDIT Notice</h1>
-			<overdraftform:form action="/withdraw-bank-error-loan?amount=${reqamount}" method="POST">
-<%-- 				<p>Select Account:<br />
-					<input type="radio" name="account" value="chk" checked> Checking (${acctchk})<br />
-					<input type="radio" name="account" value="sav"> Saving (${acctsav})<br />
-					<input type="radio" name="account" value="loan"> From Cash Advance (${acctloan})<br />
-				</p>
-				<p><overdraftform:label path="amount">Amount to withdraw:</overdraftform:label>
-				<br />
-				<overdraftform:input type="text" path="amount"/>
-				<overdraftform:errors path="amount" cssClass="error" /></p>				
-				<p class="error">${errormessage}</p>
- --%>			<p>
+			<overdraftform:form action="/withdraw-bank" method="GET">
+				<td class="content"><money:formatNumber value="${chkbal}" type="currency" pattern="$#,##0.00;($#,##0.00)" minFractionDigits="2"/></td>
+				<p>
  					A withdrawal of
  					<money:formatNumber value="${reqamount}" type="currency" pattern="$#,##0.00;($#,##0.00)" minFractionDigits="2"/>
- 					exceeds your available checking balance of
+ 					exceeds your available credit of
  					<money:formatNumber value="${balance}" type="currency" pattern="$#,##0.00;($#,##0.00)" minFractionDigits="2"/>.<br>
- 					If you proceed, your account will receive an overdraft charge of
- 					<money:formatNumber value="${overdraft}" type="currency" pattern="$#,##0.00;($#,##0.00)" minFractionDigits="2"/>.<br>
- 					Click <strong>Proceed</strong> to proceed with the withdrawal and receive the charge.<br>
- 					Click <strong>Cancel</strong> to cancel the transaction and return to the withdrawal page.<br>
-					<input class="btn btn-success" type="submit" name="reqamount" value="Proceed">
-					<a class="btn btn-primary" href="/withdraw-bank">Cancel</a>
+ 					Click <strong>Return</strong> to return to the withdrawal page to enter a new amount.<br><br>
+					<input class="btn btn-success" type="submit" name="goback" value="Return">
 				</p>
 			</overdraftform:form>
 		</section>

@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import edu.gcu.cst341.model.Account;
 import edu.gcu.cst341.model.Customer;
+import edu.gcu.cst341.model.Loan;
 import edu.gcu.cst341.model.Transaction;
 
 /**
@@ -141,7 +142,7 @@ public class BankService {
 					//Validate the business rule that cash advances (withdrawals)
 					//must be less that the difference between the maximum balance (principal)
 					//and the outstanding balance
-					if(amount <= Math.abs(cust.getLoan().getPrincipal()) - Math.abs(cust.getLoan().getAccountBalance())) {
+					if(amount <= computeLoanAvailable(cust.getLoan())) {
 						validAmount = true;
 					}
 					break;
@@ -170,5 +171,14 @@ public class BankService {
 			validAmount = true;
 		}
 		return validAmount;
+	}
+	
+	/**
+	 * Helper method to compute how much credit is available on a Loan object
+	 * @param loan the Loan object for computing available credit
+	 * @return the amount of credit available
+	 */
+	public double computeLoanAvailable(Loan loan) {
+		return Math.abs(loan.getPrincipal()) - Math.abs(loan.getAccountBalance());
 	}
 }

@@ -18,18 +18,22 @@
 	<div class="container">
 		<%@ include file="common/header-common.jspf" %>
 		<section>
-			<h1>Customer Dashboard</h1>
-			<h3>Welcome ${fullname}!</h3>
-			<h5>Current Account Balances</h5>
+			<h1>Dashboard for <strong style="color:#522398">${fullname}</strong></h1>
+			<h3 style="text-align:center"><strong>Current Account Balances</strong></h3>
+			<div class="dashboard">
 			<table class="table table-striped">
 				<tr><th>Checking</th><th>Saving</th><th>Cash Advance</th></tr>
 				<tr>
 					<money:setLocale value="en_US"/>
 					<td class="content"><money:formatNumber value="${chkbal}" type="currency" pattern="$#,##0.00;($#,##0.00)" minFractionDigits="2"/></td>
 					<td class="content"><money:formatNumber value="${savbal}" type="currency" pattern="$#,##0.00;($#,##0.00)" minFractionDigits="2"/></td>
-					<td class="content"><money:formatNumber value="${loanbal}" type="currency" pattern="$#,##0.00;($#,##0.00)" minFractionDigits="2"/></td>
+					<td class="content">
+						<money:formatNumber value="${loanbal}" type="currency" pattern="$#,##0.00;($#,##0.00)" minFractionDigits="2"/>
+						(Available: <money:formatNumber value="${loanavail}" type="currency" pattern="$#,##0.00;($#,##0.00)" minFractionDigits="2"/>)
+					</td>
 				</tr>
 			</table>
+			</div>
 			<p><a class="btn btn-success" href="/statements-bank">Reports</a></p>
 		</section>
 		<%@ include file="common/footer-common.jspf" %>

@@ -19,12 +19,12 @@ header {
 	padding-bottom:20px;
 }
 header h2 {
-	color:#fff;
+	color:#522398;
 	font-size:3.0em;
 	padding:10px;
-	background:#00f;
-	border:3px solid #fff;
-	width:35%;
+	background:#ffffff;
+	border:6px solid #522398;
+	width:47%;
 	margin:auto;
 	text-align:center;
 }
@@ -48,6 +48,7 @@ table {
 
 td {
 	border-bottom:1px solid black;
+	font-size:1.25em;
 }
 
 th {
@@ -62,10 +63,11 @@ nav {
 nav div {
 	padding:3px;
 	margin:4px;
-	width:13%;
+	width:13.5%;
 	border:1px solid #aaa;
 	float:left;
 	text-align:center;
+	font-size:1.25em;
 }
 
 nav div a {
@@ -76,9 +78,24 @@ nav div a {
 }
 
 nav div a:hover {
-	background-color:#aaa;
+	background-color:#522398;
+	color:#ffffff;
 }
 
 .error {
 	color:#f00;
+}
+.dashboard th {
+	font-size:2.0em;
+}
+
+.dashboard td {
+	font-size:2.0em;
+}
+
+.radioform p {
+	font-size:1.25em;
+}
+.amountinput {
+	font-size:1.5em;
 }

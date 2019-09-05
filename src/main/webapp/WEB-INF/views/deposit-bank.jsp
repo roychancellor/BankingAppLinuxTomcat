@@ -1,6 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
 <%@ taglib prefix="depform" uri="http://www.springframework.org/tags/form"%>
+<%@ taglib prefix="money" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -17,18 +18,37 @@
 	<div class="container">
 		<%@ include file="common/header-common.jspf" %>
 		<section>
-			<h1>DEPOSIT Into Account</h1>
-			<h3>Welcome ${fullname}!</h3>
+			<h1>Welcome ${fullname}!</h1>
+			<h2><strong>DEPOSIT Into Account</strong></h2>
 			<depform:form modelAttribute="amount" action="/deposit-bank" method="POST">
-				<p>Select Account:<br />
-					<input type="radio" name="account" value="chk" checked> Checking (${acctchk})<br />
-					<input type="radio" name="account" value="sav"> Saving (${acctsav})<br />
-					<input type="radio" name="account" value="loan"> Payment to Cash Advance (${acctloan})<br />
-				</p>
-				<p><depform:label path="amount">Amount to deposit:</depform:label>
-				<br />
-				<depform:input type="text" path="amount"/>
-				<depform:errors path="amount" cssClass="error" /></p>				
+				<div class="radioform">
+					<p><strong>Select Account:</strong><br />
+						<input type="radio" name="account" value="chk" checked> Checking (${acctchk})
+							<strong>Available:
+							<money:formatNumber value=" ${chkbal}" type="currency" pattern="$#,##0.00;($#,##0.00)" minFractionDigits="2"/>
+							</strong>
+							<br />
+							<br />
+						<input type="radio" name="account" value="sav"> Saving (${acctsav})
+							<strong>Available:
+							<money:formatNumber value=" ${savbal}" type="currency" pattern="$#,##0.00;($#,##0.00)" minFractionDigits="2"/>
+							</strong>
+							<br />
+							<br />
+						<input type="radio" name="account" value="loan"> Payment to Cash Advance (${acctloan})
+							<strong>Available:
+							<money:formatNumber value=" ${loanavail}" type="currency" pattern="$#,##0.00;($#,##0.00)" minFractionDigits="2"/>
+							</strong>
+							<br />
+							<br />
+					</p>
+				</div>
+				<div class="amountinput">
+					<p><depform:label path="amount">Amount to deposit:</depform:label>
+					<br />
+					<depform:input type="text" path="amount"/>
+					<depform:errors path="amount" cssClass="error" /></p>	
+				</div>			
 				<p class="error">${errormessage}</p>
 				<p>
 					<input class="btn btn-success" type="submit" value="Submit Deposit">

@@ -20,17 +20,7 @@
 		<section>
 			<h1>Checking OVERDRAFT Notice</h1>
 			<overdraftform:form action="/withdraw-bank-error-checking?amount=${reqamount}" method="POST">
-<%-- 				<p>Select Account:<br />
-					<input type="radio" name="account" value="chk" checked> Checking (${acctchk})<br />
-					<input type="radio" name="account" value="sav"> Saving (${acctsav})<br />
-					<input type="radio" name="account" value="loan"> From Cash Advance (${acctloan})<br />
-				</p>
-				<p><overdraftform:label path="amount">Amount to withdraw:</overdraftform:label>
-				<br />
-				<overdraftform:input type="text" path="amount"/>
-				<overdraftform:errors path="amount" cssClass="error" /></p>				
-				<p class="error">${errormessage}</p>
- --%>			<p>
+				<p>
  					A withdrawal of
  					<money:formatNumber value="${reqamount}" type="currency" pattern="$#,##0.00;($#,##0.00)" minFractionDigits="2"/>
  					exceeds your available checking balance of

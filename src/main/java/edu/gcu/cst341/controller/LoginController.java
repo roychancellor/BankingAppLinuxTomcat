@@ -21,6 +21,7 @@ import edu.gcu.cst341.model.Account;
 import edu.gcu.cst341.model.AmountForm;
 import edu.gcu.cst341.model.Checking;
 import edu.gcu.cst341.model.Customer;
+import edu.gcu.cst341.model.Loan;
 import edu.gcu.cst341.model.Transaction;
 
 @Controller
@@ -293,21 +294,20 @@ public class LoginController {
 			}
 			else {
 				if(accountType.equals("chk")) {
+					//Populate the information needed for the error page
 					populateWithdrawalErrorModel(customer.getChecking(), amount.getAmount(), map);
 					jspToAccess = "withdraw-bank-error-checking";
 				}
 				else if(accountType.equals("sav")) {
+					//Populate the information needed for the error page
 					populateWithdrawalErrorModel(customer.getSaving(), amount.getAmount(), map);
 					jspToAccess = "withdraw-bank-error-saving";
 				}
 				else if(accountType.equals("loan")) {
+					//Populate the information needed for the error page
 					populateWithdrawalErrorModel(customer.getLoan(), amount.getAmount(), map);
 					jspToAccess = "withdraw-bank-error-loan";
 				}
-				//Populate the information needed for the error page
-//				map.addAttribute("reqamount", amount.getAmount());
-//				map.addAttribute("balance", customer.getChecking().getAccountBalance());
-//				map.addAttribute("overdraft", customer.getChecking().getOverdraftFee());
 				
 				//Show error page and proceed based on user selection
 				System.out.println("/withdraw-bank POST: About to leave to " + jspToAccess + "\n"
@@ -336,6 +336,9 @@ public class LoginController {
 		//Other model parameters based on account type
 		if(account instanceof Checking) {
 			map.addAttribute("overdraft", ((Checking)account).getOverdraftFee());
+		}
+		if(account instanceof Loan) {
+			map.addAttribute("balance", BankService.computeLoanAvailable((Loan)account));
 		}
 	}
 	
@@ -485,10 +488,10 @@ public class LoginController {
 		map.put("chkbal", customer.getChecking().getAccountBalance());
 		map.put("savbal", customer.getSaving().getAccountBalance());
 		map.put("loanbal", customer.getLoan().getAccountBalance());
-		map.put("acctchk", customer.getChecking().getAccountNumber());
-		map.put("acctsav", customer.getSaving().getAccountNumber());
-		map.put("acctloan", customer.getLoan().getAccountNumber());
+		map.put("loanavail", BankService.computeLoanAvailable(customer.getLoan()));
+		map.put("acctchk", "C..." + customer.getChecking().getAccountNumber().substring(8));
+		map.put("acctsav", "S..." + customer.getSaving().getAccountNumber().substring(8));
+		map.put("acctloan", "L..." + customer.getLoan().getAccountNumber().substring(8));
 		map.put("customer", customer);
-	}
-
+	}	
 }

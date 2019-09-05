@@ -26,9 +26,8 @@
  					<money:formatNumber value="${reqamount}" type="currency" pattern="$#,##0.00;($#,##0.00)" minFractionDigits="2"/>
  					exceeds your available saving balance of
  					<money:formatNumber value="${balance}" type="currency" pattern="$#,##0.00;($#,##0.00)" minFractionDigits="2"/>.<br>
- 					Click <strong>Return</strong> to return to the withdrawal page to enter a new amount.<br>
+ 					Click <strong>Return</strong> to return to the withdrawal page to enter a new amount.<br><br>
 					<input class="btn btn-success" type="submit" name="goback" value="Return">
-					<!--<a class="btn btn-primary" href="/withdraw-bank">Cancel</a> -->
 				</p>
 			</overdraftform:form>
 		</section>
