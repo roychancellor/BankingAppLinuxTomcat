@@ -179,6 +179,7 @@ public class BankService {
 	 * @return the amount of credit available
 	 */
 	public double computeLoanAvailable(Loan loan) {
-		return Math.abs(loan.getPrincipal()) - Math.abs(loan.getAccountBalance());
+		System.out.println("Credit limit: " + loan.getCreditLimit() + ", balance: " + loan.getAccountBalance());
+		return Math.abs(loan.getCreditLimit()) - Math.abs(loan.getAccountBalance());
 	}
 }

@@ -14,15 +14,15 @@ public class Loan extends Account {
 	private double lateFee;
 	private int termYears;
 	private double monthlyPaymentAmount;
-	private double principal;
+	private double creditLimit;
 	private double amountPaidThisMonth;
 	public static final double LATE_FEE = 25.0;
 	public static final double ANNUAL_INTEREST_RATE = 0.08;
 	
 	//Constructor
-	public Loan(String accountNumber, double principal, double lateFee, double annualInterestRate, int termYears) {
-		//Call the superclass (Account) constructor
-		super(accountNumber, principal);
+	public Loan(String accountNumber, double creditLimit, double lateFee, double annualInterestRate, int termYears) {
+		//Call the superclass (Account) constructor with a ZERO balance
+		super(accountNumber, 0);
 		
 		//Unique to Loan objects
 		this.lateFee = lateFee;
@@ -31,7 +31,7 @@ public class Loan extends Account {
 		this.monthlyInterestRate = annualInterestRate / 12;
 		
 		this.termYears = termYears;
-		this.principal = principal;
+		this.creditLimit = creditLimit;
 		this.monthlyPaymentAmount = computeMonthlyPayment();
 		this.amountPaidThisMonth = 0;
 	}
@@ -72,10 +72,10 @@ public class Loan extends Account {
 	}
 
 	/**
-	 * @return the principal
+	 * @return the credit limit
 	 */
-	public double getPrincipal() {
-		return principal;
+	public double getCreditLimit() {
+		return creditLimit;
 	}
 
 	/**
@@ -122,7 +122,7 @@ public class Loan extends Account {
 		//WITHDRAWALS are cash advances FROM the loan balance, so only allow a withdrawal
 		//up to the difference between the current balance and the available credit (principal)
 		if(transType == Account.WITHDRAWAL
-			&& amount > (Math.abs(this.principal) - Math.abs(getAccountBalance()))) {
+			&& amount > (Math.abs(this.creditLimit) - Math.abs(getAccountBalance()))) {
 			System.out.println("\nLOAN WITHDRAWAL: Taking more than available");
 		}
 		//Process the transaction
@@ -152,7 +152,7 @@ public class Loan extends Account {
 	 * @return the monthly payment amount for compounded interest
 	 */
 	public double computeMonthlyPayment() {
-		return (-this.monthlyInterestRate * this.principal / (1 - Math.pow(1 + this.monthlyInterestRate, -this.termYears * 12)));
+		return (-this.monthlyInterestRate * this.creditLimit / (1 - Math.pow(1 + this.monthlyInterestRate, -this.termYears * 12)));
 	}
 	
 	/**
@@ -206,7 +206,7 @@ public class Loan extends Account {
 	 * prints an amortization table for this loan
 	 */
 	public void viewAmortization() {
-		double balance = this.principal;
+		double balance = this.creditLimit;
 		double interestPaid = 0;
 		int paymentNumber = 1;
 		double totalInterestPaid = 0;
@@ -214,7 +214,7 @@ public class Loan extends Account {
 		
 		System.out.println("\nNumber\tInterest\tPrincipal\tBalance");
 		Menus.printHeaderLine(55);
-		System.out.printf("0\t--------\t--------\t$%(,12.2f\n", this.principal);
+		System.out.printf("0\t--------\t--------\t$%(,12.2f\n", this.creditLimit);
 		
 		while(balance < 0) {
 			interestPaid = -balance * this.monthlyInterestRate;

@@ -2,6 +2,7 @@ package edu.gcu.cst341.model;
 
 import java.util.Date;
 
+import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
 import org.hibernate.validator.constraints.Email;
@@ -28,9 +29,11 @@ public class Customer implements Comparable<Customer> {
 	@Size(min=8, message="Password must be at least 8 characters")
 	private String password;
 	@NotBlank
+	@Size(max=12, message="Phone number must be xxx-xxx-xxxx")
+	@Pattern(regexp="[0-9]{3}-[0-9]{3}-[0-9]{4}", message="Phone number must be xxx-xxx-xxxx")
 	private String phoneNumber;
 	@NotBlank
-	@Email(message = "Must be a valid e-mail format")
+	@Email(message = "Must be a valid e-mail format: email@example.com")
 	private String emailAddress;
 	
 	//Customer accounts
@@ -272,7 +275,7 @@ public class Customer implements Comparable<Customer> {
 		
 		//Concatenate the loan details when verbose is true
 		if(verbose) {
-			message += "\n   * principal borrowed:\t" + Bank.money.format(-this.loan.getPrincipal())
+			message += "\n   * principal borrowed:\t" + Bank.money.format(-this.loan.getCreditLimit())
 			+ "\n   * annual interest rate:\t" + this.loan.getMonthlyInterestRate() * 12 * 100 + "%"
 			+ "\n   * monthly payment:\t" + Bank.money.format(this.loan.getMonthlyPaymentAmount())
 			+ "\n   * term years:\t" + this.loan.getTermYears()

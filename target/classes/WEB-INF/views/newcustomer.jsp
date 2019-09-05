@@ -54,9 +54,11 @@
 					<addcustomer:errors path="emailAddress" cssClass="error" />
 					</div>
 					<div class="form-group col-md-6">
-					<addcustomer:label path="phoneNumber">Phone Number:</addcustomer:label><br />
-					<addcustomer:input type="tel" class="form-control" placeholder="Enter phone number (123-456-7890)" path="phoneNumber" />
-					<addcustomer:errors path="phoneNumber" cssClass="error" />
+					<addcustomer:label path="phoneNumber">Phone Number (xxx-xxx-xxxx):</addcustomer:label><br />
+					<addcustomer:input type="tel" class="form-control"
+						placeholder="Enter phone number (123-456-7890)" path="phoneNumber" />
+
+ 					<addcustomer:errors path="phoneNumber" cssClass="error" />
 					</div>
 				</div>
 				<input class="btn btn-success" type="submit" name="Submit Information">
