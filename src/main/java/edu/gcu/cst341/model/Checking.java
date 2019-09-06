@@ -61,7 +61,7 @@ public class Checking extends Account {
 			this.addTransaction(amount, "Deposit" + (transType == Account.TRANSFER_D ? Account.TRANSFER_NOTE : ""));
 		}
 		//Update the account balance
-		setAccountBalance(getAccountBalance() + amount + feeAmount);
+		setAccountBalance(getAccountBalance() + amount - feeAmount);
 		System.out.println("\t\t***doTransaction AFTER setAccountBalance: " + getAccountBalance());
 	}
 	

@@ -353,13 +353,15 @@ public class LoginController {
 	 * @param map the ModelMap for the current session
 	 */
 	private void populateWithdrawalErrorModel(Account account, double amount, ModelMap map) {
+		//URL to return to after error
+		map.addAttribute("urlwithdrawal", "/withdraw-bank");
 		//Requested withdrawal amount
 		map.addAttribute("reqamount", amount);
 		//Current account balance
 		map.addAttribute("balance", account.getAccountBalance());
 		
 		//Other model parameters based on account type
-		//(note: Saving accounts only need the above two)
+		//(note: Saving accounts only need the above three)
 		if(account instanceof Checking) {
 			map.addAttribute("overdraft", ((Checking)account).getOverdraftFee());
 		}
@@ -376,9 +378,9 @@ public class LoginController {
 		
 		String jspToAccess = "dashboard";
 		
-		System.out.println("\n/withdraw-overdraft-bank: CHOICE = PROCEED");
-		System.out.println("\n/withdraw-overdraft-bank: customer = " + customer.toString());
-		System.out.println("\n/withdraw-overdraft-bank: amount = " + amountForm.getAmount());
+		System.out.println("\n/withdraw-bank-error-checking: CHOICE = PROCEED");
+		System.out.println("\n/withdraw-bank-error-checking: customer = " + customer.toString());
+		System.out.println("\n/withdraw-bank-error-checking: amount = " + amountForm.getAmount());
 		
 		//Update balance in Checking object and write transactions in database
 		BankService.doTransaction(customer, "chk", Account.WITHDRAWAL, amountForm.getAmount());
@@ -452,7 +454,7 @@ public class LoginController {
 			
 			//If either check above failed, validAmount will be false; otherwise it will be true
 			if(fromAmountValid && toAmountValid) {
-				//Do the withdrawal and update the dashboard values
+				//Do the transfer and update the dashboard values
 				int numRec = BankService.doTransfer(customer, fromAccount, amount.getAmount(), toAccount);
 
 				System.out.println("\ntransfer-bank POST: after transaction, balances are:\n"
@@ -464,28 +466,25 @@ public class LoginController {
 				//Update all dashboard parameters
 				updateDashboardModel(customer, map);
 			}
-			else if(!fromAmountValid) {
-				
-				//TODO: Put the block below in a separate method to avoid code duplication with withdraw
-				
+			else if(!fromAmountValid) {				
 				if(fromAccount.equals("chk")) {
 					//Populate the information needed for the error page
-					populateWithdrawalErrorModel(customer.getChecking(), amount.getAmount(), map);
-					jspToAccess = "withdraw-bank-error-checking";
+					populateTransferErrorModel(customer.getChecking(), amount.getAmount(), toAccount, map);
+					jspToAccess = "transfer-bank-error-checking";
 				}
 				else if(fromAccount.equals("sav")) {
 					//Populate the information needed for the error page
-					populateWithdrawalErrorModel(customer.getSaving(), amount.getAmount(), map);
+					populateTransferErrorModel(customer.getSaving(), amount.getAmount(), toAccount, map);
 					jspToAccess = "withdraw-bank-error-saving";
 				}
 				else if(fromAccount.equals("loan")) {
 					//Populate the information needed for the error page
-					populateWithdrawalErrorModel(customer.getLoan(), amount.getAmount(), map);
+					populateTransferErrorModel(customer.getLoan(), amount.getAmount(), toAccount, map);
 					jspToAccess = "withdraw-bank-error-loan";
 				}
 				
 				//Show error page and proceed based on user selection
-				System.out.println("/withdraw-bank POST: About to leave to " + jspToAccess + "\n"
+				System.out.println("/transfer-bank POST: About to leave to " + jspToAccess + "\n"
 					+ "amount = " + amount.getAmount());
 			}
 			else if(!toAmountValid) {
@@ -499,6 +498,62 @@ public class LoginController {
 			jspToAccess = "redirect:login";
 		}
 		
+		return jspToAccess;
+	}
+	
+	/**
+	 * Helper method that populates the parameters necessary for showing a transfer
+	 * error page for a checking overdraft
+	 * @param chk the Checking account object
+	 * @param amount the requested withdrawal amount
+	 * @param toAccount the type of account being transferred into ("sav" or "loan" here)
+	 * @param map the ModelMap for the current session
+	 */
+	private void populateTransferErrorModel(Account account, double amount, String toAccount, ModelMap map) {
+		//URL to return to after error
+		map.addAttribute("urlwithdrawal", "/transfer-bank");
+		//Requested withdrawal amount
+		map.addAttribute("reqamount", amount);
+		//Account to transfer into
+		map.addAttribute("toAccount", toAccount);
+		//Current account balance
+		map.addAttribute("balance", account.getAccountBalance());
+		if(account instanceof Loan) {
+			map.addAttribute("balance", BankService.computeLoanAvailable((Loan)account));
+		}
+		if(account instanceof Checking) {
+			//Overdraft fee
+			map.addAttribute("overdraft", ((Checking)account).getOverdraftFee());
+		}
+	}
+	
+	@RequestMapping(value = "/transfer-bank-error-checking", method = RequestMethod.POST)
+	public String processTransferCheckingOverdraft(
+		@ModelAttribute("customer") Customer customer,
+		@Valid @ModelAttribute("amount") AmountForm amountForm,
+		@RequestParam("toAccount") String toAccount,
+		ModelMap map) {
+		
+		String jspToAccess = "dashboard";
+		
+		System.out.println("\n/transfer-bank-error-checking: CHOICE = PROCEED");
+		System.out.println("\n/transfer-bank-error-checking: customer = " + customer.toString());
+		System.out.println("\n/transfer-bank-error-checking: amount = " + amountForm.getAmount());
+		System.out.println("\n/transfer-bank-error-checking: toAccount = " + toAccount);
+		
+		//Update balance in Checking object and write transactions in database
+		BankService.doTransfer(customer, "chk", amountForm.getAmount(), toAccount);
+		BankService.doCheckingOverdraft(customer);
+
+		System.out.println("\n/transfer-bank-error-checking POST: after transaction, balances are:\n"
+			+ "checking:" + customer.getChecking().getAccountBalance()
+			+ "saving:" + customer.getSaving().getAccountBalance()
+			+ "loan:" + customer.getLoan().getAccountBalance());
+
+		//Update all dashboard parameters
+		updateDashboardModel(customer, map);
+		
+		//Return to the dashboard
 		return jspToAccess;
 	}
 	

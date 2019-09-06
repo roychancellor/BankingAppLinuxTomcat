@@ -18,15 +18,19 @@
 	<div class="container">
 		<%@ include file="common/header-common.jspf" %>
 		<section>
-			<h1>Saving INSUFFICIENT BALANCE Notice</h1>
-			<overdraftform:form action="${urlwithdrawal}" method="GET">
+			<h1>Checking TRANSFER OVERDRAFT Notice</h1>
+			<overdraftform:form action="/transfer-bank-error-checking?amount=${reqamount}&toAccount=${toAccount}" method="POST">
 				<p>
- 					A withdrawal of
+ 					A transfer of
  					<money:formatNumber value="${reqamount}" type="currency" pattern="$#,##0.00;($#,##0.00)" minFractionDigits="2"/>
- 					exceeds your available saving balance of
+ 					exceeds your available checking balance of
  					<money:formatNumber value="${balance}" type="currency" pattern="$#,##0.00;($#,##0.00)" minFractionDigits="2"/>.<br>
- 					Click <strong>Return</strong> to return to the previous page to enter a lesser amount.<br><br>
-					<input class="btn btn-success" type="submit" name="goback" value="Return">
+ 					If you proceed, your account will receive an overdraft charge of
+ 					<money:formatNumber value="${overdraft}" type="currency" pattern="$#,##0.00;($#,##0.00)" minFractionDigits="2"/>.<br>
+ 					Click <strong>Proceed</strong> to proceed with the transfer and receive the charge.<br>
+ 					Click <strong>Cancel</strong> to cancel and return to the previous page.<br>
+					<input class="btn btn-success" type="submit" name="reqamount" value="Proceed">
+					<a class="btn btn-primary" href="/transfer-bank">Cancel</a>
 				</p>
 			</overdraftform:form>
 		</section>

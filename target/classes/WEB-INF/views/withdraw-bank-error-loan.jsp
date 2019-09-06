@@ -19,13 +19,13 @@
 		<%@ include file="common/header-common.jspf" %>
 		<section>
 			<h1>Loan INSUFFICIENT CREDIT Notice</h1>
-			<overdraftform:form action="/withdraw-bank" method="GET">
+			<overdraftform:form action="${urlwithdrawal}" method="GET">
 				<p>
  					A cash advance of
  					<money:formatNumber value="${reqamount}" type="currency" pattern="$#,##0.00;($#,##0.00)" minFractionDigits="2"/>
- 					exceeds your available credit limit of
+ 					exceeds your available credit of
  					<money:formatNumber value="${balance}" type="currency" pattern="$#,##0.00;($#,##0.00)" minFractionDigits="2"/>.<br>
- 					Click <strong>Return</strong> to return to the withdrawal page to enter a lesser amount.<br><br>
+ 					Click <strong>Return</strong> to return to the previous page to enter a lesser amount.<br><br>
 					<input class="btn btn-success" type="submit" name="goback" value="Return">
 				</p>
 			</overdraftform:form>
