@@ -20,13 +20,12 @@
 		<section>
 			<h1>Saving INSUFFICIENT BALANCE Notice</h1>
 			<overdraftform:form action="/withdraw-bank" method="GET">
-				<td class="content"><money:formatNumber value="${chkbal}" type="currency" pattern="$#,##0.00;($#,##0.00)" minFractionDigits="2"/></td>
 				<p>
  					A withdrawal of
  					<money:formatNumber value="${reqamount}" type="currency" pattern="$#,##0.00;($#,##0.00)" minFractionDigits="2"/>
  					exceeds your available saving balance of
  					<money:formatNumber value="${balance}" type="currency" pattern="$#,##0.00;($#,##0.00)" minFractionDigits="2"/>.<br>
- 					Click <strong>Return</strong> to return to the withdrawal page to enter a new amount.<br><br>
+ 					Click <strong>Return</strong> to return to the withdrawal page to enter a lesser amount.<br><br>
 					<input class="btn btn-success" type="submit" name="goback" value="Return">
 				</p>
 			</overdraftform:form>

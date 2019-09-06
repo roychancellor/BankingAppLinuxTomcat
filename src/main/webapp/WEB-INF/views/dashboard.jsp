@@ -19,7 +19,7 @@
 		<%@ include file="common/header-common.jspf" %>
 		<section>
 			<h1>Dashboard for <strong style="color:#522398">${fullname}</strong></h1>
-			<h3 style="text-align:center"><strong>Current Account Balances</strong></h3>
+			<h2 style="text-align:center"><strong>Current Account Balances</strong></h2>
 			<div class="dashboard">
 			<table class="table table-striped">
 				<tr><th>Checking</th><th>Saving</th><th>Cash Advance</th></tr>
@@ -34,7 +34,7 @@
 				</tr>
 			</table>
 			</div>
-			<p><a class="btn btn-success" href="/statements-bank">Reports</a></p>
+			<p><a style="font-size:1.5em" class="btn btn-success" href="/statements-bank">Reports</a></p>
 		</section>
 		<%@ include file="common/footer-common.jspf" %>
 	</div>

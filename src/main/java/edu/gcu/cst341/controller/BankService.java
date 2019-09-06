@@ -51,7 +51,7 @@ public class BankService {
 	 * @param transType the type of transaction (+1 = deposit, -1 = withdrawal, 0 = transfer)
 	 * @param amount the dollar amount of the transaction
 	 */
-	public int executeTransaction(Customer cust, String accountType, int transType, double amount) {
+	public int doTransaction(Customer cust, String accountType, int transType, double amount) {
 		//Get the account based on accountType (chk, sav, or loan)
 		Account account = null;
 		switch(accountType) {
@@ -95,7 +95,7 @@ public class BankService {
 	 * @param cust the current Customer object
 	 * @return the number of records written (1 if successful, 0 if not)
 	 */
-	public int executeCheckingOverdraft(Customer cust) {
+	public int doCheckingOverdraft(Customer cust) {
 		//If an overdraft occurred, write the overdraft transaction
 		DataService ds = new DataService();
 		int numRec = ds.dbAddTransaction(
@@ -108,6 +108,10 @@ public class BankService {
 		
 		ds.close();
 		return numRec;
+	}
+	
+	public int doTransfer(Customer cust, String fromAccount, double amount, String toAccount) {
+		return 0;
 	}
 	
 	/**

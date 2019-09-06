@@ -10,7 +10,7 @@
 	<spring:url value="/resources/images/header.jpg" var="headerImg" />
 	<spring:url value="/resources/images/footer.jpg" var="footerImg" />
 	<meta charset="UTF-8">
-	<title>Withdraw</title>
+	<title>Cash Advance</title>
 	<link rel="stylesheet" href="${mainCss}" />
 </head>
 
@@ -20,13 +20,12 @@
 		<section>
 			<h1>Loan INSUFFICIENT CREDIT Notice</h1>
 			<overdraftform:form action="/withdraw-bank" method="GET">
-				<td class="content"><money:formatNumber value="${chkbal}" type="currency" pattern="$#,##0.00;($#,##0.00)" minFractionDigits="2"/></td>
 				<p>
- 					A withdrawal of
+ 					A cash advance of
  					<money:formatNumber value="${reqamount}" type="currency" pattern="$#,##0.00;($#,##0.00)" minFractionDigits="2"/>
- 					exceeds your available credit of
+ 					exceeds your available credit limit of
  					<money:formatNumber value="${balance}" type="currency" pattern="$#,##0.00;($#,##0.00)" minFractionDigits="2"/>.<br>
- 					Click <strong>Return</strong> to return to the withdrawal page to enter a new amount.<br><br>
+ 					Click <strong>Return</strong> to return to the withdrawal page to enter a lesser amount.<br><br>
 					<input class="btn btn-success" type="submit" name="goback" value="Return">
 				</p>
 			</overdraftform:form>

@@ -222,7 +222,7 @@ public class LoginController {
 			jspToAccess = "dashboard";
 			
 			//Do the deposit and update the dashboard values
-			BankService.executeTransaction(customer, accountType, Account.DEPOSIT, amount.getAmount());
+			BankService.doTransaction(customer, accountType, Account.DEPOSIT, amount.getAmount());
 			
 			//Update all dashboard parameters
 			updateDashboardModel(customer, map);
@@ -282,7 +282,7 @@ public class LoginController {
 			
 			if(validAmount) {
 				//Do the withdrawal and update the dashboard values
-				BankService.executeTransaction(customer, accountType, Account.WITHDRAWAL, amount.getAmount());
+				BankService.doTransaction(customer, accountType, Account.WITHDRAWAL, amount.getAmount());
 
 				System.out.println("\nwithdraw-bank POST: after transaction, balances are:\n"
 					+ "checking:" + customer.getChecking().getAccountBalance()
@@ -331,9 +331,11 @@ public class LoginController {
 	private void populateWithdrawalErrorModel(Account account, double amount, ModelMap map) {
 		//Requested withdrawal amount
 		map.addAttribute("reqamount", amount);
+		//Current account balance
 		map.addAttribute("balance", account.getAccountBalance());
 		
 		//Other model parameters based on account type
+		//(note: Saving accounts only need the above two)
 		if(account instanceof Checking) {
 			map.addAttribute("overdraft", ((Checking)account).getOverdraftFee());
 		}
@@ -355,8 +357,8 @@ public class LoginController {
 		System.out.println("\n/withdraw-overdraft-bank: amount = " + amountForm.getAmount());
 		
 		//Update balance in Checking object and write transactions in database
-		BankService.executeTransaction(customer, "chk", Account.WITHDRAWAL, amountForm.getAmount());
-		BankService.executeCheckingOverdraft(customer);
+		BankService.doTransaction(customer, "chk", Account.WITHDRAWAL, amountForm.getAmount());
+		BankService.doCheckingOverdraft(customer);
 
 		System.out.println("\nwithdraw-overdraft-bank POST: after transaction, balances are:\n"
 			+ "checking:" + customer.getChecking().getAccountBalance()
@@ -392,36 +394,98 @@ public class LoginController {
 	
 	@RequestMapping(value = "/transfer-bank", method = RequestMethod.POST)
 	public String processTransfer(
-			@ModelAttribute("customer") Customer customer,
-			@RequestParam("accountfrom") String accountFrom,
-			@RequestParam("accountto") String accountTo,
-			@Valid @ModelAttribute("amount") AmountForm amountForm,
-			ModelMap map) {
+		@ModelAttribute("customer") Customer customer,
+		@RequestParam("fromaccount") String fromAccount,
+		@RequestParam("toaccount") String toAccount,
+		@Valid @ModelAttribute("amount") AmountForm amount,
+		BindingResult br,
+		ModelMap map) {
 		String jspToAccess = "login";
 		
+		System.out.println("/transfer-bank POST: amount = " + amount.getAmount());
+		System.out.println("br.hasErrors = " + br.hasErrors() + " " + br.toString());
+		//If the form had errors, go back to the form so the customer can make corrections
+        if (br.hasErrors()) {
+//        	map.addAttribute("errormessage", "Amount must be at least $0.01");
+			//Update all dashboard parameters
+			updateDashboardModel(customer, map);
+            return "transfer-bank";
+        }
+
 		//Verify there is a logged-in customer
 		if(customer.getCustId() != 0) {
 			jspToAccess = "dashboard";
-			//TODO: Do the transfer for the customer
+			System.out.println("\n/transfer-bank: Before executing the transaction, amount = " + amount.getAmount());
 			
-			switch(accountFrom) {
-				case "chk":
-					//Update all dashboard parameters
-					updateDashboardModel(customer, map);
-					break;
-				case "sav":
-					//Update all dashboard parameters
-					updateDashboardModel(customer, map);
-					break;
-				case "loan":
-					//Update all dashboard parameters
-					updateDashboardModel(customer, map);
-					break;
-				default:
+			//Check for a valid WITHDRAWAL amount before executing the transfer
+			boolean validFromAmount = BankService.validateWithdrawal(customer, fromAccount, amount.getAmount());
+			
+			//If the TO account is loan, validate the amount is not greater than the available balance
+			boolean validToAmount = false;
+			if(toAccount.contentEquals("loan")) {
+				validToAmount = BankService.validateCashAdvancePayment(customer, amount.getAmount());
 			}
+			
+			//If either check above failed, validAmount will be false; otherwise it will be true
+			if(validFromAmount && validToAmount) {
+				//Do the withdrawal and update the dashboard values
+				BankService.doTransfer(customer, fromAccount, amount.getAmount(), toAccount);
+
+				System.out.println("\ntransfer-bank POST: after transaction, balances are:\n"
+					+ "checking:" + customer.getChecking().getAccountBalance()
+					+ "saving:" + customer.getSaving().getAccountBalance()
+					+ "loan:" + customer.getLoan().getAccountBalance());
+
+				//Update all dashboard parameters
+				updateDashboardModel(customer, map);
+			}
+			else if(!validFromAmount) {
+				if(fromAccount.equals("chk")) {
+					//Populate the information needed for the error page
+					populateWithdrawalErrorModel(customer.getChecking(), amount.getAmount(), map);
+					jspToAccess = "withdraw-bank-error-checking";
+				}
+				else if(fromAccount.equals("sav")) {
+					//Populate the information needed for the error page
+					populateWithdrawalErrorModel(customer.getSaving(), amount.getAmount(), map);
+					jspToAccess = "withdraw-bank-error-saving";
+				}
+				else if(fromAccount.equals("loan")) {
+					//Populate the information needed for the error page
+					populateWithdrawalErrorModel(customer.getLoan(), amount.getAmount(), map);
+					jspToAccess = "withdraw-bank-error-loan";
+				}
+				
+				//Show error page and proceed based on user selection
+				System.out.println("/withdraw-bank POST: About to leave to " + jspToAccess + "\n"
+					+ "amount = " + amount.getAmount());
+			}
+			else if(!validToAmount) {
+				//The amount to transfer to the cash advance (loan) exceeds the outstanding balance
+				//Populate the information needed for the error page
+				populatePaymentErrorModel(customer.getLoan().getAccountBalance(), amount.getAmount(), map);
+				jspToAccess = "loan-payment-bank-error-loan";
+			}
+		}
+		else {
+			jspToAccess = "redirect:login";
 		}
 		
 		return jspToAccess;
+	}
+	
+	/**
+	 * Helper method that populates the parameters necessary for showing a withdrawal
+	 * error page for any of the three account types
+	 * @param loanBalance the account class with the error (Checking, Saving, Loan)
+	 * @param amount the requested withdrawal amount
+	 * @param map the ModelMap for the current session
+	 */
+	private void populatePaymentErrorModel(double loanBalance, double amount, ModelMap map) {
+		//Requested withdrawal amount
+		map.addAttribute("reqamount", amount);
+		//Current account balance
+		map.addAttribute("balance", loanBalance);
 	}
 	
 	@RequestMapping(value = "/statements-bank", method = RequestMethod.GET)
