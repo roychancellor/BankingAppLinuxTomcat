@@ -221,8 +221,17 @@ public class LoginController {
 		if(customer.getCustId() != 0) {
 			jspToAccess = "dashboard";
 			
-			//Do the deposit and update the dashboard values
-			BankService.doTransaction(customer, accountType, Account.DEPOSIT, amount.getAmount());
+			//If account type is loan, validate the payment amount first
+			if(accountType.equals("loan")
+				&& !BankService.validateCashAdvancePayment(customer, amount.getAmount())) {
+				//Populate the information needed for the error page
+				populatePaymentErrorModel(customer.getLoan().getAccountBalance(), amount.getAmount(), map);
+				jspToAccess = "loan-payment-bank-error";
+			}
+			else {
+				//Do the deposit and update the dashboard values
+				BankService.doTransaction(customer, accountType, Account.DEPOSIT, amount.getAmount());
+			}
 			
 			//Update all dashboard parameters
 			updateDashboardModel(customer, map);
@@ -234,6 +243,20 @@ public class LoginController {
 		return jspToAccess;
 	}	
 
+	/**
+	 * Helper method that populates the parameters necessary for showing a withdrawal
+	 * error page for any of the three account types
+	 * @param loanBalance the account class with the error (Checking, Saving, Loan)
+	 * @param amount the requested withdrawal amount
+	 * @param map the ModelMap for the current session
+	 */
+	private void populatePaymentErrorModel(double loanBalance, double amount, ModelMap map) {
+		//Requested withdrawal amount
+		map.addAttribute("reqamount", amount);
+		//Current account balance
+		map.addAttribute("balance", loanBalance);
+	}
+	
 	@RequestMapping(value = "/withdraw-bank", method = RequestMethod.GET)
 	public String showWithdrawScreen(@ModelAttribute("customer") Customer customer, ModelMap map) {
 		String jspToAccess = "withdraw-bank";
@@ -472,20 +495,6 @@ public class LoginController {
 		}
 		
 		return jspToAccess;
-	}
-	
-	/**
-	 * Helper method that populates the parameters necessary for showing a withdrawal
-	 * error page for any of the three account types
-	 * @param loanBalance the account class with the error (Checking, Saving, Loan)
-	 * @param amount the requested withdrawal amount
-	 * @param map the ModelMap for the current session
-	 */
-	private void populatePaymentErrorModel(double loanBalance, double amount, ModelMap map) {
-		//Requested withdrawal amount
-		map.addAttribute("reqamount", amount);
-		//Current account balance
-		map.addAttribute("balance", loanBalance);
 	}
 	
 	@RequestMapping(value = "/statements-bank", method = RequestMethod.GET)

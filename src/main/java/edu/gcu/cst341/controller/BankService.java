@@ -171,7 +171,7 @@ public class BankService {
 		
 		//Validate the business rule that cash advance payments (deposits)
 		//must be less than the outstanding balance
-		if(amount < Math.abs(cust.getLoan().getAccountBalance())) {
+		if(amount <= Math.abs(cust.getLoan().getAccountBalance())) {
 			validAmount = true;
 		}
 		return validAmount;
