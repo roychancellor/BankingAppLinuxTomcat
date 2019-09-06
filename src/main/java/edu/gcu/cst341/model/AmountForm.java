@@ -1,13 +1,6 @@
 package edu.gcu.cst341.model;
 
-import javax.validation.constraints.*;
-
 import org.hibernate.validator.constraints.NotBlank;
-import org.springframework.format.annotation.NumberFormat;
-import org.springframework.format.annotation.NumberFormat.Style;
-
-//import org.hibernate.validator.constraints.NotBlank;
-
 /**
  * A very simple Java bean for validating form input
  * for transaction amounts

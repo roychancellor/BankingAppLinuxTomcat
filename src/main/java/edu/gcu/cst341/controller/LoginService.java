@@ -21,6 +21,12 @@ public class LoginService {
 		return customerId;
 	}
 	
+	/**
+	 * Converts a String value that represents a number into a double, if possible
+	 * If not possible, catches the thrown exceptions
+	 * @param amount the String amount to convert
+	 * @return the double representation of the String if successful or -1 if not possible
+	 */
 	protected double stringToDouble(String amount) {
 		double convertedAmount = -1;
 		

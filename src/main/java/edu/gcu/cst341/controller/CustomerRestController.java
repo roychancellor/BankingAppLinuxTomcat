@@ -3,6 +3,7 @@ package edu.gcu.cst341.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import edu.gcu.cst341.model.Customer;
@@ -17,7 +18,7 @@ public class CustomerRestController {
 	CustomerService cs;
 	
 	@RequestMapping(value="/customer", method=RequestMethod.GET)
-	public Customer getCustomerInfo() {
-		return cs.getCustomerInfoAndBalances(1);
+	public Customer getCustomerInfo(@RequestParam("id") int id) {
+		return cs.getCustomerInfoAndBalances(id);
 	}
 }
