@@ -111,7 +111,18 @@ public class BankService {
 	}
 	
 	public int doTransfer(Customer cust, String fromAccount, double amount, String toAccount) {
-		return 0;
+		//Do a withdrawal from the FROM account
+		int numRec = doTransaction(cust, fromAccount, Account.WITHDRAWAL, amount);
+		
+		if(numRec > 0) {
+			//Do a deposit into the TO account
+			numRec += doTransaction(cust, toAccount, Account.DEPOSIT, amount);
+		}
+		else {
+			System.out.println("ERROR: Unable to compleete the transfer!!!");
+		}
+		
+		return numRec;
 	}
 	
 	/**

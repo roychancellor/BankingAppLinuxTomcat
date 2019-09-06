@@ -221,7 +221,8 @@ public class LoginController {
 		if(customer.getCustId() != 0) {
 			jspToAccess = "dashboard";
 			
-			//If account type is loan, validate the payment amount first
+			//If account type is loan, validate the payment amount before doing the deposit
+			//If amount is invalid, show the error page
 			if(accountType.equals("loan")
 				&& !BankService.validateCashAdvancePayment(customer, amount.getAmount())) {
 				//Populate the information needed for the error page
@@ -441,28 +442,32 @@ public class LoginController {
 			System.out.println("\n/transfer-bank: Before executing the transaction, amount = " + amount.getAmount());
 			
 			//Check for a valid WITHDRAWAL amount before executing the transfer
-			boolean validFromAmount = BankService.validateWithdrawal(customer, fromAccount, amount.getAmount());
+			boolean fromAmountValid = BankService.validateWithdrawal(customer, fromAccount, amount.getAmount());
 			
 			//If the TO account is loan, validate the amount is not greater than the available balance
-			boolean validToAmount = false;
+			boolean toAmountValid = false;
 			if(toAccount.contentEquals("loan")) {
-				validToAmount = BankService.validateCashAdvancePayment(customer, amount.getAmount());
+				toAmountValid = BankService.validateCashAdvancePayment(customer, amount.getAmount());
 			}
 			
 			//If either check above failed, validAmount will be false; otherwise it will be true
-			if(validFromAmount && validToAmount) {
+			if(fromAmountValid && toAmountValid) {
 				//Do the withdrawal and update the dashboard values
-				BankService.doTransfer(customer, fromAccount, amount.getAmount(), toAccount);
+				int numRec = BankService.doTransfer(customer, fromAccount, amount.getAmount(), toAccount);
 
 				System.out.println("\ntransfer-bank POST: after transaction, balances are:\n"
 					+ "checking:" + customer.getChecking().getAccountBalance()
 					+ "saving:" + customer.getSaving().getAccountBalance()
 					+ "loan:" + customer.getLoan().getAccountBalance());
+				System.out.println("\ntransfer-bank POST: after transaction, numRec = " + numRec);
 
 				//Update all dashboard parameters
 				updateDashboardModel(customer, map);
 			}
-			else if(!validFromAmount) {
+			else if(!fromAmountValid) {
+				
+				//TODO: Put the block below in a separate method to avoid code duplication with withdraw
+				
 				if(fromAccount.equals("chk")) {
 					//Populate the information needed for the error page
 					populateWithdrawalErrorModel(customer.getChecking(), amount.getAmount(), map);
@@ -483,11 +488,11 @@ public class LoginController {
 				System.out.println("/withdraw-bank POST: About to leave to " + jspToAccess + "\n"
 					+ "amount = " + amount.getAmount());
 			}
-			else if(!validToAmount) {
+			else if(!toAmountValid) {
 				//The amount to transfer to the cash advance (loan) exceeds the outstanding balance
 				//Populate the information needed for the error page
 				populatePaymentErrorModel(customer.getLoan().getAccountBalance(), amount.getAmount(), map);
-				jspToAccess = "loan-payment-bank-error-loan";
+				jspToAccess = "loan-payment-bank-error";
 			}
 		}
 		else {
