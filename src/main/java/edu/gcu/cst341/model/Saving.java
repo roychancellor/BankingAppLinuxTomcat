@@ -68,23 +68,28 @@ public class Saving extends Account {
 	 */
 	public void doTransaction(final int transType, double amount) {
 		//WITHDRAWAL: Determine if the account will be overdrawn; if so, alert the user and try again
-		while(transType == Account.WITHDRAWAL && amount > getAccountBalance()) {
-			System.out.println(
-				"\n\t"
-				+ Bank.money.format(amount)
-				+ " is greater than your balance of "
-				+ Bank.money.format(getAccountBalance())
-				+ ". Enter a new value or 0 to void transaction.\n"
-			);			
-			amount = getTransactionValue(Account.AMOUNT_MESSAGE + "withdraw: ");
-		}
-		//Process the transaction
-		setAccountBalance(getAccountBalance() + transType * amount);
+//		while(transType == Account.WITHDRAWAL && amount > getAccountBalance()) {
+//			System.out.println(
+//				"\n\t"
+//				+ Bank.money.format(amount)
+//				+ " is greater than your balance of "
+//				+ Bank.money.format(getAccountBalance())
+//				+ ". Enter a new value or 0 to void transaction.\n"
+//			);			
+//			amount = getTransactionValue(Account.AMOUNT_MESSAGE + "withdraw: ");
+//		}
 		//Record the transaction
-		if(transType == Account.WITHDRAWAL)
-			this.addTransaction(-amount, "Withdrawal");
-		if(transType == Account.DEPOSIT)
-			this.addTransaction(amount, "Deposit");
+		if(transType == Account.WITHDRAWAL || transType == Account.TRANSFER_W) {
+			//Withdrawals are negative, so change the sign of the amount
+			amount = -amount;
+			this.addTransaction(amount, "Withdrawal" + (transType == Account.TRANSFER_W ? Account.TRANSFER_NOTE : ""));
+		}
+		if(transType == Account.DEPOSIT || transType == Account.TRANSFER_D) {
+			this.addTransaction(amount, "Deposit" + (transType == Account.TRANSFER_D ? Account.TRANSFER_NOTE : ""));
+		}
+		//Update the account balance
+		setAccountBalance(getAccountBalance() + amount);
+		System.out.println("\t\t***doTransaction AFTER setAccountBalance: " + getAccountBalance());
 	}
 	
 	/**

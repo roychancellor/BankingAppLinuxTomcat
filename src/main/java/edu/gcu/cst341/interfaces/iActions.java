@@ -5,11 +5,14 @@ package edu.gcu.cst341.interfaces;
  */
 public interface iActions {
 	/**
-	 * DEPOSIT and WITHDRAW are provided as descriptors for transType in processTransaction
-	 * and can be used as multipliers depending on the transaction type
+	 * These constants are provided as descriptors for transType in processTransaction
+	 * DEPOSIT & WITHDRAWAL should be different values from TRANSFER_D & TRANSFER_W
 	 */
 	public static final int DEPOSIT = 1;
 	public static final int WITHDRAWAL = -1;
+	public static final int TRANSFER_D = 2;
+	public static final int TRANSFER_W = -2;
+	public static final String TRANSFER_NOTE = " (transfer)";
 	
 	/**
 	 * interface method for getting a double value from a Scanner

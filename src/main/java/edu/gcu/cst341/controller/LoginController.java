@@ -445,8 +445,8 @@ public class LoginController {
 			boolean fromAmountValid = BankService.validateWithdrawal(customer, fromAccount, amount.getAmount());
 			
 			//If the TO account is loan, validate the amount is not greater than the available balance
-			boolean toAmountValid = false;
-			if(toAccount.contentEquals("loan")) {
+			boolean toAmountValid = true;
+			if(toAccount.equals("loan")) {
 				toAmountValid = BankService.validateCashAdvancePayment(customer, amount.getAmount());
 			}
 			
@@ -456,8 +456,8 @@ public class LoginController {
 				int numRec = BankService.doTransfer(customer, fromAccount, amount.getAmount(), toAccount);
 
 				System.out.println("\ntransfer-bank POST: after transaction, balances are:\n"
-					+ "checking:" + customer.getChecking().getAccountBalance()
-					+ "saving:" + customer.getSaving().getAccountBalance()
+					+ "checking:" + customer.getChecking().getAccountBalance() + ", "
+					+ "saving:" + customer.getSaving().getAccountBalance() + ", "
 					+ "loan:" + customer.getLoan().getAccountBalance());
 				System.out.println("\ntransfer-bank POST: after transaction, numRec = " + numRec);
 

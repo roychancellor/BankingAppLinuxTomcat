@@ -42,22 +42,27 @@ public class Checking extends Account {
 		System.out.println("\t\t***doTransaction BEFORE setAccountBalance: " + getAccountBalance());
 		//WITHDRAWAL: If the amount is more than the balance, add the overdraft fee
 		//The customer will have been advised on the front end
-		if(transType == Account.WITHDRAWAL && amount > getAccountBalance()) {
+		if((transType == Account.WITHDRAWAL || transType == Account.TRANSFER_W)
+			&& amount > getAccountBalance()) {
+			//Set the feeAmount to the overdraft fee
 			feeAmount = getOverdraftFee();
+			//Add an overdraft transaction
 			this.addTransaction(feeAmount, "Overdraft fee");
 		}
 		
-		//Once validated, process the transaction
-		setAccountBalance(getAccountBalance() + transType * (amount + feeAmount));
-		System.out.println("\t\t***doTransaction AFTER setAccountBalance: " + getAccountBalance());
-		
+		//Once validated, process the transaction		
 		//Record the transaction
-		if(transType == Account.WITHDRAWAL) {
-			this.addTransaction(-amount, "Withdrawal");
+		if(transType == Account.WITHDRAWAL || transType == Account.TRANSFER_W) {
+			//Withdrawals are negative, so change the sign of the amount
+			amount = -amount;
+			this.addTransaction(amount, "Withdrawal" + (transType == Account.TRANSFER_W ? Account.TRANSFER_NOTE : ""));
 		}
-		if(transType == Account.DEPOSIT) {
-			this.addTransaction(amount, "Deposit");
+		if(transType == Account.DEPOSIT || transType == Account.TRANSFER_D) {
+			this.addTransaction(amount, "Deposit" + (transType == Account.TRANSFER_D ? Account.TRANSFER_NOTE : ""));
 		}
+		//Update the account balance
+		setAccountBalance(getAccountBalance() + amount + feeAmount);
+		System.out.println("\t\t***doTransaction AFTER setAccountBalance: " + getAccountBalance());
 	}
 	
 	/**

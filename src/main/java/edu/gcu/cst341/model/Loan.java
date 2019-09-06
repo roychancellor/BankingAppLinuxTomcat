@@ -121,19 +121,23 @@ public class Loan extends Account {
 		}
 		//WITHDRAWALS are cash advances FROM the loan balance, so only allow a withdrawal
 		//up to the difference between the current balance and the available credit (principal)
-		if(transType == Account.WITHDRAWAL
-			&& amount > (Math.abs(this.creditLimit) - Math.abs(getAccountBalance()))) {
-			System.out.println("\nLOAN WITHDRAWAL: Taking more than available");
-		}
+//		if(transType == Account.WITHDRAWAL
+//			&& amount > (Math.abs(this.creditLimit) - Math.abs(getAccountBalance()))) {
+//			System.out.println("\nLOAN WITHDRAWAL: Taking more than available");
+//		}
 		//Process the transaction
-		String transMessage = "Loan payment";
-		if(transType == Account.WITHDRAWAL) {
+		String transMessage = "";
+		if(transType == Account.WITHDRAWAL || transType == Account.TRANSFER_W) {
 			//Withdrawals are negative, so change the sign of the amount
-			amount *= -1;
-			transMessage = "Cash advance";
+			amount = -amount;
+			transMessage = "Cash advance" + (transType == Account.TRANSFER_W ? Account.TRANSFER_NOTE : "");
 		}
+		if(transType == Account.DEPOSIT || transType == Account.TRANSFER_D) {
+			transMessage = "Loan payment" + (transType == Account.TRANSFER_D ? Account.TRANSFER_NOTE : "");
+			setAmountPaidThisMonth(getAmountPaidThisMonth() + amount);
+		}
+		//Update the account balance
 		setAccountBalance(getAccountBalance() + amount);
-		setAmountPaidThisMonth(getAmountPaidThisMonth() + amount);
 		//Record the transaction
 		this.addTransaction(amount, transMessage);
 	}

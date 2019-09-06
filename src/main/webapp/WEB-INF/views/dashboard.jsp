@@ -29,7 +29,7 @@
 					<td class="content"><money:formatNumber value="${savbal}" type="currency" pattern="$#,##0.00;($#,##0.00)" minFractionDigits="2"/></td>
 					<td class="content">
 						<money:formatNumber value="${loanbal}" type="currency" pattern="$#,##0.00;($#,##0.00)" minFractionDigits="2"/>
-						(Available: <money:formatNumber value="${loanavail}" type="currency" pattern="$#,##0.00;($#,##0.00)" minFractionDigits="2"/>)
+						(Available credit: <money:formatNumber value="${loanavail}" type="currency" pattern="$#,##0.00;($#,##0.00)" minFractionDigits="2"/>)
 					</td>
 				</tr>
 			</table>

@@ -110,16 +110,24 @@ public class BankService {
 		return numRec;
 	}
 	
+	/**
+	 * Executes a transfer between two accounts
+	 * @param cust the current logged-in Customer object
+	 * @param fromAccount the account type from which funds are taken
+	 * @param amount the amount of the transfer
+	 * @param toAccount the account type into which funds are put
+	 * @return the number of records written to the database
+	 */
 	public int doTransfer(Customer cust, String fromAccount, double amount, String toAccount) {
 		//Do a withdrawal from the FROM account
-		int numRec = doTransaction(cust, fromAccount, Account.WITHDRAWAL, amount);
+		int numRec = doTransaction(cust, fromAccount, Account.TRANSFER_W, amount);
 		
 		if(numRec > 0) {
 			//Do a deposit into the TO account
-			numRec += doTransaction(cust, toAccount, Account.DEPOSIT, amount);
+			numRec += doTransaction(cust, toAccount, Account.TRANSFER_D, amount);
 		}
 		else {
-			System.out.println("ERROR: Unable to compleete the transfer!!!");
+			System.out.println("ERROR: Unable to complete the transfer!!!");
 		}
 		
 		return numRec;
