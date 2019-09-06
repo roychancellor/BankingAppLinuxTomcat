@@ -20,4 +20,19 @@ public class LoginService {
 		}
 		return customerId;
 	}
+	
+	protected double stringToDouble(String amount) {
+		double convertedAmount = -1;
+		
+		try {
+			convertedAmount = Double.parseDouble(amount);
+		}
+		catch(NullPointerException e) {
+		}
+		catch(NumberFormatException e) {
+		}
+		catch(Exception e) {
+		}
+		return convertedAmount;
+	}	
 }

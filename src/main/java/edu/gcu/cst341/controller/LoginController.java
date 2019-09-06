@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.SessionAttributes;
 
 import edu.gcu.cst341.model.Account;
+import edu.gcu.cst341.model.AmountFormOLD;
 import edu.gcu.cst341.model.AmountForm;
 import edu.gcu.cst341.model.Checking;
 import edu.gcu.cst341.model.Customer;
@@ -188,7 +189,7 @@ public class LoginController {
 			System.out.println("/deposit-bank GET: customer =\n" + customer.toString());
 			//Update all dashboard parameters
 			updateDashboardModel(customer, map);
-			map.addAttribute("amount", new AmountForm());
+			map.addAttribute("amount", new AmountFormOLD());
 		}
 		else {
 			jspToAccess = "login";
@@ -201,46 +202,48 @@ public class LoginController {
 	public String processDeposit(
 		@ModelAttribute("customer") Customer customer,
 		@RequestParam("account") String accountType,
-		@Valid @ModelAttribute("amount") AmountForm amount,
+		@Valid @ModelAttribute("amount") AmountForm amountStr,
 		BindingResult br,
 		ModelMap map) {
 		
 		String jspToAccess = "login";
 		
-		System.out.println("/deposit-bank POST: amount = " + amount.getAmount());
+		System.out.println("/deposit-bank POST: amount = " + amountStr);
 		System.out.println("br.hasErrors = " + br.hasErrors() + " " + br.toString());
-		//If the form had errors, go back to the form so the customer can make corrections
-        if (br.hasErrors()) {
-//        	map.addAttribute("errormessage", "Amount must be at least $0.01");
+		double amount;
+		//If the form had errors or if the form input could not be converted to a number,
+		//go back to the form so the customer can make corrections
+        if (br.hasErrors() || (amount = LoginService.stringToDouble(amountStr.getAmount())) < 0) {
+        	map.addAttribute("errormessage", "Amount must be at least $0.01");
 			//Update all dashboard parameters
 			updateDashboardModel(customer, map);
-            return "deposit-bank";
+            jspToAccess = "deposit-bank";
         }
-
-		//Verify there is a logged-in customer
-		if(customer.getCustId() != 0) {
-			jspToAccess = "dashboard";
-			
-			//If account type is loan, validate the payment amount before doing the deposit
-			//If amount is invalid, show the error page
-			if(accountType.equals("loan")
-				&& !BankService.validateCashAdvancePayment(customer, amount.getAmount())) {
-				//Populate the information needed for the error page
-				populatePaymentErrorModel(customer.getLoan().getAccountBalance(), amount.getAmount(), map);
-				jspToAccess = "loan-payment-bank-error";
+		else {
+			//Verify there is a logged-in customer
+			if(customer.getCustId() != 0) {
+				jspToAccess = "dashboard";
+				
+				//If account type is loan, validate the payment amount before doing the deposit
+				//If amount is invalid, show the error page
+				if(accountType.equals("loan")
+					&& !BankService.validateCashAdvancePayment(customer, amount)) {
+					//Populate the information needed for the error page
+					populatePaymentErrorModel(customer.getLoan().getAccountBalance(), amount, map);
+					jspToAccess = "loan-payment-bank-error";
+				}
+				else {
+					//Do the deposit and update the dashboard values
+					BankService.doTransaction(customer, accountType, Account.DEPOSIT, amount);
+				}
+				
+				//Update all dashboard parameters
+				updateDashboardModel(customer, map);
 			}
 			else {
-				//Do the deposit and update the dashboard values
-				BankService.doTransaction(customer, accountType, Account.DEPOSIT, amount.getAmount());
+				jspToAccess = "redirect:login";
 			}
-			
-			//Update all dashboard parameters
-			updateDashboardModel(customer, map);
 		}
-		else {
-			jspToAccess = "redirect:login";
-		}
-		
 		return jspToAccess;
 	}	
 
@@ -267,7 +270,7 @@ public class LoginController {
 		if(customer.getCustId() != 0) {
 			//Update all dashboard parameters
 			updateDashboardModel(customer, map);
-			map.addAttribute("amount", new AmountForm());
+			map.addAttribute("amount", new AmountFormOLD());
 		}
 		else {
 			jspToAccess = "login";
@@ -280,68 +283,70 @@ public class LoginController {
 	public String processWithdrawal(
 		@ModelAttribute("customer") Customer customer,
 		@RequestParam("account") String accountType,
-		@Valid @ModelAttribute("amount") AmountForm amount,
+		@Valid @ModelAttribute("amount") AmountForm amountStr,
 		BindingResult br,
 		ModelMap map) {
 		
 		String jspToAccess = "login";
 		
-		System.out.println("/withdraw-bank POST: amount = " + amount.getAmount());
+		System.out.println("/withdraw-bank POST: amount = " + amountStr);
 		System.out.println("br.hasErrors = " + br.hasErrors() + " " + br.toString());
-		//If the form had errors, go back to the form so the customer can make corrections
-        if (br.hasErrors()) {
-//        	map.addAttribute("errormessage", "Amount must be at least $0.01");
+		//If the form had errors or if the form input could not be converted to a number,
+		//go back to the form so the customer can make corrections
+        double amount;
+		if (br.hasErrors() || (amount = LoginService.stringToDouble(amountStr.getAmount())) < 0) {
+        	map.addAttribute("errormessage", "Amount must be at least $0.01");
 			//Update all dashboard parameters
 			updateDashboardModel(customer, map);
-            return "withdraw-bank";
+            jspToAccess = "withdraw-bank";
         }
-
-		//Verify there is a logged-in customer
-		if(customer.getCustId() != 0) {
-			jspToAccess = "dashboard";
-			System.out.println("\n/withdraw-bank: Before executing the transaction, amount = " + amount.getAmount());
-			
-			//Check for a valid withdrawal amount before executing the transaction
-			boolean validAmount = BankService.validateWithdrawal(customer, accountType, amount.getAmount());
-			
-			if(validAmount) {
-				//Do the withdrawal and update the dashboard values
-				BankService.doTransaction(customer, accountType, Account.WITHDRAWAL, amount.getAmount());
-
-				System.out.println("\nwithdraw-bank POST: after transaction, balances are:\n"
-					+ "checking:" + customer.getChecking().getAccountBalance()
-					+ "saving:" + customer.getSaving().getAccountBalance()
-					+ "loan:" + customer.getLoan().getAccountBalance());
-
-				//Update all dashboard parameters
-				updateDashboardModel(customer, map);
+		else {
+			//Verify there is a logged-in customer
+			if(customer.getCustId() != 0) {
+				jspToAccess = "dashboard";
+				System.out.println("\n/withdraw-bank: Before executing the transaction, amount = " + amount);
+				
+				//Check for a valid withdrawal amount before executing the transaction
+				boolean validAmount = BankService.validateWithdrawal(customer, accountType, amount);
+				
+				if(validAmount) {
+					//Do the withdrawal and update the dashboard values
+					BankService.doTransaction(customer, accountType, Account.WITHDRAWAL, amount);
+	
+					System.out.println("\nwithdraw-bank POST: after transaction, balances are:\n"
+						+ "checking:" + customer.getChecking().getAccountBalance()
+						+ "saving:" + customer.getSaving().getAccountBalance()
+						+ "loan:" + customer.getLoan().getAccountBalance());
+	
+					//Update all dashboard parameters
+					updateDashboardModel(customer, map);
+				}
+				else {
+					if(accountType.equals("chk")) {
+						//Populate the information needed for the error page
+						populateWithdrawalErrorModel(customer.getChecking(), amount, map);
+						jspToAccess = "withdraw-bank-error-checking";
+					}
+					else if(accountType.equals("sav")) {
+						//Populate the information needed for the error page
+						populateWithdrawalErrorModel(customer.getSaving(), amount, map);
+						jspToAccess = "withdraw-bank-error-saving";
+					}
+					else if(accountType.equals("loan")) {
+						//Populate the information needed for the error page
+						populateWithdrawalErrorModel(customer.getLoan(), amount, map);
+						jspToAccess = "withdraw-bank-error-loan";
+					}
+					
+					//Show error page and proceed based on user selection
+					System.out.println("/withdraw-bank POST: About to leave to " + jspToAccess + "\n"
+						+ "amount = " + amount);
+				}
 			}
 			else {
-				if(accountType.equals("chk")) {
-					//Populate the information needed for the error page
-					populateWithdrawalErrorModel(customer.getChecking(), amount.getAmount(), map);
-					jspToAccess = "withdraw-bank-error-checking";
-				}
-				else if(accountType.equals("sav")) {
-					//Populate the information needed for the error page
-					populateWithdrawalErrorModel(customer.getSaving(), amount.getAmount(), map);
-					jspToAccess = "withdraw-bank-error-saving";
-				}
-				else if(accountType.equals("loan")) {
-					//Populate the information needed for the error page
-					populateWithdrawalErrorModel(customer.getLoan(), amount.getAmount(), map);
-					jspToAccess = "withdraw-bank-error-loan";
-				}
-				
-				//Show error page and proceed based on user selection
-				System.out.println("/withdraw-bank POST: About to leave to " + jspToAccess + "\n"
-					+ "amount = " + amount.getAmount());
+				jspToAccess = "redirect:login";
 			}
 		}
-		else {
-			jspToAccess = "redirect:login";
-		}
-		
 		return jspToAccess;
 	}
 
@@ -373,7 +378,7 @@ public class LoginController {
 	@RequestMapping(value = "/withdraw-bank-error-checking", method = RequestMethod.POST)
 	public String processWithdrawalCheckingOverdraft(
 		@ModelAttribute("customer") Customer customer,
-		@Valid @ModelAttribute("amount") AmountForm amountForm,
+		@Valid @ModelAttribute("amount") AmountFormOLD amountForm,
 		ModelMap map) {
 		
 		String jspToAccess = "dashboard";
@@ -409,7 +414,7 @@ public class LoginController {
 		if(customer.getCustId() != 0) {
 			//Update all dashboard parameters
 			updateDashboardModel(customer, map);
-			map.addAttribute("amount", new AmountForm());
+			map.addAttribute("amount", new AmountFormOLD());
 		}
 		else {
 			jspToAccess = "login";
@@ -423,81 +428,84 @@ public class LoginController {
 		@ModelAttribute("customer") Customer customer,
 		@RequestParam("fromaccount") String fromAccount,
 		@RequestParam("toaccount") String toAccount,
-		@Valid @ModelAttribute("amount") AmountForm amount,
+		@Valid @ModelAttribute("amount") AmountForm amountStr,
 		BindingResult br,
 		ModelMap map) {
+		
 		String jspToAccess = "login";
 		
-		System.out.println("/transfer-bank POST: amount = " + amount.getAmount());
+		System.out.println("/transfer-bank POST: amount = " + amountStr);
 		System.out.println("br.hasErrors = " + br.hasErrors() + " " + br.toString());
-		//If the form had errors, go back to the form so the customer can make corrections
-        if (br.hasErrors()) {
-//        	map.addAttribute("errormessage", "Amount must be at least $0.01");
+		//If the form had errors or if the form input could not be converted to a number,
+		//go back to the form so the customer can make corrections
+        double amount;
+		if (br.hasErrors() || (amount = LoginService.stringToDouble(amountStr.getAmount())) < 0) {
+        	map.addAttribute("errormessage", "Amount must be at least $0.01");
 			//Update all dashboard parameters
 			updateDashboardModel(customer, map);
-            return "transfer-bank";
+            jspToAccess = "transfer-bank";
         }
-
-		//Verify there is a logged-in customer
-		if(customer.getCustId() != 0) {
-			jspToAccess = "dashboard";
-			System.out.println("\n/transfer-bank: Before executing the transaction, amount = " + amount.getAmount());
-			
-			//Check for a valid WITHDRAWAL amount before executing the transfer
-			boolean fromAmountValid = BankService.validateWithdrawal(customer, fromAccount, amount.getAmount());
-			
-			//If the TO account is loan, validate the amount is not greater than the available balance
-			boolean toAmountValid = true;
-			if(toAccount.equals("loan")) {
-				toAmountValid = BankService.validateCashAdvancePayment(customer, amount.getAmount());
-			}
-			
-			//If either check above failed, validAmount will be false; otherwise it will be true
-			if(fromAmountValid && toAmountValid) {
-				//Do the transfer and update the dashboard values
-				int numRec = BankService.doTransfer(customer, fromAccount, amount.getAmount(), toAccount);
-
-				System.out.println("\ntransfer-bank POST: after transaction, balances are:\n"
-					+ "checking:" + customer.getChecking().getAccountBalance() + ", "
-					+ "saving:" + customer.getSaving().getAccountBalance() + ", "
-					+ "loan:" + customer.getLoan().getAccountBalance());
-				System.out.println("\ntransfer-bank POST: after transaction, numRec = " + numRec);
-
-				//Update all dashboard parameters
-				updateDashboardModel(customer, map);
-			}
-			else if(!fromAmountValid) {				
-				if(fromAccount.equals("chk")) {
-					//Populate the information needed for the error page
-					populateTransferErrorModel(customer.getChecking(), amount.getAmount(), toAccount, map);
-					jspToAccess = "transfer-bank-error-checking";
-				}
-				else if(fromAccount.equals("sav")) {
-					//Populate the information needed for the error page
-					populateTransferErrorModel(customer.getSaving(), amount.getAmount(), toAccount, map);
-					jspToAccess = "withdraw-bank-error-saving";
-				}
-				else if(fromAccount.equals("loan")) {
-					//Populate the information needed for the error page
-					populateTransferErrorModel(customer.getLoan(), amount.getAmount(), toAccount, map);
-					jspToAccess = "withdraw-bank-error-loan";
+		else {
+			//Verify there is a logged-in customer
+			if(customer.getCustId() != 0) {
+				jspToAccess = "dashboard";
+				System.out.println("\n/transfer-bank: Before executing the transaction, amount = " + amount);
+				
+				//Check for a valid WITHDRAWAL amount before executing the transfer
+				boolean fromAmountValid = BankService.validateWithdrawal(customer, fromAccount, amount);
+				
+				//If the TO account is loan, validate the amount is not greater than the available balance
+				boolean toAmountValid = true;
+				if(toAccount.equals("loan")) {
+					toAmountValid = BankService.validateCashAdvancePayment(customer, amount);
 				}
 				
-				//Show error page and proceed based on user selection
-				System.out.println("/transfer-bank POST: About to leave to " + jspToAccess + "\n"
-					+ "amount = " + amount.getAmount());
+				//If either check above failed, validAmount will be false; otherwise it will be true
+				if(fromAmountValid && toAmountValid) {
+					//Do the transfer and update the dashboard values
+					int numRec = BankService.doTransfer(customer, fromAccount, amount, toAccount);
+	
+					System.out.println("\ntransfer-bank POST: after transaction, balances are:\n"
+						+ "checking:" + customer.getChecking().getAccountBalance() + ", "
+						+ "saving:" + customer.getSaving().getAccountBalance() + ", "
+						+ "loan:" + customer.getLoan().getAccountBalance());
+					System.out.println("\ntransfer-bank POST: after transaction, numRec = " + numRec);
+	
+					//Update all dashboard parameters
+					updateDashboardModel(customer, map);
+				}
+				else if(!fromAmountValid) {				
+					if(fromAccount.equals("chk")) {
+						//Populate the information needed for the error page
+						populateTransferErrorModel(customer.getChecking(), amount, toAccount, map);
+						jspToAccess = "transfer-bank-error-checking";
+					}
+					else if(fromAccount.equals("sav")) {
+						//Populate the information needed for the error page
+						populateTransferErrorModel(customer.getSaving(), amount, toAccount, map);
+						jspToAccess = "withdraw-bank-error-saving";
+					}
+					else if(fromAccount.equals("loan")) {
+						//Populate the information needed for the error page
+						populateTransferErrorModel(customer.getLoan(), amount, toAccount, map);
+						jspToAccess = "withdraw-bank-error-loan";
+					}
+					
+					//Show error page and proceed based on user selection
+					System.out.println("/transfer-bank POST: About to leave to " + jspToAccess + "\n"
+						+ "amount = " + amount);
+				}
+				else if(!toAmountValid) {
+					//The amount to transfer to the cash advance (loan) exceeds the outstanding balance
+					//Populate the information needed for the error page
+					populatePaymentErrorModel(customer.getLoan().getAccountBalance(), amount, map);
+					jspToAccess = "loan-payment-bank-error";
+				}
 			}
-			else if(!toAmountValid) {
-				//The amount to transfer to the cash advance (loan) exceeds the outstanding balance
-				//Populate the information needed for the error page
-				populatePaymentErrorModel(customer.getLoan().getAccountBalance(), amount.getAmount(), map);
-				jspToAccess = "loan-payment-bank-error";
+			else {
+				jspToAccess = "redirect:login";
 			}
 		}
-		else {
-			jspToAccess = "redirect:login";
-		}
-		
 		return jspToAccess;
 	}
 	
@@ -530,7 +538,7 @@ public class LoginController {
 	@RequestMapping(value = "/transfer-bank-error-checking", method = RequestMethod.POST)
 	public String processTransferCheckingOverdraft(
 		@ModelAttribute("customer") Customer customer,
-		@Valid @ModelAttribute("amount") AmountForm amountForm,
+		@Valid @ModelAttribute("amount") AmountFormOLD amountForm,
 		@RequestParam("toAccount") String toAccount,
 		ModelMap map) {
 		

@@ -2,7 +2,6 @@ package edu.gcu.cst341.model;
 
 import javax.validation.constraints.*;
 
-import org.hibernate.validator.constraints.NotBlank;
 import org.springframework.format.annotation.NumberFormat;
 import org.springframework.format.annotation.NumberFormat.Style;
 
@@ -12,50 +11,37 @@ import org.springframework.format.annotation.NumberFormat.Style;
  * A very simple Java bean for validating form input
  * for transaction amounts
  */
-public class AmountForm {
-	private int id;
-	@NotBlank(message = "Amount may not be blank")
-	private String amount;
+public class AmountFormOLD {
+	@DecimalMin(value = "0.01", message = "Amount must be at least $0.01")
+	@NumberFormat(style = Style.NUMBER)
+	private double amount;
 
 	/**
 	 * @return the amount
 	 */
-	public String getAmount() {
+	public double getAmount() {
 		return amount;
 	}
 
 	/**
 	 * @param amount the amount to set
 	 */
-	public void setAmount(String amount) {
+	public void setAmount(double amount) {
 		this.amount = amount;
 	}
 
-	/**
-	 * @return the id
-	 */
-	public int getId() {
-		return id;
-	}
-
-	/**
-	 * @param id the id to set
-	 */
-	public void setId(int id) {
-		this.id = id;
-	}
-
-	
 	@Override
 	public String toString() {
-		return "AmountForm2 [id=" + id + ", amount=" + amount + "]";
+		return "AmountForm [amount=" + amount + "]";
 	}
 
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + id;
+		long temp;
+		temp = Double.doubleToLongBits(amount);
+		result = prime * result + (int) (temp ^ (temp >>> 32));
 		return result;
 	}
 
@@ -67,11 +53,9 @@ public class AmountForm {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		AmountForm other = (AmountForm) obj;
-		if (id != other.id)
+		AmountFormOLD other = (AmountFormOLD) obj;
+		if (Double.doubleToLongBits(amount) != Double.doubleToLongBits(other.amount))
 			return false;
 		return true;
 	}
-
-	
 }
