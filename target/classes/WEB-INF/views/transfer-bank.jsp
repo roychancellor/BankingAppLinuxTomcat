@@ -43,10 +43,9 @@
 				<div class="amountinput">
 					<p><transform:label path="amount">Amount to transfer:</transform:label>
 					<br />
-					<transform:input type="text" path="amount"/>
+					<transform:input type="text" path="amount"/><a class="error">${errormessage}</a>
 					<transform:errors path="amount" cssClass="error" /></p>	
 				</div>			
-				<p class="error">${errormessage}</p>
 				<div class="radioform">
 					<p><strong>TO Account:</strong><br />
 						<input type="radio" name="toaccount" value="chk"> Checking (${acctchk})

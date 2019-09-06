@@ -46,10 +46,9 @@
 				<div class="amountinput">
 					<p><depform:label path="amount">Amount to withdraw:</depform:label>
 					<br />
-					<depform:input type="text" path="amount"/>
+					<depform:input type="text" path="amount"/><a class="error">${errormessage}</a>
 					<depform:errors path="amount" cssClass="error" /></p>	
 				</div>			
-				<p class="error">${errormessage}</p>
 				<p>
 					<input class="btn btn-success" type="submit" value="Submit Withdrawal">
 					<a class="btn btn-primary" href="/dashboard">Cancel and Return to Dashboard</a>
