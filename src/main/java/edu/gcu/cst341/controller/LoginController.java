@@ -93,6 +93,7 @@ public class LoginController {
 	
 	@RequestMapping(value = "/confirmcustomer", method = RequestMethod.POST)
 	public String confirmcustomerScreen(@ModelAttribute("customer") Customer customer, ModelMap map) {
+		String jspToReturn = "redirect:login";
 		System.out.println("\nBack from confirmcustomer.jsp:");
 		System.out.println("/confirmcustomer POST: customer =\n" + customer.toString());
 		
@@ -103,17 +104,18 @@ public class LoginController {
 			map.put("customer", customer);
 			map.addAttribute("errorMessage", "ERROR: A customer with username "
 				+ customer.getUsername() + " already exists. Choose another username and re-submit");
-			return "newcustomer";
+			jspToReturn = "newcustomer";
 		}
 		else {
 			//Create the new customer object in the database
 			int custId = CustomerService.createNewCustomer(customer);
 			if(custId > 0) {
 				System.out.println("/confirmcustomer POST: created new customer:\n" + customer.toString());
+				jspToReturn = "successcustomer";
 			}
 		}
 		
-		return "redirect:login";
+		return jspToReturn;
 	}
 	
 	//NOTE: return statements are names of .jsp files
@@ -461,6 +463,12 @@ public class LoginController {
 			updateDashboardModel(customer, map);
             jspToAccess = "transfer-bank";
         }
+		else if(fromAccount.equals(toAccount)) {
+        	map.addAttribute("errormessage", "FROM Account and TO Account must be different");
+			//Update all dashboard parameters
+			updateDashboardModel(customer, map);
+            jspToAccess = "transfer-bank";
+		}
 		else {
 			//Verify there is a logged-in customer
 			if(customer.getCustId() != 0) {
