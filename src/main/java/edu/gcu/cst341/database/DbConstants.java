@@ -103,6 +103,12 @@ public class DbConstants {
 		+ " AND "
 		+ CUSTOMER_PASSWORD_HASH + "=?";
 	
+	//SQL command to RETRIEVE a customer by username (used to check if user already exists)
+	public static final String GET_CUSTOMER_BY_USERNAME = 
+		"SELECT " + CUSTOMER_USER_NAME
+		+ " FROM " + DB_NAME + "." + CREDENTIALS_TABLE
+		+ " WHERE " + CUSTOMER_USER_NAME + "=?";
+	
 	//SQL command to RETRIEVE all customer information from customers table by customerId
 	public static final String GET_CUSTOMER_BY_ID =
 		"SELECT "

@@ -96,10 +96,21 @@ public class LoginController {
 		System.out.println("\nBack from confirmcustomer.jsp:");
 		System.out.println("/confirmcustomer POST: customer =\n" + customer.toString());
 		
-		//Create the new customer object in the database
-		int custId = CustomerService.createNewCustomer(customer);
-		if(custId > 0) {
-			System.out.println("/confirmcustomer POST: created new customer:\n" + customer.toString());
+		//Check for an existing user with the same username
+		if(CustomerService.userNameExists(customer.getUsername())) {
+			System.out.println("\n/confirmcustomer POST: the username "
+				+ customer.getUsername() + " already exists\nGoing back to newcustomer.jsp");
+			map.put("customer", customer);
+			map.addAttribute("errorMessage", "ERROR: A customer with username "
+				+ customer.getUsername() + " already exists. Choose another username and re-submit");
+			return "newcustomer";
+		}
+		else {
+			//Create the new customer object in the database
+			int custId = CustomerService.createNewCustomer(customer);
+			if(custId > 0) {
+				System.out.println("/confirmcustomer POST: created new customer:\n" + customer.toString());
+			}
 		}
 		
 		return "redirect:login";

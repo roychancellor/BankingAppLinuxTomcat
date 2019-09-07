@@ -6,7 +6,14 @@ import edu.gcu.cst341.model.Customer;
 
 @Service
 public class CustomerService {
-	
+	protected boolean userNameExists(String usernameToCheck) {
+		DataService ds = new DataService();
+		if(ds.dbRetrieveCustomerByUsername(usernameToCheck) > 0) {
+			ds.close();
+			return true;
+		}
+		return false;
+	}
 	/**
 	 * Creates a new customer in the database by writing customer information
 	 * to the customers table, login credentials to the credentials table,

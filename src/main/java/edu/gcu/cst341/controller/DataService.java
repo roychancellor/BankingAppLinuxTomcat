@@ -200,6 +200,38 @@ public class DataService {
 	}
 
 	/**
+	 * Attempts to retrieve the usernameToCheck from the credentials table
+	 * to  validate the username does not already exist
+	 * @param usernameToCheck the username to check for existence
+	 * @return the number of records retrieved (>0 if already exists; 0 if not)
+	 */
+	public int dbRetrieveCustomerByUsername(String usernameToCheck) {
+		int numRec = 0;
+		if(this.connectedToDb) {
+			//SEARCH FOR THE USERNAME
+			try {
+				//Prepare the SQL statement
+				sql = conn.prepareStatement(DbConstants.GET_CUSTOMER_BY_USERNAME);
+	
+				//Populate statement parameters
+				sql.setString(1, usernameToCheck);
+				if(verboseSQL) printSQL();
+				
+				//Execute SQL statement
+				rs = sql.executeQuery();
+				while(rs.next()) {
+					numRec++;
+				}
+			}
+			catch(SQLException e) {
+				System.out.println("\nERROR: UNABLE TO QUERY FOR USERNAME " + usernameToCheck + "!!!");
+				e.printStackTrace();
+			}
+		}
+		return numRec;
+	}
+	
+	/**
 	 * Adds a customer to the customers table
 	 * @param lastName the contact name being added
 	 * @param firstName the contact phone being added
