@@ -30,15 +30,8 @@ public class CustomerService {
 			//Set the customerId for the Customer object
 			cust.setCustId(dbCustId);
 			
-			//Retrieve the salt from the database
-			String salt = ds.dbRetrieveSaltKey(1);
-			//Hash the plain-text password with the salt
-			String hashedPass = PasswordService.hashPassword(cust.getPassword(), salt).get();
-			//Replace the plain-text password in the Customer object with the hashed password
-			cust.setPassword(hashedPass);
-			//Create the credentials in credentials table
-			numRec = ds.dbCreateCustomerCredentials(dbCustId, cust.getUsername(), salt, hashedPass);
-			System.out.println("\nCREATED CREDENTIALS\n");
+			//Created the new customer's hashed credentials
+			numRec = createHashedCredentials(cust, dbCustId);
 			
 			if(numRec > 0) {
 				//Create the accounts and balances in the customer_accounts table
@@ -46,19 +39,8 @@ public class CustomerService {
 				numRec = ds.dbCreateCustomerAccounts(cust);
 				System.out.println("\nCREATED ACCOUNT NUMBERS AND BALANCES\n");
 				if(numRec > 0) {
-					numRec = 0;
-					numRec += ds.dbCreateCustomerTransactions(
-						dbCustId,
-						cust.getChecking().getAccountNumber(),
-						cust.getChecking().getAccountBalance());
-					numRec += ds.dbCreateCustomerTransactions(
-						dbCustId,
-						cust.getSaving().getAccountNumber(),
-						cust.getSaving().getAccountBalance());
-					numRec += ds.dbCreateCustomerTransactions(
-						dbCustId,
-						cust.getLoan().getAccountNumber(),
-						cust.getLoan().getAccountBalance());
+					numRec = createOpeningBalanceTransactions(dbCustId, cust);
+					System.out.println("\nCREATED OPENING BALANCE TRANSACTIONS\n");
 					if(numRec != 3) {
 						System.out.println("ERROR: Unable to write opening balance transactions");
 					}
@@ -79,6 +61,61 @@ public class CustomerService {
 		ds.close();
 		
 		return dbCustId;
+	}
+	
+	/**
+	 * Creates hashed credentials from the customer's plain-text values and writes to the database
+	 * @param ds a DataService object already open
+	 * @param cust the new Customer being created
+	 * @param dbCustId the database-generated customer Id for the new customer
+	 * @return the number of records inserted (should be 1 if successful, 0 if not)
+	 */
+	private int createHashedCredentials(Customer cust, int dbCustId) {
+		DataService ds = new DataService();
+		int numRec = 0;
+		
+		//Retrieve the salt from the database
+		String salt = ds.dbRetrieveSaltKey(1);
+		//Hash the plain-text password with the salt
+		String hashedPass = PasswordService.hashPassword(cust.getPassword(), salt).get();
+		//Replace the plain-text password in the Customer object with the hashed password
+		cust.setPassword(hashedPass);
+		//Create the credentials in credentials table
+		numRec = ds.dbCreateCustomerCredentials(dbCustId, cust.getUsername(), salt, hashedPass);
+		System.out.println("\nCREATED CREDENTIALS\n");
+		
+		ds.close();
+		
+		return numRec;
+	}
+	
+	/**
+	 * Writes opening balance transactions to the database
+	 * @param dbCustId the database-generated customer Id for the new customer being created
+	 * @param cust the new Customer object being created
+	 * @return the number of records written (should be 3 if successful)
+	 */
+	private int createOpeningBalanceTransactions(int dbCustId, Customer cust) {
+		DataService ds = new DataService();
+		int numRec = 0;
+		
+		//Write the opening balance transactions to the database
+		numRec += ds.dbCreateCustomerTransactions(
+			dbCustId,
+			cust.getChecking().getAccountNumber(),
+			cust.getChecking().getAccountBalance());
+		numRec += ds.dbCreateCustomerTransactions(
+			dbCustId,
+			cust.getSaving().getAccountNumber(),
+			cust.getSaving().getAccountBalance());
+		numRec += ds.dbCreateCustomerTransactions(
+			dbCustId,
+			cust.getLoan().getAccountNumber(),
+			cust.getLoan().getAccountBalance());
+		
+		ds.close();
+		
+		return numRec;
 	}
 	
 	/**
