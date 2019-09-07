@@ -29,6 +29,9 @@ public class Customer implements Comparable<Customer> {
 	@Size(min=8, message="Password must be at least 8 characters")
 	private String password;
 	@NotBlank
+	@Size(min=8, message="Password must be at least 8 characters")
+	private String passCompare;
+	@NotBlank
 	@Size(max=12, message="Phone number must be xxx-xxx-xxxx")
 	@Pattern(regexp="[0-9]{3}-[0-9]{3}-[0-9]{4}", message="Phone number must be xxx-xxx-xxxx")
 	private String phoneNumber;
@@ -171,6 +174,20 @@ public class Customer implements Comparable<Customer> {
 	}
 
 	/**
+	 * @return the passcompare
+	 */
+	public String getPassCompare() {
+		return passCompare;
+	}
+
+	/**
+	 * @param passCompare the passCompare to set
+	 */
+	public void setPassCompare(String passCompare) {
+		this.passCompare = passCompare;
+	}
+
+	/**
 	 * @return the phoneNumber
 	 */
 	public String getPhoneNumber() {
@@ -290,7 +307,8 @@ public class Customer implements Comparable<Customer> {
 	@Override
 	public String toString() {
 		return "Customer [firstName=" + firstName + ", lastName=" + lastName + ", dateOpened=" + dateOpened
-				+ ", custId=" + custId + ", username=" + username + ", password=" + password + ", phoneNumber="
+				+ ", custId=" + custId + ", username=" + username + ", password=" + password
+				+ ", passCompare=" + passCompare + ", phoneNumber="
 				+ phoneNumber + ", emailAddress=" + emailAddress + "]";
 	}
 

@@ -7,6 +7,14 @@ import edu.gcu.cst341.model.Customer;
 @Service
 public class CustomerService {
 	
+	/**
+	 * Creates a new customer in the database by writing customer information
+	 * to the customers table, login credentials to the credentials table,
+	 * and account information to the customer_accounts table and
+	 * customer_transactions table
+	 * @param cust the new Customer object
+	 * @return the number of records written to the database (5 if successful)
+	 */
 	protected int createNewCustomer(Customer cust) {
 		int dbCustId = 0;
 		
@@ -17,13 +25,19 @@ public class CustomerService {
 		dbCustId = ds.dbCreateCustomer(cust.getLastName(), cust.getFirstName(), cust.getEmailAddress(), cust.getPhoneNumber());
 		System.out.println("dbCustId = " + dbCustId + ", CREATED CUSTOMER: " + cust.toString() + "\n");
 		
+		int numRec = 0;
 		if(dbCustId > 0) {
 			//Set the customerId for the Customer object
 			cust.setCustId(dbCustId);
 			
+			//Retrieve the salt from the database
+			String salt = ds.dbRetrieveSaltKey(1);
+			//Hash the plain-text password with the salt
+			String hashedPass = PasswordService.hashPassword(cust.getPassword(), salt).get();
+			//Replace the plain-text password in the Customer object with the hashed password
+			cust.setPassword(hashedPass);
 			//Create the credentials in credentials table
-			int numRec = 0;
-			numRec = ds.dbCreateCustomerCredentials(dbCustId, cust.getUsername(), "salt", cust.getPassword());
+			numRec = ds.dbCreateCustomerCredentials(dbCustId, cust.getUsername(), salt, hashedPass);
 			System.out.println("\nCREATED CREDENTIALS\n");
 			
 			if(numRec > 0) {
@@ -90,5 +104,18 @@ public class CustomerService {
 		ds.close();
 		
 		return customer;
+	}
+	
+	/**
+	 * Simple helper method to verify a new customer entered the same password twice
+	 * @param password the first password entered
+	 * @param passCompare the second password entered
+	 * @return true if the passwords match; false if not
+	 */
+	protected boolean validatePasswordsMatch(String password, String passCompare) {
+		if(password.equals(passCompare)) {
+			return true;
+		}
+		return false;
 	}
 }

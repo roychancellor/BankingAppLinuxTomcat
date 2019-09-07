@@ -58,44 +58,49 @@ public class LoginController {
 		BindingResult result,
 		ModelMap map) {
 		
+		String jspToReturn = "redirect:login";
+		
 		if(result.hasErrors()) {
 			System.out.println("processNewCustomer: result has errors");
-			return "newcustomer";
+			jspToReturn = "newcustomer";
 		}
-		//Put the Customer object in the ModelMap
-		System.out.println("/newcustomer POST: customer =\n" + customer.toString());
-		map.put("customer", customer);
-		System.out.println("/newcustomer POST: customer from map.get =\n"
-			+ map.get("customer").toString());
-		
-		//Show the information to the customer - NOT WORKING YET - FIX LATER
-		
-		//Write the new customer object to the database
-		int custId = CustomerService.createNewCustomer(customer);
-		
-		DataService ds = new DataService();
-		if(custId > 0) {
-			System.out.println("/newcustomer POST: created new customer:\n" + customer.toString());
-			System.out.println("/newcustomer POST: retrieved the new customer from DB:\n"
-				+ ds.dbRetrieveCustomerById(custId).toString());
+		else {
+			//Put the Customer object in the ModelMap
+			System.out.println("/newcustomer POST: customer =\n" + customer.toString());
+			map.addAttribute("customer", customer);
+			System.out.println("/newcustomer POST: customer from map.get =\n"
+				+ map.get("customer").toString());
+			System.out.println("/newcustomer POST: password =" + customer.getPassword());
+			System.out.println("/newcustomer POST: passCompare =" + customer.getPassCompare());
+			
+			//Validate the passwords match before proceeding
+			if(!CustomerService.validatePasswordsMatch(customer.getPassword(), customer.getPassCompare())) {
+				System.err.println("PASSWORDS DO NOT MATCH");
+				//Populate the model and return to the new customer form
+				map.addAttribute("passmatcherror", "Passwords do not match, please re-enter");
+				map.addAttribute("password", "");
+				map.addAttribute("passCompare", "");
+				jspToReturn = "newcustomer";
+			}
+			else {
+				//Show the information to the customer - NOT WORKING YET - FIX LATER
+				jspToReturn = "confirmcustomer";
+			}
 		}
-		ds.close();
-
-		System.out.println("\nRedirecting to login");
-		return "redirect:login";
+		System.out.println("\nRedirecting to " + jspToReturn);
+		return jspToReturn;
 	}
 	
-	//THIS IS NOT WORKING YET...DEAL WITH CONFIRMING DATA LATER
 	@RequestMapping(value = "/confirmcustomer", method = RequestMethod.POST)
-	public String confirmcustomerScreen(
-		@ModelAttribute("customer") Customer customer,
-		@RequestParam("Submit") String submitBtn,
-		ModelMap map) {
+	public String confirmcustomerScreen(@ModelAttribute("customer") Customer customer, ModelMap map) {
 		System.out.println("\nBack from confirmcustomer.jsp:");
-		System.out.println("Submit button: " + submitBtn);
 		System.out.println("/confirmcustomer POST: customer =\n" + customer.toString());
 		
-		//Write the customer to the database
+		//Create the new customer object in the database
+		int custId = CustomerService.createNewCustomer(customer);
+		if(custId > 0) {
+			System.out.println("/confirmcustomer POST: created new customer:\n" + customer.toString());
+		}
 		
 		return "redirect:login";
 	}
@@ -159,7 +164,7 @@ public class LoginController {
 		//Remove session attributes from the session
 		session.removeAttribute("customer");
 		
-		return "login";
+		return "redirect:login";
 	}
 	
 	@RequestMapping(value = "/dashboard", method = RequestMethod.GET)

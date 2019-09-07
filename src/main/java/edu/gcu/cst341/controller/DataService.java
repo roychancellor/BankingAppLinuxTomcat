@@ -203,9 +203,8 @@ public class DataService {
 	 * Adds a customer to the customers table
 	 * @param lastName the contact name being added
 	 * @param firstName the contact phone being added
-	 * @param username the customer's username
-	 * @param passSalt the hashed salt for the customer's password
-	 * @param passHash the hashed customer password
+	 * @param email the customer's email
+	 * @param phone the cutomer's phone number
 	 * @return the customerId of the created customer if successful; -1 if unsuccessful
 	 */
 	public int dbCreateCustomer(String lastName, String firstName, String email, String phone) {
@@ -248,9 +247,9 @@ public class DataService {
 	}
 	
 	/**
-	 * Writes login credentils to database for a new customer
+	 * Writes login credentials to database for a new customer
 	 * @param customerId the customerId of the new customer
-	 * @param username ther username of hte new customer
+	 * @param username the username of the new customer
 	 * @param passSalt the password salted hash of the new customer
 	 * @param passHash the hashed password of the new customer
 	 * @return the number of records written to the database (1 if successful, 0 if not)
@@ -282,6 +281,37 @@ public class DataService {
 		}
 
 		return numRec;
+	}
+	
+	/**
+	 * Retrieves the master password salt from the database
+	 * @param saltId the id of the salt record in the salt database
+	 * @return the password salt as a String
+	 */
+	public String dbRetrieveSaltKey(int saltId) {
+		String salt = null;
+		try {
+			//Prepare the SQL statement
+			sql = conn.prepareStatement(DbConstants.RETRIEVE_SALT);
+			if(verboseSQL) printSQL();
+	
+			//Populate statement parameters
+			sql.setInt(1, saltId);
+			
+			//Execute SQL statement
+			rs = sql.executeQuery();
+			if(rs.next()) {
+				salt = rs.getString("salt");
+				if(verboseSQL) System.out.println("...Success, salt retrieved from credentials table.");
+			}
+			
+		}
+		catch(SQLException e) {
+			printMethod(new Throwable().getStackTrace()[0].getMethodName());
+			e.printStackTrace();
+		}
+
+		return salt;
 	}
 	
 	/**
@@ -617,27 +647,28 @@ public class DataService {
 	}
 	
 	/**
-	 * queries the database for unique hashed username and hashed password combination
-	 * @param hashedUsername the hashed username
+	 * Queries the database for unique username and hashed password combination
+	 * @param username the customer's username
 	 * @param hashedSalt the hashed password salt
 	 * @param hashedPassword the hashed password
 	 * @return the customer id corresponding to the username and password record
 	 */
-	public int checkLoginCredentials(String hashedUsername, String hashedSalt, String hashedPassword) {
+	public int dbRetrieveCustomerByLoginCredentials(String username, String hashedSalt, String hashedPassword) {
 		try {
 			//Prepare the SQL statement
 			sql = conn.prepareStatement(DbConstants.GET_CUSTOMER_ID_FROM_CREDENTIALS);
 			if(verboseSQL) printSQL();
 			
 			//Populate statement parameters
-			sql.setString(1, hashedUsername);
+			sql.setString(1, username);
 			sql.setString(2, hashedSalt);
 			sql.setString(3, hashedPassword);
 			
 			//Execute SQL statement
 			rs = sql.executeQuery();
 			
-			//Print the result
+			//The result set will have one record if a unique combination of 
+			//username, hashedSalt, and hashedPassword is found in the credentials table
 			if(rs.next()) {
 				int custId = rs.getInt(1);
 				if(verboseSQL) System.out.println("...Success, found username and password for customerId = " + custId);

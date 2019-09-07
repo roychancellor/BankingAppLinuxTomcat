@@ -79,6 +79,10 @@ public class DbConstants {
 		+ ")"
 		+ " VALUES(?,?,?,?)";
 	
+	//SQL command to RETRIEVE the password salt
+	public static final String RETRIEVE_SALT =
+		"SELECT salt FROM " + DB_NAME + "." + "salt WHERE saltId=?";	
+	
 	//SQL command to RETRIEVE all customers unordered
 	public static final String GET_CUSTOMERS_ORDERED =
 		"SELECT * FROM " + DB_NAME + "." + CUSTOMER_TABLE

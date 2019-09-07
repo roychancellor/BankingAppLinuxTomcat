@@ -18,15 +18,39 @@
 	<div class="container">
 		<%@ include file="common/header-common.jspf" %>
 		<section>
-			<h1>Please confirm your information and click Submit</h1>
-			<form action="/confirmcustomer" method="POST">
-				<h3>Customer Details:</h3>
-				<p>Name: ${firstName} ${lastName}</p>
-				<p>Username: ${username}</p>
-				<p>E-mail address: ${emailAddress}</p>
-				<p>Phone number: ${phoneNumber}</p>
-				<p><input type="submit" name="Submit" value="Submit Info"></p>
-			</form>
+			<h1>Confirm Customer Information</h1>
+			<h5>
+				Please confirm your information. If correct, click <strong>Submit Information</strong><br>
+				If anything is incorrect, click <strong>Cancel and Fix</strong>
+			</h5>
+			<confirmcustomer:form modelAttribute="customer" action="/confirmcustomer" method="POST">
+				<div class="form-row">
+					<div class="form-group col-md-6">
+					First name: ${customer.firstName}
+					</div>
+					<div class="form-group col-md-6">
+					Last name: ${customer.lastName}
+					</div>
+				</div>
+				<div class="form-row">
+					<div class="form-group col-md-6">
+					Username: ${customer.username}
+					</div>
+					<div class="form-group col-md-6">
+					password: ****************
+					</div>
+				</div>
+				<div class="form-row">
+					<div class="form-group col-md-6">
+					E-mail Address: ${customer.emailAddress}
+					</div>
+					<div class="form-group col-md-6">
+					Phone number: ${customer.phoneNumber}
+					</div>
+				</div>
+				<input class="btn btn-success" type="submit" name="SubmitBtn" value="Submit Information">
+				<a class="btn btn-primary" href="/newcustomer">Cancel and Fix</a>
+			</confirmcustomer:form>
 		</section>
 		<%@ include file="common/footer-common.jspf" %>
 	</div>
