@@ -216,13 +216,13 @@ public class DataService {
 			//WRITE TO CUSTOMERS TABLE
 			//Prepare the SQL statement
 			sql = conn.prepareStatement(DbConstants.CREATE_CUSTOMER, Statement.RETURN_GENERATED_KEYS);
-			if(verboseSQL) printSQL();
 
 			//Populate statement parameters
 			sql.setString(1, lastName);
 			sql.setString(2, firstName);
 			sql.setString(3, email);
 			sql.setString(4, phone);
+			if(verboseSQL) printSQL();
 			
 			//Execute SQL statement
 			int numRec = sql.executeUpdate();
@@ -260,13 +260,13 @@ public class DataService {
 		try {
 			//Prepare the SQL statement
 			sql = conn.prepareStatement(DbConstants.CREATE_CREDENTIALS);
-			if(verboseSQL) printSQL();
 	
 			//Populate statement parameters
 			sql.setInt(1, customerId);
 			sql.setString(2, username);
 			sql.setString(3, passSalt);
 			sql.setString(4, passHash);
+			if(verboseSQL) printSQL();
 			
 			//Execute SQL statement
 			numRec = sql.executeUpdate();
@@ -293,10 +293,10 @@ public class DataService {
 		try {
 			//Prepare the SQL statement
 			sql = conn.prepareStatement(DbConstants.RETRIEVE_SALT);
-			if(verboseSQL) printSQL();
 	
 			//Populate statement parameters
 			sql.setInt(1, saltId);
+			if(verboseSQL) printSQL();
 			
 			//Execute SQL statement
 			rs = sql.executeQuery();
@@ -362,13 +362,13 @@ public class DataService {
 		try {
 			//Prepare the SQL statement
 			sql = conn.prepareStatement(DbConstants.CREATE_CUSTOMER_TRANSACTIONS);
-			if(verboseSQL) printSQL();
 	
 			//Populate statement parameters
 			sql.setInt(1, custId);
 			sql.setString(2, accountNumber);
 			sql.setDouble(3, amount);
 			sql.setString(4, "Opening balance");
+			if(verboseSQL) printSQL();
 			
 			//Execute SQL statement
 			numRec = sql.executeUpdate();
@@ -436,10 +436,10 @@ public class DataService {
 			try {
 				//Prepare the SQL statement
 				sql = conn.prepareStatement(DbConstants.GET_CUSTOMER_ACCOUNTS_BY_ID);
-				if(verboseSQL) printSQL();
 	
 				//Populate statement parameters
 				sql.setInt(1, cust.getCustId());
+				if(verboseSQL) printSQL();
 				
 				//Execute SQL statement
 				rs = sql.executeQuery();
@@ -504,29 +504,7 @@ public class DataService {
 			numRec = sql.executeUpdate();
 			
 			if(verboseSQL) System.out.println("...Success, " + numRec
-				+ " record(s) inserted into customer_accounts table.");
-			
-//			//WRITE TO CUSTOMER_TRANSACTIONS TABLE
-//			if(numRec > 0) {
-//				//Prepare the SQL statement
-//				sql = conn.prepareStatement(DbConstants.UPDATE_TRANSACTION);
-//	
-//				//Populate statement parameters
-//				sql.setInt(1, customerId);
-//				sql.setString(2, accountNumber);
-//				sql.setDouble(3, transAmount);
-//				sql.setString(4, transDescription);
-//				
-//				//Execute SQL statement
-//				if(verboseSQL) printSQL();
-//				numRec = sql.executeUpdate();
-//				
-//				if(verboseSQL) System.out.println("...Success, " + numRec
-//					+ " record(s) inserted into customer_transactions table.");
-//			}
-//			else {
-//				if(verboseSQL) System.out.println("\nNO DATA WRITTEN");
-//			}
+				+ " record(s) inserted into customer_accounts table.");			
 		}
 		catch(SQLException e) {
 			printMethod(new Throwable().getStackTrace()[0].getMethodName());
@@ -554,9 +532,9 @@ public class DataService {
 			sql.setString(2, trans.getAccountNumber());
 			sql.setDouble(3, trans.getAmount());
 			sql.setString(4, trans.getTransactionType());
+			if(verboseSQL) printSQL();
 			
 			//Execute SQL statement
-			if(verboseSQL) printSQL();
 			numRec = sql.executeUpdate();
 			
 			if(verboseSQL) System.out.println("...Success, " + numRec
@@ -657,12 +635,12 @@ public class DataService {
 		try {
 			//Prepare the SQL statement
 			sql = conn.prepareStatement(DbConstants.GET_CUSTOMER_ID_FROM_CREDENTIALS);
-			if(verboseSQL) printSQL();
 			
 			//Populate statement parameters
 			sql.setString(1, username);
 			sql.setString(2, hashedSalt);
 			sql.setString(3, hashedPassword);
+			if(verboseSQL) printSQL();
 			
 			//Execute SQL statement
 			rs = sql.executeQuery();
