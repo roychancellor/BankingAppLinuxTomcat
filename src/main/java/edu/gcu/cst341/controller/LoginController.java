@@ -132,35 +132,36 @@ public class LoginController {
 		@ModelAttribute("customer") Customer customer,
 		@RequestParam String username, @RequestParam String password,
 		ModelMap map) {
+		
 		String pageToReturn = "dashboard";
 		int custId = 0;
-		if(username == null || password == null) {
-			map.put("errormessage", "Username and password must not be blank");
-			pageToReturn = "login";
+//		if(username == null || password == null) {
+//			map.put("errormessage", "Username and password must not be blank");
+//			pageToReturn = "login";
+//		}
+//		else {
+		System.out.println("About to validate credentials with the database...");
+		custId = LoginService.validateCredentials(username, password);
+		System.out.println("DONE validating credentials with the database...");
+		
+		//If the credentials matched the database, custId should be > 0
+		if(custId > 0) {
+			System.out.println("/login POST: About to get the customer information from the database...");
+			
+			//Get the customer object data from the database
+			customer = CustomerService.getCustomerInfoAndBalances(custId);
+			
+			System.out.println("/login POST: After hitting the DB, the customer object is:\n"
+				+ customer.toString());
+				
+			//Update all dashboard parameters
+			updateDashboardModel(customer, map);
 		}
 		else {
-			System.out.println("About to validate credentials with the database...");
-			custId = LoginService.validateCredentials(username, password);
-			System.out.println("DONE validating credentials with the database...");
-			
-			//If the credentials matched the database, custId should be > 0
-			if(custId > 0) {
-				System.out.println("/login POST: About to get the customer information from the database...");
-				
-				//Get the customer object data from the database
-				customer = CustomerService.getCustomerInfoAndBalances(custId);
-				
-				System.out.println("/login POST: After hitting the DB, the customer object is:\n"
-					+ customer.toString());
-					
-				//Update all dashboard parameters
-				updateDashboardModel(customer, map);
-			}
-			else {
-				map.put("errormessage", "Invalid login credentials");
-				pageToReturn = "login";
-			}
+			map.put("errormessage", "Invalid login credentials, try again");
+			pageToReturn = "login";
 		}
+//		}
 		return pageToReturn;
 	}
 	

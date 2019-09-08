@@ -6,6 +6,11 @@ import edu.gcu.cst341.model.Customer;
 
 @Service
 public class CustomerService {
+	/**
+	 * Checks for the existence of a username in the credentials database
+	 * @param usernameToCheck the username to look up
+	 * @return true if the username is found; false if not
+	 */
 	protected boolean userNameExists(String usernameToCheck) {
 		DataService ds = new DataService();
 		if(ds.dbRetrieveCustomerByUsername(usernameToCheck) > 0) {
@@ -14,6 +19,7 @@ public class CustomerService {
 		}
 		return false;
 	}
+	
 	/**
 	 * Creates a new customer in the database by writing customer information
 	 * to the customers table, login credentials to the credentials table,
@@ -42,10 +48,10 @@ public class CustomerService {
 			
 			if(numRec > 0) {
 				//Create the accounts and balances in the customer_accounts table
-				//Create opening balance transactions for each account
 				numRec = ds.dbCreateCustomerAccounts(cust);
 				System.out.println("\nCREATED ACCOUNT NUMBERS AND BALANCES\n");
 				if(numRec > 0) {
+					//Create opening balance transactions for each account
 					numRec = createOpeningBalanceTransactions(dbCustId, cust);
 					System.out.println("\nCREATED OPENING BALANCE TRANSACTIONS\n");
 					if(numRec != 3) {
@@ -81,14 +87,14 @@ public class CustomerService {
 		DataService ds = new DataService();
 		int numRec = 0;
 		
-		//Retrieve the salt from the database
-		String salt = ds.dbRetrieveSaltKey(1);
-		//Hash the plain-text password with the salt
-		String hashedPass = PasswordService.hashPassword(cust.getPassword(), salt).get();
+		//Make a salt for the new customer
+		String customerSalt = PasswordService.generateSalt(512).get();
+		//Hash the customer's plain-text password with the salt
+		String hashedPass = PasswordService.hashPassword(cust.getPassword(), customerSalt).get();
 		//Replace the plain-text password in the Customer object with the hashed password
 		cust.setPassword(hashedPass);
 		//Create the credentials in credentials table
-		numRec = ds.dbCreateCustomerCredentials(dbCustId, cust.getUsername(), salt, hashedPass);
+		numRec = ds.dbCreateCustomerCredentials(dbCustId, cust.getUsername(), customerSalt, hashedPass);
 		System.out.println("\nCREATED CREDENTIALS\n");
 		
 		ds.close();

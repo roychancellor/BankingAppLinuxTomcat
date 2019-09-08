@@ -200,13 +200,15 @@ public class DataService {
 	}
 
 	/**
-	 * Attempts to retrieve the usernameToCheck from the credentials table
-	 * to  validate the username does not already exist
+	 * Attempts to return a customer id from the credentials table
+	 * where the username is the usernameToCheck
+	 * to validate the username does not already exist for a new customer or 
+	 * to validate login credentials for an existing customer
 	 * @param usernameToCheck the username to check for existence
-	 * @return the number of records retrieved (>0 if already exists; 0 if not)
+	 * @return the customerId if a record exits with usernameToCheck or 0 if not
 	 */
 	public int dbRetrieveCustomerByUsername(String usernameToCheck) {
-		int numRec = 0;
+		int custId = 0;
 		if(this.connectedToDb) {
 			//SEARCH FOR THE USERNAME
 			try {
@@ -219,8 +221,8 @@ public class DataService {
 				
 				//Execute SQL statement
 				rs = sql.executeQuery();
-				while(rs.next()) {
-					numRec++;
+				if(rs.next()) {
+					custId = rs.getInt(1);
 				}
 			}
 			catch(SQLException e) {
@@ -228,7 +230,7 @@ public class DataService {
 				e.printStackTrace();
 			}
 		}
-		return numRec;
+		return custId;
 	}
 	
 	/**
@@ -320,21 +322,22 @@ public class DataService {
 	 * @param saltId the id of the salt record in the salt database
 	 * @return the password salt as a String
 	 */
-	public String dbRetrieveSaltKey(int saltId) {
-		String salt = null;
+	public String[] dbRetrieveCustomerHashedCredentials(int customerId) {
+		String[] keys = {null, null};
 		try {
 			//Prepare the SQL statement
-			sql = conn.prepareStatement(DbConstants.RETRIEVE_SALT);
+			sql = conn.prepareStatement(DbConstants.RETRIEVE_CREDENTIALS_BY_CUSTOMER_ID);
 	
 			//Populate statement parameters
-			sql.setInt(1, saltId);
+			sql.setInt(1, customerId);
 			if(verboseSQL) printSQL();
 			
 			//Execute SQL statement
 			rs = sql.executeQuery();
 			if(rs.next()) {
-				salt = rs.getString("salt");
-				if(verboseSQL) System.out.println("...Success, salt retrieved from credentials table.");
+				keys[0] = rs.getString(DbConstants.CUSTOMER_PASSWORD_SALT);
+				keys[1] = rs.getString(DbConstants.CUSTOMER_PASSWORD_HASH);
+				if(verboseSQL) System.out.println("...Success, customer credentials retrieved from credentials table.");
 			}
 			
 		}
@@ -343,7 +346,7 @@ public class DataService {
 			e.printStackTrace();
 		}
 
-		return salt;
+		return keys;
 	}
 	
 	/**

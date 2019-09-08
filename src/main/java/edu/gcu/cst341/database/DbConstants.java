@@ -79,9 +79,11 @@ public class DbConstants {
 		+ ")"
 		+ " VALUES(?,?,?,?)";
 	
-	//SQL command to RETRIEVE the password salt
-	public static final String RETRIEVE_SALT =
-		"SELECT salt FROM " + DB_NAME + "." + "salt WHERE saltId=?";	
+	//SQL command to RETRIEVE the password salt and password hash by customerId
+	public static final String RETRIEVE_CREDENTIALS_BY_CUSTOMER_ID =
+		"SELECT " + CUSTOMER_PASSWORD_SALT + ", " + CUSTOMER_PASSWORD_HASH
+		+ " FROM " + DB_NAME + "." + CREDENTIALS_TABLE
+		+ " WHERE customerId=?";	
 	
 	//SQL command to RETRIEVE all customers unordered
 	public static final String GET_CUSTOMERS_ORDERED =
@@ -105,7 +107,7 @@ public class DbConstants {
 	
 	//SQL command to RETRIEVE a customer by username (used to check if user already exists)
 	public static final String GET_CUSTOMER_BY_USERNAME = 
-		"SELECT " + CUSTOMER_USER_NAME
+		"SELECT " + CUSTOMER_ID
 		+ " FROM " + DB_NAME + "." + CREDENTIALS_TABLE
 		+ " WHERE " + CUSTOMER_USER_NAME + "=?";
 	

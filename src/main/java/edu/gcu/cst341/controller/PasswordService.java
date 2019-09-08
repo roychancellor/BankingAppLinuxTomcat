@@ -9,9 +9,13 @@ import java.util.Arrays;
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
 
-
 import org.springframework.stereotype.Service;
 
+/**
+ * Creates hashed passwords using PBKDF2WithHmacSHA512
+ * Got this code from: https://dev.to/awwsmm/how-to-encrypt-a-password-in-java-42dh
+ * and modified it for use with the banking application
+ */
 @Service
 public class PasswordService {
 	private static final SecureRandom RAND = new SecureRandom();
@@ -65,16 +69,16 @@ public class PasswordService {
 	}
 	
 	/**
-	 * For testing only - not used in the application
-	 * @param password the plain-text password to test
-	 * @param key the stored password for comparison
+	 * Validates that two hashed passwords match
+	 * @param plainTextPassword the plain-text password to test - gets hashed before comparing
+	 * @param hashedPasswordKey the stored hashed password key for comparison
 	 * @param salt the salt used to make the key and to hash the plain-text password
 	 * @return true of the passwords match and false if not
 	 */
-	public static boolean verifyPassword(String password, String key, String salt) {
-		Optional<String> optEncrypted = hashPassword(password, salt);
+	public static boolean verifyPassword(String plainTextPassword, String salt, String hashedPasswordKey) {
+		Optional<String> optEncrypted = hashPassword(plainTextPassword, salt);
 		if (!optEncrypted.isPresent())
 			return false;
-		return optEncrypted.get().equals(key);
+		return optEncrypted.get().equals(hashedPasswordKey);
 	}
 }
