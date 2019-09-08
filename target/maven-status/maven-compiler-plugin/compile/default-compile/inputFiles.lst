@@ -7,6 +7,7 @@
 /Users/roy/git/BankingApp341/src/main/java/edu/gcu/cst341/controller/PasswordService.java
 /Users/roy/git/BankingApp341/src/main/java/edu/gcu/cst341/model/AmountForm.java
 /Users/roy/git/BankingApp341/src/main/java/edu/gcu/cst341/application/PasswordTester.java
+/Users/roy/git/BankingApp341/src/main/java/edu/gcu/cst341/model/LoginForm.java
 /Users/roy/git/BankingApp341/src/main/java/edu/gcu/cst341/controller/Bank.java
 /Users/roy/git/BankingApp341/src/main/java/edu/gcu/cst341/model/Customer.java
 /Users/roy/git/BankingApp341/src/main/java/edu/gcu/cst341/model/Loan.java

@@ -1,5 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
+<%@ taglib prefix="login" uri="http://www.springframework.org/tags/form"%>
 <%@ taglib prefix="format" uri="http://java.sun.com/jsp/jstl/core" %>
 <!DOCTYPE html>
 <html>
@@ -18,18 +19,33 @@
 		<%@ include file="common/header-common.jspf" %>
 		<section>
 			<h1>Existing Customer Login</h1>
-			<p style="color:#f00">${errormessage}</p>
-			<form action="/login" method="POST">
-				<div class="loginform">
-					<p><strong>Username:</strong><br /><input type="text" name="username"/></p>
-					<p><strong>Password:</strong><br /><input type="password" name="password"/></p>
+			<p class="error">${errorMessage}</p>
+			<login:form modelAttribute="loginform" method="POST">
+				<div class="form-group row">
+					<login:label path="username" class="col-lg-1 col-form-label">Username:</login:label>
+					<div class="col-lg-3">
+						<login:input type="text" class="form-control" placeholder="Enter username" path="username" />
+						<login:errors path="username" cssClass="error" />
+					</div>
 				</div>
-				<p><input class="btn btn-primary" type="submit" /></p>
-			</form>
-			
-			<!-- <h3><a href="/newcustomer">Become a Customer</a></h3> -->
-			<br>
-			<p><a style="font-size:1.25em" class="btn btn-success" href="/newcustomer">Become a Customer</a></p>
+				<div class="form-group row">
+					<login:label path="password" class="col-lg-1 col-form-label">Password:</login:label>
+					<div class="col-lg-3">
+						<login:input type="password" class="form-control" placeholder="Enter password" path="password" />
+						<login:errors path="password" cssClass="error" />
+					</div>
+				</div>
+				<div class="form-group row">
+					<div class="col-sm-3">
+						<button class="btn btn-primary" type="submit">Submit</button>
+					</div>
+				</div>
+				<div class="form-group row">
+					<div class="col-sm-4">
+						<a class="btn btn-success" style="font-size:1.5em" href="/newcustomer">Become a Customer</a>
+					</div>
+				</div>
+			</login:form>
 		</section>
 		<%@ include file="common/footer-common.jspf" %>
 	</div>

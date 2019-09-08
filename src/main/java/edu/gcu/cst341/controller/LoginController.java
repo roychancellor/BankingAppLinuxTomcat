@@ -23,6 +23,7 @@ import edu.gcu.cst341.model.AmountForm;
 import edu.gcu.cst341.model.Checking;
 import edu.gcu.cst341.model.Customer;
 import edu.gcu.cst341.model.Loan;
+import edu.gcu.cst341.model.LoginForm;
 import edu.gcu.cst341.model.Transaction;
 
 @Controller
@@ -45,6 +46,10 @@ public class LoginController {
 	@Valid @ModelAttribute("customer")
 	public Customer customer() {
 		return new Customer();
+	}
+	@Valid @ModelAttribute("loginform")
+	public LoginForm loginform() {
+		return new LoginForm();
 	}
 	
 	@RequestMapping(value = "/newcustomer", method = RequestMethod.GET)
@@ -125,13 +130,16 @@ public class LoginController {
 		return "login";
 	}
 	
-	//TODO: Wire in Spring Security for validating credentials
-	
 	@RequestMapping(value = "/login", method = RequestMethod.POST)
 	public String processLoginScreen(
 		@ModelAttribute("customer") Customer customer,
-		@RequestParam String username, @RequestParam String password,
+		@Valid @ModelAttribute("loginform") LoginForm loginform,
+//		@RequestParam String username, @RequestParam String password,
+		BindingResult br,
 		ModelMap map) {
+		
+		String username = loginform.getUsername();
+		String password = loginform.getPassword();
 		
 		String pageToReturn = "dashboard";
 		int custId = 0;
