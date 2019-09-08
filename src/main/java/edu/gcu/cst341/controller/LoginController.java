@@ -41,7 +41,7 @@ public class LoginController {
 	
 	//TODO: Investigate auto-wiring a DataService object here
 	
-	//Spring will make this object when needed and will keep it in the session
+	//Spring will make these objects when needed and will keep customer in the session
 	//until the session is completed
 	@Valid @ModelAttribute("customer")
 	public Customer customer() {
@@ -166,7 +166,7 @@ public class LoginController {
 			updateDashboardModel(customer, map);
 		}
 		else {
-			map.put("errormessage", "Invalid login credentials, try again");
+			map.addAttribute("errorMessage", "Invalid login credentials, try again");
 			pageToReturn = "login";
 		}
 //		}
