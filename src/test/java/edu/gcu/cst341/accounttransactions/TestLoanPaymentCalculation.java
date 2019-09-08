@@ -1,4 +1,4 @@
-package edu.gcu.cst341.loantests;
+package edu.gcu.cst341.accounttransactions;
 
 import static org.junit.Assert.*;
 import org.junit.Test;
