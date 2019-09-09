@@ -426,7 +426,7 @@ public class DataService {
 	 * @return a Customer object created from the database information
 	 */
 	public Customer dbRetrieveCustomerById(int customerIdToRetrieve) {
-		Customer cust = new Customer();
+		Customer cust = null;
 		if(this.connectedToDb) {
 			//GET THE CUSTOMER INFORMATION
 			try {
@@ -441,6 +441,7 @@ public class DataService {
 				//Execute SQL statement
 				rs = sql.executeQuery();
 				if(rs.next()) {
+					cust = new Customer();
 					cust.setCustId(rs.getInt("customerId"));
 					cust.setLastName(rs.getString("lastName"));
 					cust.setFirstName(rs.getString("firstName"));
@@ -700,6 +701,112 @@ public class DataService {
 		return -1;
 	}
 
+	/**
+	 * Deletes a record from the customers table which will work only if all
+	 * other child tables (credentials, customer_accounts, and customer transactions
+	 * are first deleted)
+	 * @param customerId the id of the customer to delete
+	 * @return the number of records deleted (1 if successful, 0 if not)
+	 */
+	public int dbDeleteCustomerById(int customerId) {
+		int numRec = 0;
+		try {
+			//DELETE CUSTOMER FROM CHILD TABLES FIRST
+			
+			//DELETE FROM THE CUSTOMERS TABLE
+			//Prepare the SQL statement
+			sql = conn.prepareStatement(DbConstants.DELETE_CUSTOMER_BY_ID);
+
+			//Populate statement parameters
+			sql.setInt(1, customerId);
+			if(verboseSQL) printSQL();
+			
+			//Execute SQL statement
+			numRec = sql.executeUpdate();
+			
+			if(verboseSQL) System.out.println("...Success, " + numRec
+				+ " record(s) deleted from customers table.");
+		}
+		catch(SQLException e) {
+			printMethod(new Throwable().getStackTrace()[0].getMethodName());
+			e.printStackTrace();
+		}
+		
+		return numRec;
+	}
+	
+	public int dbDeleteCustomerTransactionsById(int customerId) {
+		int numRec = 0;
+		try {
+			//DELETE FROM THE CUSTOMER_TRANSACTIONS TABLE
+			//Prepare the SQL statement
+			sql = conn.prepareStatement(DbConstants.DELETE_CUSTOMER_TRANSACTIONS_BY_ID);
+
+			//Populate statement parameters
+			sql.setInt(1, customerId);
+			if(verboseSQL) printSQL();
+			
+			//Execute SQL statement
+			numRec = sql.executeUpdate();
+			
+			if(verboseSQL) System.out.println("...Success, " + numRec
+				+ " record(s) deleted from customer_transactions table.");
+		}
+		catch(SQLException e) {
+			printMethod(new Throwable().getStackTrace()[0].getMethodName());
+			e.printStackTrace();
+		}
+		
+		return numRec;
+	}
+	public int dbDeleteCustomerAccountsById(int customerId) {
+		int numRec = 0;
+		try {
+			//DELETE FROM THE CUSTOMER_ACCOUNTSS TABLE
+			//Prepare the SQL statement
+			sql = conn.prepareStatement(DbConstants.DELETE_CUSTOMER_ACCOUNTS_BY_ID);
+
+			//Populate statement parameters
+			sql.setInt(1, customerId);
+			if(verboseSQL) printSQL();
+			
+			//Execute SQL statement
+			numRec = sql.executeUpdate();
+			
+			if(verboseSQL) System.out.println("...Success, " + numRec
+				+ " record(s) deleted from customer_accounts table.");
+		}
+		catch(SQLException e) {
+			printMethod(new Throwable().getStackTrace()[0].getMethodName());
+			e.printStackTrace();
+		}
+		
+		return numRec;
+	}
+	public int dbDeleteCustomerCredentialsById(int customerId) {
+		int numRec = 0;
+		try {
+			//DELETE FROM THE CREDENTIALS TABLE
+			//Prepare the SQL statement
+			sql = conn.prepareStatement(DbConstants.DELETE_CUSTOMER_CREDENTIALS_BY_ID);
+
+			//Populate statement parameters
+			sql.setInt(1, customerId);
+			if(verboseSQL) printSQL();
+			
+			//Execute SQL statement
+			numRec = sql.executeUpdate();
+			
+			if(verboseSQL) System.out.println("...Success, " + numRec
+				+ " record(s) deleted from credentials table.");
+		}
+		catch(SQLException e) {
+			printMethod(new Throwable().getStackTrace()[0].getMethodName());
+			e.printStackTrace();
+		}
+		
+		return numRec;
+	}
 	/**
 	 * helper method prints the SQL statement to the console
 	 */

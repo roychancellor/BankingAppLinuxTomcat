@@ -3,6 +3,7 @@ package edu.gcu.cst341.controller;
 import java.util.ArrayList;
 import java.util.List;
 
+//MAKE SURE THE POM IS NOT IN TEST MODE
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 

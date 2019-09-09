@@ -11,7 +11,7 @@ public class CustomerService {
 	 * @param usernameToCheck the username to look up
 	 * @return true if the username is found; false if not
 	 */
-	protected boolean userNameExists(String usernameToCheck) {
+	public boolean userNameExists(String usernameToCheck) {
 		DataService ds = new DataService();
 		if(ds.dbRetrieveCustomerByUsername(usernameToCheck) > 0) {
 			ds.close();
@@ -28,7 +28,7 @@ public class CustomerService {
 	 * @param cust the new Customer object
 	 * @return the number of records written to the database (5 if successful)
 	 */
-	protected int createNewCustomer(Customer cust) {
+	public int createNewCustomer(Customer cust) {
 		int dbCustId = 0;
 		
 		//Open a connection to the database
@@ -43,7 +43,7 @@ public class CustomerService {
 			//Set the customerId for the Customer object
 			cust.setCustId(dbCustId);
 			
-			//Created the new customer's hashed credentials
+			//Create the new customer's hashed credentials
 			numRec = createHashedCredentials(cust, dbCustId);
 			
 			if(numRec > 0) {
@@ -176,5 +176,35 @@ public class CustomerService {
 			return true;
 		}
 		return false;
+	}
+	
+	/**
+	 * Deletes an existing customer completely from the database
+	 * @param cust the existing customer object to delete
+	 * @return the number of records deleted (>0 if successful, 0 if not or if cust is null)
+	 */
+	public int deleteExistingCustomer(Customer cust) {
+		int numRec = 0;
+		int customerId = cust.getCustId();
+		DataService ds = new DataService();
+		
+		//Verify the customer with the passed-in id exists
+		if(ds.dbRetrieveCustomerById(customerId) == null) {
+			return numRec;
+		}
+		else {
+			//Delete all transactions
+			numRec = ds.dbDeleteCustomerTransactionsById(customerId);
+			//Delete all accounts
+			numRec += ds.dbDeleteCustomerAccountsById(customerId);
+			//Delete all credentials
+			numRec += ds.dbDeleteCustomerCredentialsById(customerId);
+			//Delete all customer information
+			numRec += ds.dbDeleteCustomerById(customerId);
+		}
+		
+		ds.close();
+		
+		return numRec;
 	}
 }

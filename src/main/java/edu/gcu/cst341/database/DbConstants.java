@@ -164,10 +164,22 @@ public class DbConstants {
 		+ " (?,?,?,?)";
 	
 	//SQL command to DELETE a customer by id
-	public static final String DELETE_CUSTOMER_BY_ID = "DELETE FROM " + DB_NAME + "." + CUSTOMER_TABLE + " "
+	public static final String DELETE_CUSTOMER_BY_ID =
+		"DELETE FROM " + DB_NAME + "." + CUSTOMER_TABLE + " "
 		+ "WHERE " + CUSTOMER_ID + "=?";
 	
-	//SQL command to DELETE a customer credentials by id
-	public static final String DELETE_CREDENTIALS_BY_ID = "DELETE FROM " + DB_NAME + "." + CREDENTIALS_TABLE + " "
+	//SQL command to DELETE customer credentials by id
+	public static final String DELETE_CUSTOMER_CREDENTIALS_BY_ID =
+		"DELETE FROM " + DB_NAME + "." + CREDENTIALS_TABLE + " "
+		+ "WHERE " + CUSTOMER_ID + "=?";
+
+	//SQL command to DELETE customer accounts by id
+	public static final String DELETE_CUSTOMER_ACCOUNTS_BY_ID =
+		"DELETE FROM " + DB_NAME + "." + CUSTOMER_ACCOUNTS_TABLE + " "
+		+ "WHERE " + CUSTOMER_ID + "=?";
+
+	//SQL command to DELETE customer transactions by id
+	public static final String DELETE_CUSTOMER_TRANSACTIONS_BY_ID =
+		"DELETE FROM " + DB_NAME + "." + CUSTOMER_TRANSACTIONS_TABLE + " "
 		+ "WHERE " + CUSTOMER_ID + "=?";
 }
