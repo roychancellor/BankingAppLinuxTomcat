@@ -11,6 +11,21 @@ public class AmountForm {
 	private String amount;
 
 	/**
+	 * No-argument constructor
+	 */
+	public AmountForm() { }
+	
+	/**
+	 * @param id
+	 * @param amount
+	 */
+	public AmountForm(int id, String amount) {
+		super();
+		this.id = id;
+		this.amount = amount;
+	}
+
+	/**
 	 * @return the amount
 	 */
 	public String getAmount() {
