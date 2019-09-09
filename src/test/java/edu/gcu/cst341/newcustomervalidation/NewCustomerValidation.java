@@ -63,6 +63,16 @@ public class NewCustomerValidation {
 		Customer resultCust = ds.dbRetrieveCustomerById(dbCustId);
 		System.out.println("Result customer:\n" + resultCust.toString());
 		assertTrue(resultCust.getFirstName().equals(testCust.getFirstName()));
+		assertTrue(resultCust.getLastName().equals(testCust.getLastName()));
+		assertTrue(resultCust.getUsername().equals(testCust.getUsername()));
+		assertTrue(resultCust.getEmailAddress().equals(testCust.getEmailAddress()));
+		assertTrue(resultCust.getPhoneNumber().equals(testCust.getPhoneNumber()));
+		assertEquals("Checking balance should be 2500.00", 2500.00,
+			resultCust.getChecking().getAccountBalance(), 0.004);
+		assertEquals("Saving balance should be 500.00", 500.00,
+			resultCust.getSaving().getAccountBalance(), 0.004);
+		assertEquals("Cash advance balance should be 0.00", 0.00,
+			resultCust.getLoan().getAccountBalance(), 0.004);
 		
 		//Delete the test customer from the database
 		cs.deleteExistingCustomer(testCust);

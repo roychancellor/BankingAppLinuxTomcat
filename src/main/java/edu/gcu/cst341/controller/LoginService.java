@@ -8,7 +8,7 @@ public class LoginService {
 	 * logs in a customer by checking user-entered credential against the database
 	 * @return the customer id if successful, -1 if the passwords do not match, or 0 if username not found
 	 */
-	protected int validateCredentials(String username, String plainTextPassword) {
+	public int validateCredentials(String username, String plainTextPassword) {
 		int customerId = 0;
 		//Query the credentials database for the customer credentials
 		System.out.println("validateCredentials opening a DB connection");
