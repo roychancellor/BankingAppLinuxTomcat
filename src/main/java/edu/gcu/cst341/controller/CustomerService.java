@@ -162,8 +162,17 @@ public class CustomerService {
 	 * @param passCompare the second password entered
 	 * @return true if the passwords match; false if not
 	 */
-	protected boolean validatePasswordsMatch(String password, String passCompare) {
-		if(password.equals(passCompare)) {
+	public boolean validatePasswordsMatch(String password, String passCompare) {
+		//Validate the inputs before testing
+		if(password == null || passCompare == null) {
+			//Should never occur because of bean validation, but check anyway
+			return false;
+		}
+		else if(password.equals("") || passCompare.equals("")) {
+			//Should never occur because of bean validation, but check anyway
+			return false;
+		}
+		else if(password.equals(passCompare)) {
 			return true;
 		}
 		return false;

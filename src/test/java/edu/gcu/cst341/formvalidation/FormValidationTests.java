@@ -15,6 +15,7 @@ import javax.validation.ValidatorFactory;
 import org.junit.Before;
 import org.junit.Test;
 
+import edu.gcu.cst341.controller.CustomerService;
 import edu.gcu.cst341.model.AmountForm;
 import edu.gcu.cst341.model.Customer;
 import edu.gcu.cst341.model.LoginForm;
@@ -162,6 +163,10 @@ public class FormValidationTests {
 		assertFalse("INVALID customer: violations should NOT be empty", custViolations.isEmpty());				
 	}
 	
+	/**
+	 * Helper method for customer form test
+	 * @param c Customer object
+	 */
 	private void resetValidCustomer(Customer c) {
 		c.setFirstName("F");
 		c.setLastName("L");
@@ -171,4 +176,18 @@ public class FormValidationTests {
 		c.setEmailAddress("e@e.com");
 		c.setPhoneNumber("123-456-7890");
 	}
+	
+	@Test
+	public void testPasswordsMatch() {
+		CustomerService cs = new CustomerService();
+		assertTrue(cs.validatePasswordsMatch("pass", "pass"));
+		assertFalse(cs.validatePasswordsMatch("pass1", "pass2"));
+		assertFalse(cs.validatePasswordsMatch("", ""));
+		assertFalse(cs.validatePasswordsMatch(null, ""));
+		assertFalse(cs.validatePasswordsMatch("", null));
+		assertFalse(cs.validatePasswordsMatch(null, null));
+		assertFalse(cs.validatePasswordsMatch(null, "pass2"));
+		assertFalse(cs.validatePasswordsMatch("pass1", null));
+	}
+	
 }

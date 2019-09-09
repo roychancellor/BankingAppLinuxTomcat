@@ -39,7 +39,7 @@
         <artifactId>jstl</artifactId>
         <version>1.2</version>
     </dependency>
-    <!--  THIS MUST BE COMMENTED OUT FOR JUNIT TESTING -->
+    <!--  THIS MUST BE COMMENTED OUT FOR JUNIT TESTING BUT UNCOMMENTED FOR RUNTIME -->
     <!-- <dependency>
         <groupId>javax</groupId>
         <artifactId>javaee-web-api</artifactId>
