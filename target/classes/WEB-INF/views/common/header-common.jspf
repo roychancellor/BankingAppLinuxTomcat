@@ -7,6 +7,6 @@
 	<div><a href="/transfer-bank">Transfer</a></div>
 	<div><a href="/statements-bank">Transactions</a></div>
 	<div><a href="/dashboard">Dashboard</a></div>
-	<div><a href="/settings">Settings</a></div>
+	<div><a href="/customer-settings">Settings</a></div>
 	<div><a href="/logout">Logout</a></div>
 </nav>

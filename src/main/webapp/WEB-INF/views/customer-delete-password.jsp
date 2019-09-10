@@ -10,7 +10,7 @@
 	<spring:url value="/resources/images/header.jpg" var="headerImg" />
 	<spring:url value="/resources/images/footer.jpg" var="footerImg" />
 	<meta charset="UTF-8">
-	<title>Login</title>
+	<title>Delete Account</title>
 	<link rel="stylesheet" href="${mainCss}" />
 </head>
 
@@ -18,13 +18,13 @@
 	<div class="container">
 		<%@ include file="common/header-common-login.jspf" %>
 		<section>
-			<h1>Existing Customer Login</h1>
+			<h1>Delete Your Account</h1>
 			<p class="error">${errorMessage}</p>
-			<login:form modelAttribute="loginform" action="/login" method="POST">
+			<login:form modelAttribute="loginform" action="/delete-login" method="POST">
 				<div class="form-group row">
 					<login:label path="username" class="col-lg-1 col-form-label">Username:</login:label>
 					<div class="col-lg-3">
-						<login:input type="text" class="form-control" placeholder="Enter username" path="username" />
+						<p class="form-control-static">${username}</p>
 						<login:errors path="username" cssClass="error" />
 					</div>
 				</div>
@@ -37,12 +37,12 @@
 				</div>
 				<div class="form-group row">
 					<div class="col-sm-3">
-						<button class="btn btn-primary" type="submit">Submit</button>
+						<button class="btn btn-primary" type="submit">Click to Delete</button>
 					</div>
 				</div>
 				<div class="form-group row">
 					<div class="col-sm-4">
-						<a class="btn btn-success" style="font-size:1.5em" href="/newcustomer">Become a Customer</a>
+						<a class="btn btn-success btn-lg" href="/customer-settings">Cancel Without Deleting</a>
 					</div>
 				</div>
 			</login:form>

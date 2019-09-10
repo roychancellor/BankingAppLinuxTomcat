@@ -55,7 +55,7 @@ public class LoginController {
 	
 	@RequestMapping(value = "/newcustomer", method = RequestMethod.GET)
 	public String showNewCustomerScreen(ModelMap map) {
-		return "newcustomer";
+		return "customer-new";
 	}
 	
 	@RequestMapping(value="/newcustomer", method = RequestMethod.POST)
@@ -68,7 +68,7 @@ public class LoginController {
 		
 		if(result.hasErrors()) {
 			System.out.println("processNewCustomer: result has errors");
-			jspToReturn = "newcustomer";
+			jspToReturn = "customer-new";
 		}
 		else {
 			//Put the Customer object in the ModelMap
@@ -86,11 +86,11 @@ public class LoginController {
 				map.addAttribute("passmatcherror", "Passwords do not match, please re-enter");
 				map.addAttribute("password", "");
 				map.addAttribute("passCompare", "");
-				jspToReturn = "newcustomer";
+				jspToReturn = "customer-new";
 			}
 			else {
 				//Show the information to the customer - NOT WORKING YET - FIX LATER
-				jspToReturn = "confirmcustomer";
+				jspToReturn = "customer-confirm";
 			}
 		}
 		System.out.println("\nRedirecting to " + jspToReturn);
@@ -110,14 +110,14 @@ public class LoginController {
 			map.put("customer", customer);
 			map.addAttribute("errorMessage", "ERROR: A customer with username "
 				+ customer.getUsername() + " already exists. Choose another username and re-submit");
-			jspToReturn = "newcustomer";
+			jspToReturn = "customer-new";
 		}
 		else {
 			//Create the new customer object in the database
 			int custId = CustomerService.createNewCustomer(customer);
 			if(custId > 0) {
 				System.out.println("/confirmcustomer POST: created new customer:\n" + customer.toString());
-				jspToReturn = "successcustomer";
+				jspToReturn = "customer-success";
 			}
 		}
 		
@@ -135,7 +135,6 @@ public class LoginController {
 	public String processLoginScreen(
 		@ModelAttribute("customer") Customer customer,
 		@Valid @ModelAttribute("loginform") LoginForm loginform,
-//		@RequestParam String username, @RequestParam String password,
 		BindingResult br,
 		ModelMap map) {
 		
@@ -144,11 +143,6 @@ public class LoginController {
 		
 		String pageToReturn = "dashboard";
 		int custId = 0;
-//		if(username == null || password == null) {
-//			map.put("errormessage", "Username and password must not be blank");
-//			pageToReturn = "login";
-//		}
-//		else {
 		System.out.println("About to validate credentials with the database...");
 		custId = LoginService.validateCredentials(username, password);
 		System.out.println("DONE validating credentials with the database...");
@@ -170,7 +164,6 @@ public class LoginController {
 			map.addAttribute("errorMessage", "Invalid login credentials, try again");
 			pageToReturn = "login";
 		}
-//		}
 		return pageToReturn;
 	}
 	
@@ -606,9 +599,6 @@ public class LoginController {
 		//Verify there is a logged-in customer
 		if(customer.getCustId() != 0) {
 			//Lists that will store transactions by type and posted to the transactions view
-//			List<Transaction> transchk = new ArrayList<Transaction>();
-//			List<Transaction> transsav = new ArrayList<Transaction>();
-//			List<Transaction> transloan = new ArrayList<Transaction>();
 			List<Transaction> transchk;
 			List<Transaction> transsav;
 			List<Transaction> transloan;
@@ -621,19 +611,6 @@ public class LoginController {
 			//Separate transactions by account type and put in their respective lists
 			//The query returns transactions sorted by account and transaction date
 			if(transList != null) {
-//				char acctType; 
-//				for(Transaction t : transList) {
-//					acctType = t.getAccountNumber().charAt(0);
-//					if(acctType == 'C') {
-//						transchk.add(t);
-//					}
-//					else if(acctType == 'S') {
-//						transsav.add(t);
-//					}
-//					else if(acctType == 'L') {
-//						transloan.add(t);
-//					}
-//				}
 				//Separate all transactions into lists by account type
 				transchk = BankService.transListByAccount(transList, 'C');
 				transsav = BankService.transListByAccount(transList, 'S');
@@ -656,6 +633,96 @@ public class LoginController {
 	@RequestMapping(value = "/about-bank", method = RequestMethod.GET)
 	public String showAboutScreen() {
 		return "about-bank";
+	}
+	
+	@RequestMapping(value = "/customer-settings", method = RequestMethod.GET)
+	public String showCustomerSettingsScreen(
+		@ModelAttribute("customer") Customer customer, ModelMap map) {
+		
+		String jspToAccess = "customer-settings";
+		
+		System.out.println("\n/customer-settings GET: customer =\n" + customer.toString());
+		//Verify there is a logged-in customer
+		if(customer.getCustId() != 0) {
+			//Update all dashboard parameters
+			updateDashboardModel(customer, map);
+		}
+		else {
+			jspToAccess = "login";
+		}
+		System.out.println("/customer-settings GET: about to go to customer-settings.jsp");
+		return jspToAccess;
+	}
+	
+	@RequestMapping(value = "/customer-delete", method = RequestMethod.GET)
+	public String showDeleteCustomerScreen(@ModelAttribute("customer") Customer customer, ModelMap map) {
+		map.addAttribute("username", customer.getUsername());
+		
+		String jspToAccess = "customer-delete-password";
+
+		//Verify there is a logged-in customer
+		if(customer.getCustId() != 0) {
+			//Update all dashboard parameters
+			updateDashboardModel(customer, map);
+		}
+		else {
+			jspToAccess = "login";
+		}
+		System.out.println("/customer-delete GET: about to go to customer-delete-password.jsp");
+		return jspToAccess;
+	}
+	
+	@RequestMapping(value = "/delete-login", method = RequestMethod.POST)
+	public String processDeleteLogin(
+		@ModelAttribute("customer") Customer customer,
+		@Valid @ModelAttribute("loginform") LoginForm loginform,
+		BindingResult br,
+		ModelMap map) {
+		
+		String username = loginform.getUsername();
+		String password = loginform.getPassword();
+		
+		String pageToReturn = "customer-delete-confirm";
+		int custId = 0;
+		System.out.println("/delete-login POST: About to validate credentials with the database...");
+		custId = LoginService.validateCredentials(username, password);
+		System.out.println("/delete-login POST: DONE validating credentials with the database...");
+		
+		//If the credentials matched the database, custId should be > 0
+		if(custId > 0) {
+			System.out.println("/delete-login POST: About to get the customer information from the database...");
+			
+			//Get the customer object data from the database
+			customer = CustomerService.getCustomerInfoAndBalances(custId);
+			
+			System.out.println("/delete-login POST: After hitting the DB, the customer object is:\n"
+				+ customer.toString());
+				
+			//Update all dashboard parameters
+			updateDashboardModel(customer, map);
+		}
+		else {
+			map.addAttribute("errorMessage", "Invalid login credentials, try again");
+			pageToReturn = "customer-delete-password";
+		}
+		return pageToReturn;
+	}
+		
+	@RequestMapping(value = "/delete-customer", method = RequestMethod.GET)
+	public String deleteCustomer(@ModelAttribute("customer") Customer customer, ModelMap map) {
+		String jspToReturn = "redirect:login";
+		
+		System.out.println("\nBack from customer-delete-confirm:");
+		System.out.println("/delete-customer POST: customer =\n" + customer.toString());
+		
+		//DELETE the existing customer object in the database
+		int numRec = CustomerService.deleteExistingCustomer(customer);
+		if(numRec > 0) {
+			System.out.println("/delete-customer POST: deleted exiting customer:\n" + customer.toString());
+			jspToReturn = "customer-delete-success";
+		}
+		
+		return jspToReturn;
 	}
 	
 	/**

@@ -20,7 +20,7 @@
 		<section>
 			<h1>Existing Customer Login</h1>
 			<p class="error">${errorMessage}</p>
-			<login:form modelAttribute="loginform" method="POST">
+			<login:form modelAttribute="loginform" action="/login" method="POST">
 				<div class="form-group row">
 					<login:label path="username" class="col-lg-1 col-form-label">Username:</login:label>
 					<div class="col-lg-3">
