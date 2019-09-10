@@ -18,6 +18,7 @@ public class Loan extends Account {
 	private double amountPaidThisMonth;
 	public static final double LATE_FEE = 25.0;
 	public static final double ANNUAL_INTEREST_RATE = 0.08;
+	public static final double DEFAULT_CREDIT_LIMIT = -5000.00;
 	
 	//Constructor
 	public Loan(String accountNumber, double creditLimit, double lateFee, double annualInterestRate, int termYears) {

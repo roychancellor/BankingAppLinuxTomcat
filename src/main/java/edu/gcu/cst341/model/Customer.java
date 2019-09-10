@@ -363,7 +363,7 @@ public class Customer implements Comparable<Customer> {
 		String accountNumber = "LOA" + createAccountNumber();
 		return new Loan(
 			accountNumber,
-			-5000,
+			Loan.DEFAULT_CREDIT_LIMIT,
 			Loan.LATE_FEE,
 			Loan.ANNUAL_INTEREST_RATE,
 			10

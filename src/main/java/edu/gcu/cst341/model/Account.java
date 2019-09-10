@@ -126,7 +126,7 @@ public abstract class Account implements iActions, iTrans {
 	 */
 	public void addTransaction(double amount, String transType) {
 		this.transList.add(new Transaction(new Date(), this.accountNumber, amount, transType));
-		this.lastTrans = new Transaction(new Date(), this.accountNumber, amount, transType);
+		setLastTrans(new Transaction(new Date(), this.accountNumber, amount, transType));
 	}
 
 	/**

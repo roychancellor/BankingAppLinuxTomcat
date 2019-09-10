@@ -93,17 +93,15 @@ public class TransactionTests {
 		String depositAmount = "500.00";
 		payAmount = bs.stringToDouble(depositAmount);
 		bs.doTransaction(testCust, "chk", Account.DEPOSIT, payAmount);
-		payAmount = bs.stringToDouble(depositAmount);
 		bs.doTransaction(testCust, "sav", Account.DEPOSIT, payAmount);
-		payAmount = bs.stringToDouble(depositAmount);
 		bs.doTransaction(testCust, "loan", Account.DEPOSIT, payAmount);
 		
 		//Get the balances back from the database and perform the tests
 		boolean gotBalances = ds.dbRetrieveCustomerBalancesById(testCust);
 		assertTrue(gotBalances);
-		assertTrue(testCust.getChecking().getAccountBalance() == 1500.00);
-		assertTrue(testCust.getSaving().getAccountBalance() == 1500.00);
-		assertTrue(testCust.getLoan().getAccountBalance() == -500.00);
+		assertTrue(testCust.getChecking().getAccountBalance() == initialBalance + payAmount);
+		assertTrue(testCust.getSaving().getAccountBalance() == initialBalance + payAmount);
+		assertTrue(testCust.getLoan().getAccountBalance() == -initialBalance + payAmount);
 		List<Transaction> allTransactions = ds.dbRetrieveTransactionsById(testCust.getCustId());
 		List<Transaction> chkTrans = bs.transListByAccount(allTransactions, 'C');
 		List<Transaction> savTrans = bs.transListByAccount(allTransactions, 'S');
@@ -121,12 +119,89 @@ public class TransactionTests {
 	
 	@Test
 	public void withdrawalTests() {
-		//TEST 1: Checking overdraft occurs when amount > balance
+		double initialBalance = 1000.00;
+		String validWithdraw = "500.00";
+		String invalidWithdraw = "1000.01";
 		
-		//TEST 2: Transactions are correct (new balance computed and new balance + transaction written to DB)
+		//TEST 1A: Valid withdrawal from checking
+		testCust.getChecking().setAccountBalance(initialBalance);
+		double withdrawAmount = bs.stringToDouble(validWithdraw);
+		boolean validAmount = bs.validateWithdrawal(testCust, "chk", withdrawAmount);
+		assertTrue(validAmount);
+		testCust.getChecking().doTransaction(Account.WITHDRAWAL, withdrawAmount);
+		assertTrue(testCust.getChecking().getAccountBalance() == initialBalance - withdrawAmount);
+
+		//TEST 1B: Overdraft checking
+		testCust.getChecking().setAccountBalance(initialBalance);
+		withdrawAmount = bs.stringToDouble(invalidWithdraw);
+		validAmount = bs.validateWithdrawal(testCust, "chk", withdrawAmount);
+		assertFalse(validAmount);
+		testCust.getChecking().doTransaction(Account.WITHDRAWAL, withdrawAmount);
+		assertTrue(testCust.getChecking().getAccountBalance() ==
+			initialBalance - withdrawAmount - testCust.getChecking().getOverdraftFee());
+		
+		//TEST 2A: Transactions are correct (new balance computed and new balance + transaction written to DB)
+		//Set the test customer balances:
+		makeValidCustomer();
+		testCust.getChecking().setAccountBalance(initialBalance);
+		testCust.getSaving().setAccountBalance(initialBalance);
+		testCust.getLoan().setAccountBalance(-initialBalance);
+		
+		int custId = cs.createNewCustomer(testCust);
+		assertTrue(custId > 0);
+		
+		//Perform transactions for each of the test customer's accounts
+		withdrawAmount = bs.stringToDouble(validWithdraw);
+		bs.doTransaction(testCust, "chk", Account.WITHDRAWAL, withdrawAmount);
+		bs.doTransaction(testCust, "sav", Account.WITHDRAWAL, withdrawAmount);
+		bs.doTransaction(testCust, "loan", Account.WITHDRAWAL, withdrawAmount);
+		
+		//Get the balances back from the database and perform the tests
+		boolean gotBalances = ds.dbRetrieveCustomerBalancesById(testCust);
+		assertTrue(gotBalances);
+		assertTrue(testCust.getChecking().getAccountBalance() == initialBalance - withdrawAmount);
+		assertTrue(testCust.getSaving().getAccountBalance() == initialBalance - withdrawAmount);
+		assertTrue(testCust.getLoan().getAccountBalance() == -initialBalance - withdrawAmount);
+		List<Transaction> allTransactions = ds.dbRetrieveTransactionsById(testCust.getCustId());
+		List<Transaction> chkTrans = bs.transListByAccount(allTransactions, 'C');
+		List<Transaction> savTrans = bs.transListByAccount(allTransactions, 'S');
+		List<Transaction> loanTrans = bs.transListByAccount(allTransactions, 'L');
+		assertTrue(chkTrans.get(chkTrans.size() - 1).getAmount() == -withdrawAmount);
+		assertTrue(savTrans.get(savTrans.size() - 1).getAmount() == -withdrawAmount);
+		assertTrue(loanTrans.get(loanTrans.size() - 1).getAmount() == -withdrawAmount);
+		assertTrue(chkTrans.get(chkTrans.size() - 1).getTransactionType().equals("Withdrawal"));
+		assertTrue(savTrans.get(savTrans.size() - 1).getTransactionType().equals("Withdrawal"));
+		assertTrue(loanTrans.get(loanTrans.size() - 1).getTransactionType().equals("Cash advance"));
+
+		//TEST 2B: Checking overdraft is correct in database
+		testCust.getChecking().setAccountBalance(initialBalance);
+		withdrawAmount = bs.stringToDouble(invalidWithdraw);
+		bs.doTransaction(testCust, "chk", Account.WITHDRAWAL, withdrawAmount);
+		bs.doCheckingOverdraft(testCust);
+		gotBalances = ds.dbRetrieveCustomerBalancesById(testCust);
+		assertTrue(gotBalances);
+		System.err.println("testing checking overdraft: " + testCust.getChecking().getAccountBalance());
+		System.err.println(initialBalance - withdrawAmount - testCust.getChecking().getOverdraftFee());
+		assertEquals("balance within 0.004", initialBalance - withdrawAmount - testCust.getChecking().getOverdraftFee(),
+			testCust.getChecking().getAccountBalance(), 0.004);
+		allTransactions = ds.dbRetrieveTransactionsById(testCust.getCustId());
+		chkTrans = bs.transListByAccount(allTransactions, 'C');
+		assertEquals(testCust.getChecking().getOverdraftFee(), chkTrans.get(chkTrans.size() - 1).getAmount(), 0.004);
+		assertEquals(-withdrawAmount, chkTrans.get(chkTrans.size() - 2).getAmount(), 0.004);
+		assertTrue(chkTrans.get(chkTrans.size() - 2).getTransactionType().equals("Withdrawal"));
+		assertTrue(chkTrans.get(chkTrans.size() - 1).getTransactionType().equals("Overdraft fee"));
 
 		//TEST 3: Unable to exceed available balance for savings and loans
+		testCust.getSaving().setAccountBalance(initialBalance);
+		testCust.getLoan().setAccountBalance(0);
+		withdrawAmount = bs.stringToDouble(invalidWithdraw);
+		validAmount = bs.validateWithdrawal(testCust, "sav", testCust.getSaving().getAccountBalance() + 0.01);
+		assertFalse(validAmount);
+		validAmount = bs.validateWithdrawal(testCust, "loan", -testCust.getLoan().getCreditLimit() + 0.01);
+		assertFalse(validAmount);
 		
+		//Delete the test customer from the database
+		cs.deleteExistingCustomer(testCust);
 	}
 	
 	@Test
