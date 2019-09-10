@@ -21,8 +21,8 @@ public class Loan extends Account {
 	
 	//Constructor
 	public Loan(String accountNumber, double creditLimit, double lateFee, double annualInterestRate, int termYears) {
-		//Call the superclass (Account) constructor with a ZERO balance
-		super(accountNumber, 0);
+		//Call the superclass (Account) constructor with a ($1,000) balance
+		super(accountNumber, -1000);
 		
 		//Unique to Loan objects
 		this.lateFee = lateFee;

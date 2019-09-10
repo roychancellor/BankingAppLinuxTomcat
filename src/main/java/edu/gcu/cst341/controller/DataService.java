@@ -662,6 +662,8 @@ public class DataService {
 	
 	/**
 	 * Queries the database for unique username and hashed password combination
+	 * UNUSED FOR VALIDATING LOGIN CREENTIALS BECAUSE hashedSalt is
+	 * UNIQUE TO THE CUSTOMER AND ONLY STORED IN THE DATABASE, THUS IS UNKNOWN AT LOGIN TIME
 	 * @param username the customer's username
 	 * @param hashedSalt the hashed password salt
 	 * @param hashedPassword the hashed password

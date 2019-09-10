@@ -241,7 +241,7 @@ public class LoginController {
 		double amount;
 		//If the form had errors or if the form input could not be converted to a number,
 		//go back to the form so the customer can make corrections
-        if (br.hasErrors() || (amount = LoginService.stringToDouble(amountStr.getAmount())) < 0) {
+        if (br.hasErrors() || (amount = BankService.stringToDouble(amountStr.getAmount())) < 0.01) {
         	map.addAttribute("errormessage", "Amount must be at least $0.01");
 			//Update all dashboard parameters
 			updateDashboardModel(customer, map);
@@ -322,7 +322,7 @@ public class LoginController {
 		//If the form had errors or if the form input could not be converted to a number,
 		//go back to the form so the customer can make corrections
         double amount;
-		if (br.hasErrors() || (amount = LoginService.stringToDouble(amountStr.getAmount())) < 0) {
+		if (br.hasErrors() || (amount = BankService.stringToDouble(amountStr.getAmount())) < 0.01) {
         	map.addAttribute("errormessage", "Amount must be at least $0.01");
 			//Update all dashboard parameters
 			updateDashboardModel(customer, map);
@@ -467,7 +467,7 @@ public class LoginController {
 		//If the form had errors or if the form input could not be converted to a number,
 		//go back to the form so the customer can make corrections
         double amount;
-		if (br.hasErrors() || (amount = LoginService.stringToDouble(amountStr.getAmount())) < 0) {
+		if (br.hasErrors() || (amount = BankService.stringToDouble(amountStr.getAmount())) < 0.01) {
         	map.addAttribute("errormessage", "Amount must be at least $0.01");
 			//Update all dashboard parameters
 			updateDashboardModel(customer, map);
@@ -606,9 +606,12 @@ public class LoginController {
 		//Verify there is a logged-in customer
 		if(customer.getCustId() != 0) {
 			//Lists that will store transactions by type and posted to the transactions view
-			List<Transaction> transchk = new ArrayList<Transaction>();
-			List<Transaction> transsav = new ArrayList<Transaction>();
-			List<Transaction> transloan = new ArrayList<Transaction>();
+//			List<Transaction> transchk = new ArrayList<Transaction>();
+//			List<Transaction> transsav = new ArrayList<Transaction>();
+//			List<Transaction> transloan = new ArrayList<Transaction>();
+			List<Transaction> transchk;
+			List<Transaction> transsav;
+			List<Transaction> transloan;
 			
 			//Get the transaction lists from the database
 			DataService ds = new DataService();
@@ -618,19 +621,23 @@ public class LoginController {
 			//Separate transactions by account type and put in their respective lists
 			//The query returns transactions sorted by account and transaction date
 			if(transList != null) {
-				char acctType; 
-				for(Transaction t : transList) {
-					acctType = t.getAccountNumber().charAt(0);
-					if(acctType == 'C') {
-						transchk.add(t);
-					}
-					else if(acctType == 'S') {
-						transsav.add(t);
-					}
-					else if(acctType == 'L') {
-						transloan.add(t);
-					}
-				}
+//				char acctType; 
+//				for(Transaction t : transList) {
+//					acctType = t.getAccountNumber().charAt(0);
+//					if(acctType == 'C') {
+//						transchk.add(t);
+//					}
+//					else if(acctType == 'S') {
+//						transsav.add(t);
+//					}
+//					else if(acctType == 'L') {
+//						transloan.add(t);
+//					}
+//				}
+				//Separate all transactions into lists by account type
+				transchk = BankService.transListByAccount(transList, 'C');
+				transsav = BankService.transListByAccount(transList, 'S');
+				transloan = BankService.transListByAccount(transList, 'L');
 				
 				//Update all dashboard parameters
 				updateDashboardModel(customer, map);

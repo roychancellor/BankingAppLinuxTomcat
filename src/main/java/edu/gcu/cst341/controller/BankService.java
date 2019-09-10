@@ -1,7 +1,9 @@
 package edu.gcu.cst341.controller;
 
 import java.text.DecimalFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import org.springframework.stereotype.Service;
 
@@ -205,4 +207,48 @@ public class BankService {
 		System.out.println("Credit limit: " + loan.getCreditLimit() + ", balance: " + loan.getAccountBalance());
 		return Math.abs(loan.getCreditLimit()) - Math.abs(loan.getAccountBalance());
 	}
+	
+	/**
+	 * Helper method that separates the complete transaction list for a customer Id
+	 * into lists by account type
+	 * @param allTransactions the complete list of transactions for a customer Id
+	 * @param acctPrefix the account type prefix ('C' = checking, 'S' = savings, 'L' = loan)
+	 * @return a list of transactions filtered by account prefix
+	 */
+	public List<Transaction> transListByAccount(List<Transaction> allTransactions, char acctPrefix) {
+		List<Transaction> listByAccount = null;
+		char acctType;
+		
+		if(allTransactions != null) {
+			listByAccount = new ArrayList<Transaction>();
+			for(Transaction t : allTransactions) {
+				acctType = t.getAccountNumber().charAt(0);
+				if(acctType == acctPrefix) {
+					listByAccount.add(t);
+				}
+			}
+		}
+		return listByAccount;
+	}
+	
+	/**
+	 * Converts a String value that represents a number into a double, if possible
+	 * If not possible, catches the thrown exceptions
+	 * @param amount the String amount to convert
+	 * @return the double representation of the String if successful or -1 if not possible
+	 */
+	public double stringToDouble(String amount) {
+		double convertedAmount = -1;
+		
+		try {
+			convertedAmount = Double.parseDouble(amount);
+		}
+		catch(NullPointerException e) {
+		}
+		catch(NumberFormatException e) {
+		}
+		catch(Exception e) {
+		}
+		return convertedAmount;
+	}	
 }
