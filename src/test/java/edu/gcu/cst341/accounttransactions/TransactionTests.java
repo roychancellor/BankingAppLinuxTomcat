@@ -206,14 +206,147 @@ public class TransactionTests {
 	
 	@Test
 	public void transferTests() {
+		double initialBalance = 1000.00;
+		double transferAmount = 500.00;
+		makeValidCustomer();
+		testCust.getChecking().setAccountBalance(initialBalance);
+		testCust.getSaving().setAccountBalance(initialBalance);
+		testCust.getLoan().setAccountBalance(-initialBalance);
 		//TEST 1: Can't transfer between same account type
-		
-		
+		String fromAccount = "chk";
+		String toAccount = "sav";
+		assertFalse(fromAccount.equals(toAccount));
+		fromAccount = "chk";
+		toAccount = "loan";
+		assertFalse(fromAccount.equals(toAccount));
+		fromAccount = "sav";
+		toAccount = "chk";
+		assertFalse(fromAccount.equals(toAccount));
+		fromAccount = "sav";
+		toAccount = "loan";
+		assertFalse(fromAccount.equals(toAccount));
+		fromAccount = "loan";
+		toAccount = "chk";
+		assertFalse(fromAccount.equals(toAccount));
+		fromAccount = "loan";
+		toAccount = "sav";
+		assertFalse(fromAccount.equals(toAccount));
+		fromAccount = "chk";
+		toAccount = "chk";
+		assertTrue(fromAccount.equals(toAccount));
+		fromAccount = "sav";
+		toAccount = "sav";
+		assertTrue(fromAccount.equals(toAccount));
+		fromAccount = "loan";
+		toAccount = "loan";
+		assertTrue(fromAccount.equals(toAccount));
+
 		//TEST 2: Can't violate deposit or withdrawal rules
+		//Check for a valid WITHDRAWAL amount before executing the transfer
+		int custId = cs.createNewCustomer(testCust);
+		assertTrue(custId > 0);
+		testCust.getChecking().setAccountBalance(initialBalance);
+		testCust.getSaving().setAccountBalance(initialBalance);
+		testCust.getLoan().setAccountBalance(-initialBalance);
+
+		//CHK --> SAV
+		fromAccount = "chk";
+		toAccount = "sav";
+		boolean toAmountValid = true;
+		boolean fromAmountValid = bs.validateWithdrawal(testCust, fromAccount, transferAmount);
+		assertTrue(fromAmountValid && toAmountValid);
+		transferAmount = testCust.getChecking().getAccountBalance() + 0.01;
+		fromAmountValid = bs.validateWithdrawal(testCust, fromAccount, transferAmount);
+		assertFalse(fromAmountValid && toAmountValid);
 		
+		//CHK --> LOAN
+		transferAmount = 500.00;
+		toAccount = "loan";
+		fromAmountValid = bs.validateWithdrawal(testCust, fromAccount, transferAmount);
+		toAmountValid = bs.validateCashAdvancePayment(testCust, transferAmount);
+		assertTrue(fromAmountValid && toAmountValid);
+		transferAmount = testCust.getChecking().getAccountBalance() + 0.01;
+		fromAmountValid = bs.validateWithdrawal(testCust, fromAccount, transferAmount);
+		assertFalse(fromAmountValid && toAmountValid);
+		transferAmount = 500.0;
+		fromAmountValid = bs.validateWithdrawal(testCust, fromAccount, transferAmount);
+		toAmountValid = bs.validateCashAdvancePayment(testCust, 5000.01);
+		assertFalse(fromAmountValid && toAmountValid);
+		
+		//SAV --> CHK
+		fromAccount = "sav";
+		toAccount = "chk";
+		toAmountValid = true;
+		fromAmountValid = bs.validateWithdrawal(testCust, fromAccount, transferAmount);
+		assertTrue(fromAmountValid && toAmountValid);
+		transferAmount = testCust.getSaving().getAccountBalance() + 0.01;
+		fromAmountValid = bs.validateWithdrawal(testCust, fromAccount, transferAmount);
+		assertFalse(fromAmountValid && toAmountValid);
+		
+		//SAV --> LOAN
+		transferAmount = 500.00;
+		toAccount = "loan";
+		fromAmountValid = bs.validateWithdrawal(testCust, fromAccount, transferAmount);
+		toAmountValid = bs.validateCashAdvancePayment(testCust, transferAmount);
+		assertTrue(fromAmountValid && toAmountValid);
+		transferAmount = testCust.getSaving().getAccountBalance() + 0.01;
+		fromAmountValid = bs.validateWithdrawal(testCust, fromAccount, transferAmount);
+		assertFalse(fromAmountValid && toAmountValid);
+		transferAmount = 500.0;
+		fromAmountValid = bs.validateWithdrawal(testCust, fromAccount, transferAmount);
+		toAmountValid = bs.validateCashAdvancePayment(testCust, 5000.01);
+		assertFalse(fromAmountValid && toAmountValid);
+		
+		//LOAN --> CHK
+		fromAccount = "loan";
+		toAccount = "chk";
+		toAmountValid = true;
+		fromAmountValid = bs.validateWithdrawal(testCust, fromAccount, transferAmount);
+		assertTrue(fromAmountValid && toAmountValid);
+		transferAmount = -(testCust.getLoan().getCreditLimit() - 0.01);
+		fromAmountValid = bs.validateWithdrawal(testCust, fromAccount, transferAmount);
+		assertFalse(fromAmountValid && toAmountValid);
+		
+		//LOAN --> SAV
+		transferAmount = 500.00;
+		toAccount = "sav";
+		fromAmountValid = bs.validateWithdrawal(testCust, fromAccount, transferAmount);
+		assertTrue(fromAmountValid && toAmountValid);
+		transferAmount = -(testCust.getLoan().getCreditLimit() - 0.01);
+		fromAmountValid = bs.validateWithdrawal(testCust, fromAccount, transferAmount);
+		assertFalse(fromAmountValid && toAmountValid);
+		//Delete the test customer from the database
+		cs.deleteExistingCustomer(testCust);
 		
 		//TEST 3: transactions written to correct accounts
-		
+		makeValidCustomer();
+		custId = cs.createNewCustomer(testCust);
+		assertTrue(custId > 0);
+		testCust.getChecking().setAccountBalance(initialBalance);
+		testCust.getSaving().setAccountBalance(initialBalance);
+		testCust.getLoan().setAccountBalance(-initialBalance);
+
+		//CHK --> SAV
+		transferAmount = 500.00;
+		fromAccount = "chk";
+		toAccount = "sav";
+		int numRec = bs.doTransfer(testCust, fromAccount, transferAmount, toAccount);
+		assertTrue(numRec > 0);
+		//Get the balances back from the database and perform the tests
+		boolean gotBalances = ds.dbRetrieveCustomerBalancesById(testCust);
+		assertTrue(gotBalances);
+		assertEquals(initialBalance - transferAmount, testCust.getChecking().getAccountBalance(), 0.004);
+		assertEquals(initialBalance + transferAmount, testCust.getSaving().getAccountBalance(), 0.004);
+		List<Transaction> allTransactions = ds.dbRetrieveTransactionsById(testCust.getCustId());
+		List<Transaction> chkTrans = bs.transListByAccount(allTransactions, 'C');
+		List<Transaction> savTrans = bs.transListByAccount(allTransactions, 'S');
+		assertEquals(-transferAmount, chkTrans.get(chkTrans.size() - 1).getAmount(), 0.004);
+		assertEquals(transferAmount, savTrans.get(savTrans.size() - 1).getAmount(), 0.004);
+		assertTrue(chkTrans.get(chkTrans.size() - 1).getTransactionType().equals("Withdrawal (transfer)"));
+		assertTrue(savTrans.get(savTrans.size() - 1).getTransactionType().equals("Deposit (transfer)"));
+
+		//Delete the test customer from the database
+		cs.deleteExistingCustomer(testCust);
 	}
 	
 	@Test
