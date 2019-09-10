@@ -5,8 +5,8 @@
 	<div><a href="/deposit-bank">Deposit</a></div>
 	<div><a href="/withdraw-bank">Withdraw</a></div>
 	<div><a href="/transfer-bank">Transfer</a></div>
-	<div><a href="/statements-bank">Reports</a></div>
+	<div><a href="/statements-bank">Transactions</a></div>
 	<div><a href="/dashboard">Dashboard</a></div>
-	<div><a href="/about-bank">About</a></div>
+	<div><a href="/settings">Settings</a></div>
 	<div><a href="/logout">Logout</a></div>
 </nav>

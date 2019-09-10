@@ -16,7 +16,6 @@ import org.junit.Test;
 import edu.gcu.cst341.controller.BankService;
 import edu.gcu.cst341.controller.CustomerService;
 import edu.gcu.cst341.controller.DataService;
-import edu.gcu.cst341.controller.LoginService;
 import edu.gcu.cst341.model.Account;
 import edu.gcu.cst341.model.Customer;
 import edu.gcu.cst341.model.Loan;
@@ -26,7 +25,6 @@ public class TransactionTests {
 	private CustomerService cs;
 	private Customer testCust;
 	private DataService ds;
-	private LoginService ls;
 	private BankService bs;
 	
 	@Before
@@ -34,7 +32,6 @@ public class TransactionTests {
 		cs = new CustomerService();
 		ds = new DataService();
 		testCust = new Customer();
-		ls = new LoginService();
 		bs = new BankService();
 	}
 

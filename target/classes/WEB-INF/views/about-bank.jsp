@@ -17,10 +17,12 @@
 		<%@ include file="common/header-common.jspf" %>
 		<section>
 			<h1>About</h1>
-			<p>This is the coolest online bank ever.
-			It is built with HTML, CSS, Bootstrap, Spring, and Java.</p>
-			<br>
-			<p><a class="btn btn-success" href="/dashboard">Dashboard</a></p>
+			<h3>GCU Banking Application built for CST-341 in the Java Certificate Program.</h3>
+			<p>
+			<hr>
+			Technology stack: HTML, CSS, Bootstrap, Spring, Java, JDBC, MySQL</p>
+			<hr>
+			<p><a class="btn btn-success" href="/dashboard">Return to Dashboard</a></p>
 		</section>
 		<%@ include file="common/footer-common.jspf" %>
 	</div>
