@@ -16,7 +16,7 @@
 
 <body>
 	<div class="container">
-		<%@ include file="common/header-common.jspf" %>
+		<%@ include file="common/header-common-login.jspf" %>
 		<section>
 			<h1>Existing Customer Login</h1>
 			<p class="error">${errorMessage}</p>
