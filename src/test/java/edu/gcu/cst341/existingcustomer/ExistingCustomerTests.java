@@ -30,12 +30,12 @@ public class ExistingCustomerTests {
 	@Test
 	public void testLoginCredentials() {
 		//TEST 1: Valid credentials --> login
-		String testUser = "roychance";
+		String testUser = "twomack";
 		String testPass = "password";
 		int custId = ls.validateCredentials(testUser, testPass);
 		testCust = ds.dbRetrieveCustomerById(custId);
 		assertTrue("Valid credentials --> login", custId > 0);
-		assertTrue("username should be roychance", testCust.getUsername().equals(testUser));
+		assertTrue("username should be twomack", testCust.getUsername().equals(testUser));
 		assertNotNull(testCust);
 
 		//TEST 2: Invalid credentials --> do not log in

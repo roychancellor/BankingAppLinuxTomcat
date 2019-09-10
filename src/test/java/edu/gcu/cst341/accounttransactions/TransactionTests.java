@@ -349,12 +349,6 @@ public class TransactionTests {
 		cs.deleteExistingCustomer(testCust);
 	}
 	
-	@Test
-	public void correctBalanceTests() {
-		//Perform a series of transactions of known amounts from a new customer
-		//and verify the correct balance occurs for each account
-	}
-	
 	/**
 	 * Helper method to create a known-good customer object
 	 * @return a known-good customer object
