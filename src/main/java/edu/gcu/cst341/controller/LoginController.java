@@ -715,7 +715,7 @@ public class LoginController {
 		
 	@RequestMapping(value = "/delete-customer", method = RequestMethod.GET)
 	public String deleteCustomer(@ModelAttribute("customer") Customer customer, ModelMap map) {
-		String jspToReturn = "redirect:login";
+		String jspToReturn = "redirect:logout";
 		
 		System.out.println("\nBack from customer-delete-confirm:");
 		System.out.println("/delete-customer POST: customer =\n" + customer.toString());
