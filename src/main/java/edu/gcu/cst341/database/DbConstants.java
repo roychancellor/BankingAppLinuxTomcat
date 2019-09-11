@@ -18,7 +18,7 @@ public class DbConstants {
 	public static final String PASSWORD_LOCAL = "root";  //I KNOW THIS IS NOT OK...FOR DEMO ONLY
 	public static final String PASSWORD_AWS = "sqlsqlmysql";  //I KNOW THIS IS NOT OK...FOR DEMO ONLY
 	public static final String DB_NAME = "bank";
-	public static final String CUSTOMER_TABLE = "customers";
+	public static final String CUSTOMERS_TABLE = "customers";
 	public static final String CREDENTIALS_TABLE = "credentials";
 	public static final String CUSTOMER_ACCOUNTS_TABLE = "customer_accounts";
 	public static final String CUSTOMER_TRANSACTIONS_TABLE = "customer_transactions";
@@ -38,7 +38,7 @@ public class DbConstants {
 	//SQL command to CREATE a customer in the customers table
 	public static final String CREATE_CUSTOMER =
 		"INSERT INTO "
-		+ DB_NAME + "." + CUSTOMER_TABLE
+		+ DB_NAME + "." + CUSTOMERS_TABLE
 		+ "(" + CUSTOMER_LAST_NAME
 		+ "," + CUSTOMER_FIRST_NAME
 		+ "," + CUSTOMER_EMAIL
@@ -87,13 +87,13 @@ public class DbConstants {
 	
 	//SQL command to RETRIEVE all customers unordered
 	public static final String GET_CUSTOMERS_ORDERED =
-		"SELECT * FROM " + DB_NAME + "." + CUSTOMER_TABLE
+		"SELECT * FROM " + DB_NAME + "." + CUSTOMERS_TABLE
 		+ " ORDER BY " + CUSTOMER_LAST_NAME
 		+ "," + CUSTOMER_FIRST_NAME;	
 	
 	//SQL command to RETRIEVE all customers and ORDER BY lastName, firstName
 	public static final String GET_CUSTOMERS_UNORDERED =
-		"SELECT * FROM " + DB_NAME + "." + CUSTOMER_TABLE;
+		"SELECT * FROM " + DB_NAME + "." + CUSTOMERS_TABLE;
 	
 	//SQL command to RETRIEVE customerId from a username and password match in the credentials table
 	public static final String GET_CUSTOMER_ID_FROM_CREDENTIALS =
@@ -114,19 +114,19 @@ public class DbConstants {
 	//SQL command to RETRIEVE all customer information from customers table by customerId
 	public static final String GET_CUSTOMER_BY_ID =
 		"SELECT "
-		+ DB_NAME + "." + CUSTOMER_TABLE + ".customerId,"
-		+ DB_NAME + "." + CUSTOMER_TABLE + ".lastName,"
-		+ DB_NAME + "." + CUSTOMER_TABLE + ".firstName,"
-		+ DB_NAME + "." + CUSTOMER_TABLE + ".email,"
-		+ DB_NAME + "." + CUSTOMER_TABLE + ".phone,"
+		+ DB_NAME + "." + CUSTOMERS_TABLE + ".customerId,"
+		+ DB_NAME + "." + CUSTOMERS_TABLE + ".lastName,"
+		+ DB_NAME + "." + CUSTOMERS_TABLE + ".firstName,"
+		+ DB_NAME + "." + CUSTOMERS_TABLE + ".email,"
+		+ DB_NAME + "." + CUSTOMERS_TABLE + ".phone,"
 		+ DB_NAME + "." + CREDENTIALS_TABLE + ".userName,"
 		+ DB_NAME + "." + CREDENTIALS_TABLE + ".passwordHash"
 		+ " FROM "
-		+ DB_NAME + "." + CUSTOMER_TABLE + "," + DB_NAME + "." + CREDENTIALS_TABLE
+		+ DB_NAME + "." + CUSTOMERS_TABLE + "," + DB_NAME + "." + CREDENTIALS_TABLE
 		+ " WHERE "
 		+ DB_NAME + "." + CREDENTIALS_TABLE + "." + "customerId=?"
 		+ " AND "
-		+ DB_NAME + "." + CUSTOMER_TABLE + "." + "customerId=?";
+		+ DB_NAME + "." + CUSTOMERS_TABLE + "." + "customerId=?";
 	
 	//SQL command to RETRIEVE account numbers and balances by customerId
 	public static final String GET_CUSTOMER_ACCOUNTS_BY_ID =
@@ -143,13 +143,19 @@ public class DbConstants {
 		+ " WHERE customerId=?"
 		+ " ORDER BY accountNumber, transTimestamp";
 	
-	//SQL command to UPDATE a customer by id
-	public static final String UPDATE_CUSTOMER_BY_ID =
-		"UPDATE " + DB_NAME + "." + CUSTOMER_TABLE + " "
+	//SQL command to UPDATE customer names by id
+	public static final String UPDATE_CUSTOMER_NAMES_BY_ID =
+		"UPDATE " + DB_NAME + "." + CUSTOMERS_TABLE + " "
 		+ "SET " + CUSTOMER_LAST_NAME + "=?," + CUSTOMER_FIRST_NAME + "=? "
 		+ "WHERE " + CUSTOMER_ID + "=?";
 	
-	//SQL command to UPDATE a credentials by customer id
+	//SQL command to UPDATE customer contact information by id
+	public static final String UPDATE_CUSTOMER_CONTACT_BY_ID =
+		"UPDATE " + DB_NAME + "." + CUSTOMERS_TABLE + " "
+		+ "SET " + CUSTOMER_EMAIL + "=?," + CUSTOMER_PHONE + "=? "
+		+ "WHERE " + CUSTOMER_ID + "=?";
+	
+	//SQL command to UPDATE customer login credentials by customer id
 	public static final String UPDATE_CREDENTIALS_BY_ID =
 		"UPDATE " + DB_NAME + "." + CREDENTIALS_TABLE + " "
 		+ "SET " + CUSTOMER_USER_NAME + "=?," + CUSTOMER_PASSWORD_SALT + "=? " + CUSTOMER_PASSWORD_HASH + "=? "
@@ -165,7 +171,7 @@ public class DbConstants {
 	
 	//SQL command to DELETE a customer by id
 	public static final String DELETE_CUSTOMER_BY_ID =
-		"DELETE FROM " + DB_NAME + "." + CUSTOMER_TABLE + " "
+		"DELETE FROM " + DB_NAME + "." + CUSTOMERS_TABLE + " "
 		+ "WHERE " + CUSTOMER_ID + "=?";
 	
 	//SQL command to DELETE customer credentials by id

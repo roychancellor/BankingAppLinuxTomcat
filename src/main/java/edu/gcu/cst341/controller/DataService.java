@@ -495,58 +495,6 @@ public class DataService {
 	}
 	
 	/**
-	 * Updates account balance and writes a transaction to the database
-	 * @param <E> an Account object (Checking, Saving, or Loan)
-	 * @param customerId The customerId being updated
-	 * @param account The Account object being updated (Checking, Saving, Loan)
-	 * @return number of records inserted (1 if successful, 0 if not)
-	 */
-	public <E> int dbUpdateAccountBalances(int customerId, E account) {
-		int numRec = 0;
-		String accountField = null;
-		double accountBalance = 0;
-		try {
-			//WRITE TO CUSTOMER_ACCOUNTS TABLE
-			//Populate statement parameters
-			if(account instanceof Checking) {
-				accountField = "checkingBalance";
-				accountBalance = ((Checking) account).getAccountBalance();
-			}
-			else if(account instanceof Saving) {
-				accountField = "savingBalance";
-				accountBalance = ((Saving) account).getAccountBalance();
-			}
-			else if(account instanceof Loan) {
-				accountField = "loanBalance";
-				accountBalance = ((Loan) account).getAccountBalance();
-			}
-			
-			//Prepare the SQL statement to UPDATE an account balance by customer id
-			final String UPDATE_BALANCE_BY_ID =
-				"UPDATE " + DbConstants.DB_NAME + "." + DbConstants.CUSTOMER_ACCOUNTS_TABLE
-				+ " SET " + accountField + "=?"
-				+ " WHERE " + DbConstants.CUSTOMER_ID + "=?";
-			
-			sql = conn.prepareStatement(UPDATE_BALANCE_BY_ID);
-			sql.setDouble(1, accountBalance);
-			sql.setInt(2, customerId);
-			if(verboseSQL) printSQL();
-			
-			//Execute SQL statement
-			numRec = sql.executeUpdate();
-			
-			if(verboseSQL) System.out.println("...Success, " + numRec
-				+ " record(s) inserted into customer_accounts table.");			
-		}
-		catch(SQLException e) {
-			printMethod(new Throwable().getStackTrace()[0].getMethodName());
-			e.printStackTrace();
-		}
-		
-		return numRec;
-	}
-	
-	/**
 	 * Adds a single transaction to the customer_transactions table
 	 * @param customerId the customerId of the current customer
 	 * @param trans a Transaction object for the transaction to be written
@@ -699,6 +647,119 @@ public class DataService {
 		return -1;
 	}
 
+	/**
+	 * Updates account balance and writes a transaction to the database
+	 * @param <E> an Account object (Checking, Saving, or Loan)
+	 * @param customerId The customerId being updated
+	 * @param account The Account object being updated (Checking, Saving, Loan)
+	 * @return number of records inserted (1 if successful, 0 if not)
+	 */
+	public <E> int dbUpdateAccountBalances(int customerId, E account) {
+		int numRec = 0;
+		String accountField = null;
+		double accountBalance = 0;
+		try {
+			//WRITE TO CUSTOMER_ACCOUNTS TABLE
+			//Populate statement parameters
+			if(account instanceof Checking) {
+				accountField = "checkingBalance";
+				accountBalance = ((Checking) account).getAccountBalance();
+			}
+			else if(account instanceof Saving) {
+				accountField = "savingBalance";
+				accountBalance = ((Saving) account).getAccountBalance();
+			}
+			else if(account instanceof Loan) {
+				accountField = "loanBalance";
+				accountBalance = ((Loan) account).getAccountBalance();
+			}
+			
+			//Prepare the SQL statement to UPDATE an account balance by customer id
+			final String UPDATE_BALANCE_BY_ID =
+				"UPDATE " + DbConstants.DB_NAME + "." + DbConstants.CUSTOMER_ACCOUNTS_TABLE
+				+ " SET " + accountField + "=?"
+				+ " WHERE " + DbConstants.CUSTOMER_ID + "=?";
+			
+			sql = conn.prepareStatement(UPDATE_BALANCE_BY_ID);
+			sql.setDouble(1, accountBalance);
+			sql.setInt(2, customerId);
+			if(verboseSQL) printSQL();
+			
+			//Execute SQL statement
+			numRec = sql.executeUpdate();
+			
+			if(verboseSQL) System.out.println("...Success, " + numRec
+				+ " record(s) inserted into customer_accounts table.");			
+		}
+		catch(SQLException e) {
+			printMethod(new Throwable().getStackTrace()[0].getMethodName());
+			e.printStackTrace();
+		}
+		
+		return numRec;
+	}
+	
+	/**
+	 * Updates the email address and phone number for a customer
+	 * @param cust the Customer object to update
+	 * @return the number of records updated (1 if successful, 0 if not)
+	 */
+	public int dbUpdateCustomerContactInfo(Customer cust) {
+		int numRec = 0;
+		try {
+			//UPDATE THE CUSTOMERS TABLE
+			//Prepare the SQL statement to UPDATE a customer record by customerId
+			sql = conn.prepareStatement(DbConstants.UPDATE_CUSTOMER_NAMES_BY_ID);
+			sql.setString(1, cust.getEmailAddress());
+			sql.setString(2, cust.getPhoneNumber());
+			sql.setInt(3, cust.getCustId());
+			if(verboseSQL) printSQL();
+			
+			//Execute SQL statement
+			numRec = sql.executeUpdate();
+			
+			if(verboseSQL) System.out.println("...Success, " + numRec
+				+ " record(s) updated in the customers table.");			
+		}
+		catch(SQLException e) {
+			printMethod(new Throwable().getStackTrace()[0].getMethodName());
+			e.printStackTrace();
+		}
+		
+		return numRec;
+	}
+	
+	/**
+	 * Updates the login credentials for a customer
+	 * @param cust the Customer object to update
+	 * @return the number of records updated (1 if successful, 0 if not)
+	 */
+	public int dbUpdateCustomerCredentials(Customer cust) {
+		int numRec = 0;
+		try {
+			//UPDATE THE CUSTOMER_CREDENTIALS TABLE
+			//Prepare the SQL statement to UPDATE a customer credentials record by customerId
+			sql = conn.prepareStatement(DbConstants.UPDATE_CREDENTIALS_BY_ID);
+			sql.setString(1, cust.getUsername());
+			sql.setString(2, cust.getHashedSalt());
+			sql.setString(3, cust.getPassword());
+			sql.setInt(4, cust.getCustId());
+			if(verboseSQL) printSQL();
+			
+			//Execute SQL statement
+			numRec = sql.executeUpdate();
+			
+			if(verboseSQL) System.out.println("...Success, " + numRec
+				+ " record(s) updated in the customer_credentials table.");			
+		}
+		catch(SQLException e) {
+			printMethod(new Throwable().getStackTrace()[0].getMethodName());
+			e.printStackTrace();
+		}
+		
+		return numRec;
+	}
+	
 	/**
 	 * Deletes a record from the customers table which will work only if all
 	 * other child tables (credentials, customer_accounts, and customer transactions

@@ -188,28 +188,12 @@ public class CustomerService {
 			//Update the credentials in the database
 			numRec = ds.dbUpdateCustomerCredentials(cust);
 			
-			if(numRec > 0) {
-				//Create the accounts and balances in the customer_accounts table
-				numRec = ds.dbCreateCustomerAccounts(cust);
-				System.out.println("\nCREATED ACCOUNT NUMBERS AND BALANCES\n");
-				if(numRec > 0) {
-					//Create opening balance transactions for each account
-					numRec = createOpeningBalanceTransactions(dbCustId, cust);
-					System.out.println("\nCREATED OPENING BALANCE TRANSACTIONS\n");
-					if(numRec != 3) {
-						System.out.println("ERROR: Unable to write opening balance transactions");
-					}
-				}
-				else {
-					System.out.println("ERROR: Unable to write customer accounts to database");
-				}
-			}
-			else {
-				System.out.println("ERROR: Unable to write new customer credentials to database");
+			if(numRec == 0) {
+				System.err.println("ERROR: Unable to update customer credentials in database!!!");
 			}
 		}
 		else {
-			System.out.println("ERROR: Unable to write new customer to database!!!");
+			System.err.println("ERROR: Unable to update customer in database!!!");
 		}
 		
 		//Close the database connection
