@@ -36,8 +36,8 @@
 							<br />
 							<br />
 						<input type="radio" name="account" value="loan"> Payment to Cash Advance (${acctloan})
-							<strong>Available:
-							<money:formatNumber value=" ${loanavail}" type="currency" pattern="$#,##0.00;($#,##0.00)" minFractionDigits="2"/>
+							<strong>Outstanding Balance:
+							<money:formatNumber value=" ${loanbal}" type="currency" pattern="$#,##0.00;($#,##0.00)" minFractionDigits="2"/>
 							</strong>
 							<br />
 							<br />

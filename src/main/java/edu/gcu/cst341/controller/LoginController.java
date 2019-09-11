@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.SessionAttributes;
 
 import edu.gcu.cst341.model.Account;
-import edu.gcu.cst341.model.AmountFormOLD;
 import edu.gcu.cst341.model.AmountForm;
 import edu.gcu.cst341.model.Checking;
 import edu.gcu.cst341.model.Customer;
@@ -214,7 +213,7 @@ public class LoginController {
 			System.out.println("/deposit-bank GET: customer =\n" + customer.toString());
 			//Update all dashboard parameters
 			updateDashboardModel(customer, map);
-			map.addAttribute("amount", new AmountFormOLD());
+			map.addAttribute("amount", new AmountForm());
 		}
 		else {
 			jspToAccess = "login";
@@ -295,7 +294,7 @@ public class LoginController {
 		if(customer.getCustId() != 0) {
 			//Update all dashboard parameters
 			updateDashboardModel(customer, map);
-			map.addAttribute("amount", new AmountFormOLD());
+			map.addAttribute("amount", new AmountForm());
 		}
 		else {
 			jspToAccess = "login";
@@ -403,17 +402,17 @@ public class LoginController {
 	@RequestMapping(value = "/withdraw-bank-error-checking", method = RequestMethod.POST)
 	public String processWithdrawalCheckingOverdraft(
 		@ModelAttribute("customer") Customer customer,
-		@Valid @ModelAttribute("amount") AmountFormOLD amountForm,
+		@RequestParam("amount") double amount,
 		ModelMap map) {
 		
 		String jspToAccess = "dashboard";
 		
 		System.out.println("\n/withdraw-bank-error-checking: CHOICE = PROCEED");
 		System.out.println("\n/withdraw-bank-error-checking: customer = " + customer.toString());
-		System.out.println("\n/withdraw-bank-error-checking: amount = " + amountForm.getAmount());
+		System.out.println("\n/withdraw-bank-error-checking: amount = " + amount);
 		
 		//Update balance in Checking object and write transactions in database
-		BankService.doTransaction(customer, "chk", Account.WITHDRAWAL, amountForm.getAmount());
+		BankService.doTransaction(customer, "chk", Account.WITHDRAWAL, amount);
 		BankService.doCheckingOverdraft(customer);
 
 		System.out.println("\nwithdraw-overdraft-bank POST: after transaction, balances are:\n"
@@ -439,7 +438,7 @@ public class LoginController {
 		if(customer.getCustId() != 0) {
 			//Update all dashboard parameters
 			updateDashboardModel(customer, map);
-			map.addAttribute("amount", new AmountFormOLD());
+			map.addAttribute("amount", new AmountForm());
 		}
 		else {
 			jspToAccess = "login";
@@ -569,7 +568,7 @@ public class LoginController {
 	@RequestMapping(value = "/transfer-bank-error-checking", method = RequestMethod.POST)
 	public String processTransferCheckingOverdraft(
 		@ModelAttribute("customer") Customer customer,
-		@Valid @ModelAttribute("amount") AmountFormOLD amountForm,
+		@RequestParam("amount") double amount,
 		@RequestParam("toAccount") String toAccount,
 		ModelMap map) {
 		
@@ -577,11 +576,11 @@ public class LoginController {
 		
 		System.out.println("\n/transfer-bank-error-checking: CHOICE = PROCEED");
 		System.out.println("\n/transfer-bank-error-checking: customer = " + customer.toString());
-		System.out.println("\n/transfer-bank-error-checking: amount = " + amountForm.getAmount());
+		System.out.println("\n/transfer-bank-error-checking: amount = " + amount);
 		System.out.println("\n/transfer-bank-error-checking: toAccount = " + toAccount);
 		
 		//Update balance in Checking object and write transactions in database
-		BankService.doTransfer(customer, "chk", amountForm.getAmount(), toAccount);
+		BankService.doTransfer(customer, "chk", amount, toAccount);
 		BankService.doCheckingOverdraft(customer);
 
 		System.out.println("\n/transfer-bank-error-checking POST: after transaction, balances are:\n"
