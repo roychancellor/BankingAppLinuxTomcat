@@ -1,4 +1,4 @@
-package edu.gcu.cst341.service;
+package edu.gcu.cst341.controller;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -33,7 +33,7 @@ public class DataService {
 	 */
 	public DataService() {
 		this.verboseSQL = true;
-		this.productionDb = false;
+		this.productionDb = true;
 		if(connectToDatabase()) {
 			System.out.println("\nDataService CONNECTED TO DB...");
 		}

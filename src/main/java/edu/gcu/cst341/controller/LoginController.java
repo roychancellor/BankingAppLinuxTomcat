@@ -22,24 +22,20 @@ import edu.gcu.cst341.model.Checking;
 import edu.gcu.cst341.model.Customer;
 import edu.gcu.cst341.model.Loan;
 import edu.gcu.cst341.model.Transaction;
-import edu.gcu.cst341.service.BankService;
-import edu.gcu.cst341.service.CustomerService;
-import edu.gcu.cst341.service.DataService;
-import edu.gcu.cst341.service.LoginService;
 import edu.gcu.cst341.viewforms.AmountForm;
 import edu.gcu.cst341.viewforms.LoginForm;
 import edu.gcu.cst341.viewforms.PasswordForm;
 
-@Controller
-@Scope("session")
-//Give access to the customer object throughout the session
-@SessionAttributes("customer")
 /**
  * The MAIN CONTROLLER for the bank application
  * Controls all HTTP GET and POST requests
  * Keeps a Customer object in the HTTP session until customer logs out
  * All return statements are the names of Java Server Page (jsp) files
  */
+@Controller
+@Scope("session")
+//Give access to the customer object throughout the session
+@SessionAttributes("customer")
 public class LoginController {
 	//Allows Spring to take over control of making these objects
 	@Autowired

@@ -12,7 +12,7 @@ import org.hibernate.validator.constraints.NotBlank;
  * Customer class used to create Customer objects which will create Checking, Saving, and Loan objects
  * NO LONGER NEEDS TO IMPLEMENT COMPARABLE BECAUSE THE APP WILL NO LONGER USE LISTS OF CUSTOMER OBJECTS
  */
-public class Customer implements Comparable<Customer> {
+public class Customer {
 	//Class data
 	private int custId;
 	@NotBlank(message = "Name must be at least one character")
