@@ -282,24 +282,20 @@ public class DataService {
 	
 	/**
 	 * Writes login credentials to database for a new customer
-	 * @param customerId the customerId of the new customer
-	 * @param username the username of the new customer
-	 * @param passSalt the password salted hash of the new customer
-	 * @param passHash the hashed password of the new customer
+	 * @param cust the customer object for the new customer
 	 * @return the number of records written to the database (1 if successful, 0 if not)
 	 */
-	public int dbCreateCustomerCredentials(int customerId, String username,
-		String passSalt, String passHash) {
+	public int dbCreateCustomerCredentials(Customer cust) {
 		int numRec = 0;
 		try {
 			//Prepare the SQL statement
 			sql = conn.prepareStatement(DbConstants.CREATE_CREDENTIALS);
 	
 			//Populate statement parameters
-			sql.setInt(1, customerId);
-			sql.setString(2, username);
-			sql.setString(3, passSalt);
-			sql.setString(4, passHash);
+			sql.setInt(1, cust.getCustId());
+			sql.setString(2, cust.getUsername());
+			sql.setString(3, cust.getHashedSalt());
+			sql.setString(4, cust.getPassword());
 			if(verboseSQL) printSQL();
 			
 			//Execute SQL statement

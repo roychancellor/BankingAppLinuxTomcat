@@ -10,7 +10,7 @@
 	<spring:url value="/resources/images/header.jpg" var="headerImg" />
 	<spring:url value="/resources/images/footer.jpg" var="footerImg" />
 	<meta charset="UTF-8">
-	<meta http-equiv="refresh" content="5; url=/login">
+	<meta http-equiv="refresh" content="5; url=/dashboard">
 	<title>Success!</title>
 	<link rel="stylesheet" href="${mainCss}" />
 </head>

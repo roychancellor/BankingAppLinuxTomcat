@@ -39,6 +39,8 @@ public class Customer implements Comparable<Customer> {
 	@Email(message = "Must be a valid e-mail format: email@example.com")
 	private String emailAddress;
 	
+	private String hashedSalt;
+	
 	//Customer accounts
 	private Checking checking;
 	private Saving saving;
@@ -185,6 +187,20 @@ public class Customer implements Comparable<Customer> {
 	 */
 	public void setPassCompare(String passCompare) {
 		this.passCompare = passCompare;
+	}
+
+	/**
+	 * @return the hashedSalt
+	 */
+	public String getHashedSalt() {
+		return hashedSalt;
+	}
+
+	/**
+	 * @param hashedSalt the hashedSalt to set
+	 */
+	public void setHashedSalt(String hashedSalt) {
+		this.hashedSalt = hashedSalt;
 	}
 
 	/**

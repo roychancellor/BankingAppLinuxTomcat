@@ -20,7 +20,7 @@
 		<section>
 			<h1>Enter Your Password to Begin Updating Process</h1>
 			<p class="error">${errorMessage}</p>
-			<login:form modelAttribute="passwordform" action="/update-entry" method="POST">
+			<login:form modelAttribute="passwordform" action="/update-login" method="POST">
 				<div class="form-group row">
 					<label class="col-lg-1 col-form-label">Username:</label>
 					<div class="col-lg-3">
@@ -36,7 +36,7 @@
 				</div>
 				<div class="form-group row">
 					<div class="col-sm-3">
-						<button class="btn btn-primary" type="submit">Click to Delete</button>
+						<button class="btn btn-primary" type="submit">Click to Update</button>
 					</div>
 				</div>
 				<div class="form-group row">

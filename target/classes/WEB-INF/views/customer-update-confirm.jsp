@@ -18,7 +18,7 @@
 	<div class="container">
 		<%@ include file="common/header-common.jspf" %>
 		<section>
-			<h1>Confirm NEW Customer Information</h1>
+			<h1>Confirm UPDATED Customer Information</h1>
 			<h5>
 				Please confirm your updated information. If correct, click <strong>Submit Information</strong><br>
 				If anything is incorrect, click <strong>Cancel and Fix</strong>

@@ -26,61 +26,49 @@
 				<div class="form-row">
 					<h4><strong>Name</strong></h4>
 					<div class="form-group col-md-6">
-						<label class="col-lg-1 col-form-label">First Name: </label>
-						<p class="form-control-static">${firstname}</p>
+						<label class="col-lg-4 col-form-label">First Name:<br>${firstname}</label>
 					</div>
 					<div class="form-group col-md-6">
-						<label class="col-lg-1 col-form-label">Last Name: </label>
-						<p class="form-control-static">${lastname}</p>
+						<label class="col-lg-4 col-form-label">Last Name:<br>${lastname}</label>
 					</div>
 				</div>
 				<div class="form-row">
-					<h4><strong>Login Credentials</strong></h4>
-					<div class="form-group col-md-4">
-						<label class="col-lg-1 col-form-label">Username: </label>
-						<p class="form-control-static">${username}</p>
-					</div>
-					<div class="form-group col-md-3">
-					<updatecust:label>CURRENT Password:</updatecust:label><br />
-					<updatecust:input type="password" class="form-control" placeholder="Enter CURRENT password"/>
-					</div>
-					<div class="form-group col-md-3">
+					<h4><strong>Update Password</strong></h4>
+					<div class="form-group col-md-6">
 					<updatecust:label path="password">NEW Password:</updatecust:label><br />
-					<updatecust:input type="password" class="form-control" placeholder="Enter NEW password (min 8 characters)" value="${newPass}" path="password" />
+					<updatecust:input type="password" class="form-control" placeholder="Enter NEW password (min 8 characters)" value="" path="password" />
 					<updatecust:errors path="password" cssClass="error" />
 					</div>
-					<div class="form-group col-md-3">
+					<div class="form-group col-md-6">
 					<updatecust:label path="passCompare">Re-enter NEW Password:</updatecust:label><br />
-					<updatecust:input type="password" class="form-control" placeholder="Re-enter NEW password" value="${newPassCompare}" path="passCompare" />
+					<updatecust:input type="password" class="form-control" placeholder="Re-enter NEW password" value ="" path="passCompare" />
 					<updatecust:errors path="passCompare" cssClass="error" />
 					</div>
 				</div>
 				<div class="form-row">
-					<div class="form-group col-md-4">
-					</div>
 					<div class="form-group col-md-8">
 					<a class="error">${passmatcherror}</a>
+					</div>
+					<div class="form-group col-md-4">
 					</div>
 				</div>
 				<div class="form-row">
 					<h4><strong>Update E-mail</strong></h4>
-					<div class="form-group col-md-4">
-					<updatecust:label>CURRENT E-mail Address:</updatecust:label><br />
-					<updatecust:input type="email" class="form-control" placeholder="${curEmail}" value="${curEmail}"/>
+					<div class="form-group col-md-6">
+					<label>CURRENT E-mail Address:<br>${curEmail}</label><br />
 					</div>
-					<div class="form-group col-md-4">
+					<div class="form-group col-md-6">
 					<updatecust:label path="emailAddress">NEW E-mail Address:</updatecust:label><br />
 					<updatecust:input type="email" class="form-control" placeholder="Enter NEW e-mail address" path="emailAddress" />
 					<updatecust:errors path="emailAddress" cssClass="error" />
 					</div>
 				</div>
 				<div class="form-row">
-					<h4><strong>Update Phone</strong></h4>
-					<div class="form-group col-sm-4">
-					<updatecust:label>CURRENT Phone Number:</updatecust:label><br />
-					<updatecust:input type="tel" class="form-control" placeholder="${curPhone}" value="${curPhone}"/>
+					<h4><strong>Update Phone Number</strong></h4>
+					<div class="form-group col-sm-6">
+					<label>CURRENT Phone Number:<br>${curPhone}</label><br />
 					</div>
-					<div class="form-group col-sm-4">
+					<div class="form-group col-sm-6">
 					<updatecust:label path="phoneNumber">NEW Phone Number (xxx-xxx-xxxx):</updatecust:label><br />
 					<updatecust:input type="tel" class="form-control"
 						placeholder="Enter NEW phone number (123-456-7890)" path="phoneNumber" />

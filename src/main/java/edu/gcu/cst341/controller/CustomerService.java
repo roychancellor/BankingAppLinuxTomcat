@@ -44,7 +44,9 @@ public class CustomerService {
 			cust.setCustId(dbCustId);
 			
 			//Create the new customer's hashed credentials
-			numRec = createHashedCredentials(cust, dbCustId);
+			createHashedCredentials(cust);
+			//Write the hashed credentials to the database
+			numRec = ds.dbCreateCustomerCredentials(cust);
 			
 			if(numRec > 0) {
 				//Create the accounts and balances in the customer_accounts table
@@ -77,29 +79,14 @@ public class CustomerService {
 	}
 	
 	/**
-	 * Creates hashed credentials from the customer's plain-text values and writes to the database
-	 * @param ds a DataService object already open
+	 * Creates hashed credentials from the customer's plain-text values
 	 * @param cust the new Customer being created
-	 * @param dbCustId the database-generated customer Id for the new customer
-	 * @return the number of records inserted (should be 1 if successful, 0 if not)
 	 */
-	private int createHashedCredentials(Customer cust, int dbCustId) {
-		DataService ds = new DataService();
-		int numRec = 0;
-		
+	private void createHashedCredentials(Customer cust) {
 		//Make a salt for the new customer
-		String customerSalt = PasswordService.generateSalt(512).get();
-		//Hash the customer's plain-text password with the salt
-		String hashedPass = PasswordService.hashPassword(cust.getPassword(), customerSalt).get();
-		//Replace the plain-text password in the Customer object with the hashed password
-		cust.setPassword(hashedPass);
-		//Create the credentials in credentials table
-		numRec = ds.dbCreateCustomerCredentials(dbCustId, cust.getUsername(), customerSalt, hashedPass);
-		System.out.println("\nCREATED CREDENTIALS\n");
-		
-		ds.close();
-		
-		return numRec;
+		cust.setHashedSalt(PasswordService.generateSalt(512).get());
+		//Hash the customer's plain-text password with the salt and replace the Customer password
+		cust.setPassword(PasswordService.hashPassword(cust.getPassword(), cust.getHashedSalt()).get());
 	}
 	
 	/**
@@ -176,6 +163,59 @@ public class CustomerService {
 			return true;
 		}
 		return false;
+	}
+	
+	/**
+	 * Updates an existing customer in the database by writing customer information
+	 * to the customers table and login credentials to the credentials table.
+	 * Accounts and transactions are NOT allowed to change by business rule
+	 * @param cust the updated Customer object
+	 * @return the number of records written to the database
+	 */
+	public int updateCustomer(Customer cust) {
+		int dbCustId = 0;
+		
+		//Open a connection to the database
+		DataService ds = new DataService();
+		
+		//Update the customer in the customers table
+		int numRec = ds.dbUpdateCustomerContactInfo(cust);
+		System.out.println("numRec = " + numRec + ", UPDATED CUSTOMER: " + cust.toString() + "\n");
+		
+		if(numRec > 0) {
+			//hash the customer's new credentials (even if they were unchanged)
+			createHashedCredentials(cust);
+			//Update the credentials in the database
+			numRec = ds.dbUpdateCustomerCredentials(cust);
+			
+			if(numRec > 0) {
+				//Create the accounts and balances in the customer_accounts table
+				numRec = ds.dbCreateCustomerAccounts(cust);
+				System.out.println("\nCREATED ACCOUNT NUMBERS AND BALANCES\n");
+				if(numRec > 0) {
+					//Create opening balance transactions for each account
+					numRec = createOpeningBalanceTransactions(dbCustId, cust);
+					System.out.println("\nCREATED OPENING BALANCE TRANSACTIONS\n");
+					if(numRec != 3) {
+						System.out.println("ERROR: Unable to write opening balance transactions");
+					}
+				}
+				else {
+					System.out.println("ERROR: Unable to write customer accounts to database");
+				}
+			}
+			else {
+				System.out.println("ERROR: Unable to write new customer credentials to database");
+			}
+		}
+		else {
+			System.out.println("ERROR: Unable to write new customer to database!!!");
+		}
+		
+		//Close the database connection
+		ds.close();
+		
+		return dbCustId;
 	}
 	
 	/**

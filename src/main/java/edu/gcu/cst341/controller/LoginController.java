@@ -644,7 +644,7 @@ public class LoginController {
 	public String showCustomerSettingsScreen(
 		@ModelAttribute("customer") Customer customer, ModelMap map) {
 		
-		String jspToAccess = "customer-updateinfo";
+		String jspToAccess = "customer-settings";
 		
 		System.out.println("\n/customer-settings GET: customer =\n" + customer.toString());
 		//Verify there is a logged-in customer
@@ -717,6 +717,8 @@ public class LoginController {
 		return pageToReturn;
 	}
 		
+	//STEP 4: Receive the updated Customer object, validate the new passwords match
+	//and go to the confirmation screen if they do
 	@RequestMapping(value="/updatecustomer", method = RequestMethod.POST)
 	public String processUpdateCustomer(
 		@Valid @ModelAttribute("customer") Customer customer,
@@ -730,7 +732,7 @@ public class LoginController {
 			jspToReturn = "customer-updateinfo";
 		}
 		else {
-			//Put the Customer object in the ModelMap
+			//Put the UPDATED Customer object in the ModelMap
 			System.out.println("updatecustomer POST: customer =\n" + customer.toString());
 			map.addAttribute("customer", customer);
 			System.out.println("/updatecustomer POST: customer from map.get =\n"
@@ -750,7 +752,7 @@ public class LoginController {
 			}
 			else {
 				//Show the information to the customer for confirmation
-				jspToReturn = "customer-confirm";
+				jspToReturn = "customer-update-confirm";
 			}
 		}
 		System.out.println("\nRedirecting to " + jspToReturn);
@@ -779,6 +781,7 @@ public class LoginController {
 		int numRec = 1;
 		if(numRec > 0) {
 			System.out.println("/update-customer GET: updated existing customer:\n" + customer.toString());
+			map.put("customer", customer);
 			jspToReturn = "customer-update-success";
 		}
 		
