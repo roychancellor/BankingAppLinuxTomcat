@@ -18,14 +18,13 @@
 	<div class="container">
 		<%@ include file="common/header-common-login.jspf" %>
 		<section>
-			<h1>Delete Your Account</h1>
+			<h1>Enter Your Password to Begin Deletion Process</h1>
 			<p class="error">${errorMessage}</p>
-			<login:form modelAttribute="loginform" action="/delete-login" method="POST">
+			<login:form modelAttribute="passwordform" action="/delete-login" method="POST">
 				<div class="form-group row">
-					<login:label path="username" class="col-lg-1 col-form-label">Username:</login:label>
+					<label class="col-lg-1 col-form-label">Username:</label>
 					<div class="col-lg-3">
 						<p class="form-control-static">${username}</p>
-						<login:errors path="username" cssClass="error" />
 					</div>
 				</div>
 				<div class="form-group row">

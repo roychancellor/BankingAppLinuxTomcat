@@ -25,6 +25,7 @@ import edu.gcu.cst341.model.Checking;
 import edu.gcu.cst341.model.Customer;
 import edu.gcu.cst341.model.Loan;
 import edu.gcu.cst341.model.LoginForm;
+import edu.gcu.cst341.model.PasswordForm;
 import edu.gcu.cst341.model.Transaction;
 
 @Controller
@@ -51,6 +52,10 @@ public class LoginController {
 	@Valid @ModelAttribute("loginform")
 	public LoginForm loginform() {
 		return new LoginForm();
+	}
+	@Valid @ModelAttribute("passwordform")
+	public PasswordForm passwordform() {
+		return new PasswordForm();
 	}
 	
 	@RequestMapping(value = "/newcustomer", method = RequestMethod.GET)
@@ -656,14 +661,13 @@ public class LoginController {
 	
 	@RequestMapping(value = "/customer-delete", method = RequestMethod.GET)
 	public String showDeleteCustomerScreen(@ModelAttribute("customer") Customer customer, ModelMap map) {
-		map.addAttribute("username", customer.getUsername());
-		
 		String jspToAccess = "customer-delete-password";
 
 		//Verify there is a logged-in customer
 		if(customer.getCustId() != 0) {
 			//Update all dashboard parameters
 			updateDashboardModel(customer, map);
+			map.addAttribute("username", customer.getUsername());			
 		}
 		else {
 			jspToAccess = "login";
@@ -675,12 +679,12 @@ public class LoginController {
 	@RequestMapping(value = "/delete-login", method = RequestMethod.POST)
 	public String processDeleteLogin(
 		@ModelAttribute("customer") Customer customer,
-		@Valid @ModelAttribute("loginform") LoginForm loginform,
+		@Valid @ModelAttribute("passwordform") PasswordForm passwordform,
 		BindingResult br,
 		ModelMap map) {
 		
-		String username = loginform.getUsername();
-		String password = loginform.getPassword();
+		String username = customer.getUsername();
+		String password = passwordform.getPassword();
 		
 		String pageToReturn = "customer-delete-confirm";
 		int custId = 0;
@@ -703,6 +707,7 @@ public class LoginController {
 		}
 		else {
 			map.addAttribute("errorMessage", "Invalid login credentials, try again");
+			map.addAttribute("username", customer.getUsername());
 			pageToReturn = "customer-delete-password";
 		}
 		return pageToReturn;

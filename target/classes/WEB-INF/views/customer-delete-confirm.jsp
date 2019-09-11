@@ -20,13 +20,15 @@
 		<section>
 			<h1 style="color:red">!!! Confirm Account Deletion !!!</h1>
 			<deleteform:form action="/delete-customer" method="GET">
-				<p>
- 					You are about to PERMANENTLY delete your account. This can not be undone!
+				<h4>
+ 					You are about to PERMANENTLY delete ALL of your accounts and customer information.<br>
+ 					<strong style="color:red">This can not be undone!</strong><br>
  					Click <strong>Delete</strong> to permanently delete your account.<br>
  					Click <strong>Cancel</strong> to cancel and keep your account open.<br>
+ 					<br>
 					<input class="btn btn-danger" type="submit" name="deleteaccount" value="Delete">
 					<a class="btn btn-primary" href="/customer-settings">Cancel</a>
-				</p>
+				</h4>
 			</deleteform:form>
 		</section>
 		<%@ include file="common/footer-common.jspf" %>
