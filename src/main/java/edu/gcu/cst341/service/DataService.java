@@ -26,6 +26,7 @@ public class DataService {
 	private boolean verboseSQL;
 	private boolean connectedToDb;
 	private boolean productionDb;
+	
 	//Constructor
 	/**
 	 * Constructor for class: Opens a MySQL database and creates a Statement object

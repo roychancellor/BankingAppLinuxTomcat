@@ -4,6 +4,9 @@ import org.springframework.stereotype.Service;
 
 import edu.gcu.cst341.model.Customer;
 
+/**
+ * Provides service methods for Customer transactions in the main controller
+ */
 @Service
 public class CustomerService {
 	/**
@@ -57,19 +60,19 @@ public class CustomerService {
 					numRec = createOpeningBalanceTransactions(dbCustId, cust);
 					System.out.println("\nCREATED OPENING BALANCE TRANSACTIONS\n");
 					if(numRec != 3) {
-						System.out.println("ERROR: Unable to write opening balance transactions");
+						System.err.println("ERROR: Unable to write opening balance transactions");
 					}
 				}
 				else {
-					System.out.println("ERROR: Unable to write customer accounts to database");
+					System.err.println("ERROR: Unable to write customer accounts to database");
 				}
 			}
 			else {
-				System.out.println("ERROR: Unable to write new customer credentials to database");
+				System.err.println("ERROR: Unable to write new customer credentials to database");
 			}
 		}
 		else {
-			System.out.println("ERROR: Unable to write new customer to database!!!");
+			System.err.println("ERROR: Unable to write new customer to database!!!");
 		}
 		
 		//Close the database connection

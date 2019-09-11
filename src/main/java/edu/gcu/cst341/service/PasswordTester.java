@@ -3,6 +3,9 @@ package edu.gcu.cst341.service;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * A class for testing the methods of PasswordService. NOT used anywhere else.
+ */
 public class PasswordTester {
 
 	public static void main(String[] args) {

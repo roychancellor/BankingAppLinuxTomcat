@@ -2,6 +2,9 @@ package edu.gcu.cst341.service;
 
 import org.springframework.stereotype.Service;
 
+/**
+ * Provides service methods for logging in a customer
+ */
 @Service
 public class LoginService {
 	/**
