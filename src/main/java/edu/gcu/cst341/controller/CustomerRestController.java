@@ -18,6 +18,11 @@ public class CustomerRestController {
 	@Autowired
 	CustomerService cs;
 	
+	/**
+	 * Gets a customer object and returns it in JSON format
+	 * @param id the customerId to retrieve
+	 * @return a JSON-formatted Customer object
+	 */
 	@RequestMapping(value="/customer", method=RequestMethod.GET)
 	public Customer getCustomerInfo(@RequestParam("id") int id) {
 		return cs.getCustomerInfoAndBalances(id);

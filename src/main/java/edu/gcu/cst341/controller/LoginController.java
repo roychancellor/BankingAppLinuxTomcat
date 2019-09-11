@@ -1,8 +1,8 @@
 package edu.gcu.cst341.controller;
 
+//MAKE SURE THE POM IS NOT IN TEST MODE
 import java.util.List;
 
-//MAKE SURE THE POM IS NOT IN TEST MODE
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 
@@ -34,6 +34,12 @@ import edu.gcu.cst341.viewforms.PasswordForm;
 @Scope("session")
 //Give access to the customer object throughout the session
 @SessionAttributes("customer")
+/**
+ * The MAIN CONTROLLER for the bank application
+ * Controls all HTTP GET and POST requests
+ * Keeps a Customer object in the HTTP session until customer logs out
+ * All return statements are the names of Java Server Page (jsp) files
+ */
 public class LoginController {
 	//Allows Spring to take over control of making these objects
 	@Autowired
@@ -43,38 +49,63 @@ public class LoginController {
 	@Autowired
 	BankService BankService;
 	
-	//TODO: Investigate auto-wiring a DataService object here
-	
 	//Spring will make these objects when needed and will keep customer in the session
 	//until the session is completed
+	/**
+	 * Customer object that is kept in session until the customer logs out
+	 * @return a new Customer object
+	 */
 	@Valid @ModelAttribute("customer")
 	public Customer customer() {
 		return new Customer();
 	}
+	
+	/**
+	 * Creates a LoginForm object as needed
+	 * @return a new LoginForm object
+	 */
 	@Valid @ModelAttribute("loginform")
 	public LoginForm loginform() {
 		return new LoginForm();
 	}
+	
+	/**
+	 * Creates a new PasswordForm object as needed
+	 * @return a new PasswordForm object
+	 */
 	@Valid @ModelAttribute("passwordform")
 	public PasswordForm passwordform() {
 		return new PasswordForm();
 	}
 	
+	/**
+	 * HTTP GET request handler for /newcustomer to direct to the new customer jsp
+	 * @param map the current ModelMap
+	 * @return a string for the customer-new jsp
+	 */
 	@RequestMapping(value = "/newcustomer", method = RequestMethod.GET)
 	public String showNewCustomerScreen(ModelMap map) {
 		return "customer-new";
 	}
 	
+	/**
+	 * HTTP POST request handler for /newcustomer to respond to the new customer form POST
+	 * @param customer the Customer object currently in session representing the new customer
+	 * @param result the BindingResult from the validation of the form fields of Customer
+	 * @param map the current ModelMap
+	 * @return the jsp to return based on the logic of the method (if all is well, redirect to login)
+	 */
 	@RequestMapping(value="/newcustomer", method = RequestMethod.POST)
 	public String processNewCustomer(
 		@Valid @ModelAttribute("customer") Customer customer,
 		BindingResult result,
 		ModelMap map) {
 		
-		String jspToReturn = "redirect:login";
+		String jspToReturn = "customer-confirm";
 		
+		//If the BindingResult object has errors, return to the new customer page
 		if(result.hasErrors()) {
-			System.out.println("processNewCustomer: result has errors");
+			System.err.println("\n/newcustomer POST: BindingResult has errors; returning to new customer page");
 			jspToReturn = "customer-new";
 		}
 		else {
@@ -88,31 +119,33 @@ public class LoginController {
 			
 			//Validate the passwords match before proceeding
 			if(!CustomerService.validatePasswordsMatch(customer.getPassword(), customer.getPassCompare())) {
-				System.err.println("PASSWORDS DO NOT MATCH");
-				//Populate the model and return to the new customer form
+				System.err.println("/newcustomer POST: PASSWORDS DO NOT MATCH");
+				//Populate the model map and return to the new customer form
 				map.addAttribute("passmatcherror", "Passwords do not match, please re-enter");
 				map.addAttribute("password", "");
 				map.addAttribute("passCompare", "");
 				jspToReturn = "customer-new";
 			}
-			else {
-				//Show the information to the customer - NOT WORKING YET - FIX LATER
-				jspToReturn = "customer-confirm";
-			}
 		}
-		System.out.println("\nRedirecting to " + jspToReturn);
+		System.out.println("/newcustomer POST: Redirecting to " + jspToReturn);
 		return jspToReturn;
 	}
 	
+	/**
+	 * HTTP POST handler for new customer confirmation
+	 * @param customer the new Customer object
+	 * @param map the current ModelMap
+	 * @return the jsp to return (redirect to login if all is well)
+	 */
 	@RequestMapping(value = "/confirmcustomer", method = RequestMethod.POST)
 	public String confirmcustomerScreen(@ModelAttribute("customer") Customer customer, ModelMap map) {
-		String jspToReturn = "redirect:login";
-		System.out.println("\nBack from confirmcustomer.jsp:");
+		String jspToReturn = "customer-success";
+		System.out.println("\n/confirmcustomer POST: Back from confirmcustomer.jsp:");
 		System.out.println("/confirmcustomer POST: customer =\n" + customer.toString());
 		
 		//Check for an existing user with the same username
 		if(CustomerService.userNameExists(customer.getUsername())) {
-			System.out.println("\n/confirmcustomer POST: the username "
+			System.err.println("/confirmcustomer POST: the username "
 				+ customer.getUsername() + " already exists\nGoing back to newcustomer.jsp");
 			map.put("customer", customer);
 			map.addAttribute("errorMessage", "ERROR: A customer with username "
@@ -120,24 +153,34 @@ public class LoginController {
 			jspToReturn = "customer-new";
 		}
 		else {
-			//Create the new customer object in the database
+			//Username is valid, so create the new customer object in the database
 			int custId = CustomerService.createNewCustomer(customer);
 			if(custId > 0) {
 				System.out.println("/confirmcustomer POST: created new customer:\n" + customer.toString());
-				jspToReturn = "customer-success";
 			}
 		}
 		
 		return jspToReturn;
 	}
 	
-	//NOTE: return statements are names of .jsp files
-	
+	/**
+	 * HTTP GET handler for the main login page for existing customers
+	 * @param map the ModelMap
+	 * @return the login.jsp page
+	 */
 	@RequestMapping(value = "/login", method = RequestMethod.GET)
 	public String showLoginScreen(ModelMap map) {
 		return "login";
 	}
 	
+	/**
+	 * HTTP POST handler for the main login page
+	 * @param customer the Customer object of the customer logging in
+	 * @param loginform the LoginForm object for validation checking
+	 * @param br the BindingResult object for errors in the LoginForm object
+	 * @param map the ModelMap
+	 * @return the jsp page (customer dashboard if successfully logged in)
+	 */
 	@RequestMapping(value = "/login", method = RequestMethod.POST)
 	public String processLoginScreen(
 		@ModelAttribute("customer") Customer customer,
@@ -145,14 +188,15 @@ public class LoginController {
 		BindingResult br,
 		ModelMap map) {
 		
+		//Get hte user name and oassword from the LoginForm object
 		String username = loginform.getUsername();
 		String password = loginform.getPassword();
 		
 		String pageToReturn = "dashboard";
 		int custId = 0;
-		System.out.println("About to validate credentials with the database...");
+		System.out.println("/login POST: About to validate credentials with the database...");
 		custId = LoginService.validateCredentials(username, password);
-		System.out.println("DONE validating credentials with the database...");
+		System.out.println("/login POST: DONE validating credentials with the database...");
 		
 		//If the credentials matched the database, custId should be > 0
 		if(custId > 0) {
@@ -174,6 +218,13 @@ public class LoginController {
 		return pageToReturn;
 	}
 	
+	/**
+	 * HTTP GET handler for a customer logout. Sets all model and session attributes to null
+	 * @param customer the Customer object currently in session
+	 * @param session the current HTTP session
+	 * @param map the ModelMap
+	 * @return a redirecrt to the login page
+	 */
 	@RequestMapping(value = "/logout", method = RequestMethod.GET)
 	public String showLogoutScreen(
 		@ModelAttribute("customer") Customer customer,
@@ -183,6 +234,8 @@ public class LoginController {
 		map.put("username", null);
 		map.put("customerid", 0);
 		map.put("customer", null);
+		map.put("password", null);
+		map.put("passCompare", null);
 		
 		//Remove session attributes from the session
 		session.removeAttribute("customer");
@@ -190,6 +243,12 @@ public class LoginController {
 		return "redirect:login";
 	}
 	
+	/**
+	 * HTTP GET handler for the customer dashboard
+	 * @param customer the current Customer object
+	 * @param map the ModelMap
+	 * @return the jsp file name (dashboard if customer is logged in)
+	 */
 	@RequestMapping(value = "/dashboard", method = RequestMethod.GET)
 	public String showDashboardScreen(@ModelAttribute("customer") Customer customer, ModelMap map) {
 		String jspToAccess = "dashboard";
@@ -197,7 +256,7 @@ public class LoginController {
 		//Verify there is a logged-in customer
 		System.out.println("/dashboard GET: about do check custId != 0:\n" + customer.toString());
 		if(customer.getCustId() != 0) {
-			System.out.println("In dashboard GET: AFTER check custId != 0:\n" + customer.toString());
+			System.out.println("/dashboard GET: AFTER check custId != 0:\n" + customer.toString());
 			//Update all dashboard parameters
 			updateDashboardModel(customer, map);
 		}
@@ -208,6 +267,12 @@ public class LoginController {
 		return jspToAccess;
 	}
 	
+	/**
+	 * HTTP GET handler for deposit transactions
+	 * @param customer the current logged-in Customer object
+	 * @param map the ModelMap
+	 * @return the jsp file name (deposit-bank if customer logged in)
+	 */
 	@RequestMapping(value = "/deposit-bank", method = RequestMethod.GET)
 	public String showDepositScreen(@ModelAttribute("customer") Customer customer, ModelMap map) {
 		String jspToAccess = "deposit-bank";
@@ -217,6 +282,7 @@ public class LoginController {
 			System.out.println("/deposit-bank GET: customer =\n" + customer.toString());
 			//Update all dashboard parameters
 			updateDashboardModel(customer, map);
+			//Add a new AmountForm object for validating the amount the customer enters
 			map.addAttribute("amount", new AmountForm());
 		}
 		else {
@@ -226,6 +292,16 @@ public class LoginController {
 		return jspToAccess;
 	}
 	
+	/**
+	 * HTTP POST handler for processing the deposit form
+	 * @param customer the current logged-in Customer object
+	 * @param accountType the account type from the radio button ("chk", "sav", or "loan")
+	 * @param amountStr a String representation of the deposit amount
+	 * that will be converted to double if possible
+	 * @param br the BindingResult object for the AmountForm object
+	 * @param map the ModelMap
+	 * @return the jsp file name to go to depending on the result
+	 */
 	@RequestMapping(value = "/deposit-bank", method = RequestMethod.POST)
 	public String processDeposit(
 		@ModelAttribute("customer") Customer customer,
@@ -237,7 +313,7 @@ public class LoginController {
 		String jspToAccess = "login";
 		
 		System.out.println("/deposit-bank POST: amount = " + amountStr);
-		System.out.println("br.hasErrors = " + br.hasErrors() + " " + br.toString());
+		System.out.println("/deposit-bank POST: br.hasErrors is: " + br.hasErrors() + " " + br.toString());
 		double amount;
 		//If the form had errors or if the form input could not be converted to a number,
 		//go back to the form so the customer can make corrections
@@ -289,6 +365,12 @@ public class LoginController {
 		map.addAttribute("balance", loanBalance);
 	}
 	
+	/**
+	 * HTTP GET handler for making a withdrawal
+	 * @param customer the current logged-in Customer object
+	 * @param map the ModelMap
+	 * @return the jsp file name to access (withdraw-bank if customer is logged in)
+	 */
 	@RequestMapping(value = "/withdraw-bank", method = RequestMethod.GET)
 	public String showWithdrawScreen(@ModelAttribute("customer") Customer customer, ModelMap map) {
 		String jspToAccess = "withdraw-bank";
@@ -298,15 +380,26 @@ public class LoginController {
 		if(customer.getCustId() != 0) {
 			//Update all dashboard parameters
 			updateDashboardModel(customer, map);
+			//AmountForm object for getting the amount from the user
 			map.addAttribute("amount", new AmountForm());
 		}
 		else {
 			jspToAccess = "login";
 		}
-		System.out.println("/withdraw-bank GET: LEAVING to go to JSP page...");
+		System.out.println("/withdraw-bank GET: LEAVING to go to JSP page " + jspToAccess);
 		return jspToAccess;
 	}
 	
+	/**
+	 * HTTP POST request handler for withdrawals
+	 * @param customer the current logged-in Customer object
+	 * @param accountType the account type ("chk", "sav", or "loan")
+	 * @param amountStr the String representation of the withdrawal amount
+	 * that will be converted to double, if possible
+	 * @param br the BindingResult object for the AmountForm
+	 * @param map the ModelMap
+	 * @return the jsp to access (dashboard if the transaction is valid)
+	 */
 	@RequestMapping(value = "/withdraw-bank", method = RequestMethod.POST)
 	public String processWithdrawal(
 		@ModelAttribute("customer") Customer customer,
@@ -318,7 +411,7 @@ public class LoginController {
 		String jspToAccess = "login";
 		
 		System.out.println("/withdraw-bank POST: amount = " + amountStr);
-		System.out.println("br.hasErrors = " + br.hasErrors() + " " + br.toString());
+		System.out.println("/withdraw-bank POST: br.hasErrors is: " + br.hasErrors() + " " + br.toString());
 		//If the form had errors or if the form input could not be converted to a number,
 		//go back to the form so the customer can make corrections
         double amount;
@@ -332,7 +425,7 @@ public class LoginController {
 			//Verify there is a logged-in customer
 			if(customer.getCustId() != 0) {
 				jspToAccess = "dashboard";
-				System.out.println("\n/withdraw-bank: Before executing the transaction, amount = " + amount);
+				System.out.println("/withdraw-bank: Before executing the transaction, amount = " + amount);
 				
 				//Check for a valid withdrawal amount before executing the transaction
 				boolean validAmount = BankService.validateWithdrawal(customer, accountType, amount);
@@ -341,7 +434,7 @@ public class LoginController {
 					//Do the withdrawal and update the dashboard values
 					BankService.doTransaction(customer, accountType, Account.WITHDRAWAL, amount);
 	
-					System.out.println("\nwithdraw-bank POST: after transaction, balances are:\n"
+					System.out.println("/withdraw-bank POST: after transaction, balances are:\n"
 						+ "checking:" + customer.getChecking().getAccountBalance()
 						+ "saving:" + customer.getSaving().getAccountBalance()
 						+ "loan:" + customer.getLoan().getAccountBalance());
@@ -403,6 +496,13 @@ public class LoginController {
 		}
 	}
 	
+	/**
+	 * HTTP POST handler for withdrawal errors
+	 * @param customer the current logged-in Customer object
+	 * @param amount the amount of the transaction
+	 * @param map the ModelMap
+	 * @return the jsp to access (dashboard if successful)
+	 */
 	@RequestMapping(value = "/withdraw-bank-error-checking", method = RequestMethod.POST)
 	public String processWithdrawalCheckingOverdraft(
 		@ModelAttribute("customer") Customer customer,
@@ -411,15 +511,15 @@ public class LoginController {
 		
 		String jspToAccess = "dashboard";
 		
-		System.out.println("\n/withdraw-bank-error-checking: CHOICE = PROCEED");
-		System.out.println("\n/withdraw-bank-error-checking: customer = " + customer.toString());
-		System.out.println("\n/withdraw-bank-error-checking: amount = " + amount);
+		System.out.println("/withdraw-bank-error-checking POST: CHOICE = PROCEED");
+		System.out.println("/withdraw-bank-error-checking POST: customer = " + customer.toString());
+		System.out.println("/withdraw-bank-error-checking POST: amount = " + amount);
 		
 		//Update balance in Checking object and write transactions in database
 		BankService.doTransaction(customer, "chk", Account.WITHDRAWAL, amount);
 		BankService.doCheckingOverdraft(customer);
 
-		System.out.println("\nwithdraw-overdraft-bank POST: after transaction, balances are:\n"
+		System.out.println("/withdraw-bank-error-checking POST: after transaction, balances are:\n"
 			+ "checking:" + customer.getChecking().getAccountBalance()
 			+ "saving:" + customer.getSaving().getAccountBalance()
 			+ "loan:" + customer.getLoan().getAccountBalance());
@@ -431,10 +531,17 @@ public class LoginController {
 		return jspToAccess;
 	}
 	
+	/**
+	 * HTTP GET handler for transfers between accounts
+	 * @param customer the current logged-in Customer object
+	 * @param map the ModelMap
+	 * @return the jsp to access (transfer-bank if customer is logged in)
+	 */
 	@RequestMapping(value = "/transfer-bank", method = RequestMethod.GET)
 	public String showTransferScreen(
 		@ModelAttribute("customer") Customer customer,
 		ModelMap map) {
+		
 		String jspToAccess = "transfer-bank";
 		
 		System.out.println("\n/transfer-bank GET: customer =\n" + customer.toString());
@@ -442,15 +549,27 @@ public class LoginController {
 		if(customer.getCustId() != 0) {
 			//Update all dashboard parameters
 			updateDashboardModel(customer, map);
+			//AmountForm object that will allow the amount entered to be validated
 			map.addAttribute("amount", new AmountForm());
 		}
 		else {
 			jspToAccess = "login";
 		}
-		System.out.println("/transfer-bank: about to go to transfer-bank.jsp");
+		System.out.println("/transfer-bank GET: about to go to " + jspToAccess);
 		return jspToAccess;
 	}
 	
+	/**
+	 * HTTP POST handler for transfers between accounts
+	 * @param customer the current logged-in Customer object
+	 * @param fromAccount the account type FROM ("chk", "sav", or "loan")
+	 * @param toAccount the account type FROM ("chk", "sav", or "loan")
+	 * @param amountStr the String representation of the transfer amount
+	 * that will be converted to double, if possible
+	 * @param br the BindingResult object for the AmountForm
+	 * @param map the ModelMap
+	 * @return the jsp to access (dashboard if successful)
+	 */
 	@RequestMapping(value = "/transfer-bank", method = RequestMethod.POST)
 	public String processTransfer(
 		@ModelAttribute("customer") Customer customer,
@@ -463,7 +582,7 @@ public class LoginController {
 		String jspToAccess = "login";
 		
 		System.out.println("/transfer-bank POST: amount = " + amountStr);
-		System.out.println("br.hasErrors = " + br.hasErrors() + " " + br.toString());
+		System.out.println("/transfer-bank POST: br.hasErrors is: " + br.hasErrors() + " " + br.toString());
 		//If the form had errors or if the form input could not be converted to a number,
 		//go back to the form so the customer can make corrections
         double amount;
@@ -483,7 +602,7 @@ public class LoginController {
 			//Verify there is a logged-in customer
 			if(customer.getCustId() != 0) {
 				jspToAccess = "dashboard";
-				System.out.println("\n/transfer-bank: Before executing the transaction, amount = " + amount);
+				System.out.println("/transfer-bank POST: Before executing the transaction, amount = " + amount);
 				
 				//Check for a valid WITHDRAWAL amount before executing the transfer
 				boolean fromAmountValid = BankService.validateWithdrawal(customer, fromAccount, amount);
@@ -499,11 +618,11 @@ public class LoginController {
 					//Do the transfer and update the dashboard values
 					int numRec = BankService.doTransfer(customer, fromAccount, amount, toAccount);
 	
-					System.out.println("\ntransfer-bank POST: after transaction, balances are:\n"
+					System.out.println("/transfer-bank POST: after transaction, balances are:\n"
 						+ "checking:" + customer.getChecking().getAccountBalance() + ", "
 						+ "saving:" + customer.getSaving().getAccountBalance() + ", "
 						+ "loan:" + customer.getLoan().getAccountBalance());
-					System.out.println("\ntransfer-bank POST: after transaction, numRec = " + numRec);
+					System.out.println("/transfer-bank POST: after transaction, numRec = " + numRec);
 	
 					//Update all dashboard parameters
 					updateDashboardModel(customer, map);
@@ -569,6 +688,15 @@ public class LoginController {
 		}
 	}
 	
+	/**
+	 * HTTP POST handler for transfer-out-of-checking errors.
+	 * Performs the transfer that has been validated by this point
+	 * @param customer the current logged-in Customer object
+	 * @param amount the amount of the transfer
+	 * @param toAccount the account type TO ("chk", "sav", or "loan")
+	 * @param map the ModelMap
+	 * @return the jsp to access (dashboard if successful)
+	 */
 	@RequestMapping(value = "/transfer-bank-error-checking", method = RequestMethod.POST)
 	public String processTransferCheckingOverdraft(
 		@ModelAttribute("customer") Customer customer,
@@ -579,15 +707,15 @@ public class LoginController {
 		String jspToAccess = "dashboard";
 		
 		System.out.println("\n/transfer-bank-error-checking: CHOICE = PROCEED");
-		System.out.println("\n/transfer-bank-error-checking: customer = " + customer.toString());
-		System.out.println("\n/transfer-bank-error-checking: amount = " + amount);
-		System.out.println("\n/transfer-bank-error-checking: toAccount = " + toAccount);
+		System.out.println("/transfer-bank-error-checking: customer = " + customer.toString());
+		System.out.println("/transfer-bank-error-checking: amount = " + amount);
+		System.out.println("/transfer-bank-error-checking: toAccount = " + toAccount);
 		
 		//Update balance in Checking object and write transactions in database
 		BankService.doTransfer(customer, "chk", amount, toAccount);
 		BankService.doCheckingOverdraft(customer);
 
-		System.out.println("\n/transfer-bank-error-checking POST: after transaction, balances are:\n"
+		System.out.println("/transfer-bank-error-checking POST: after transaction, balances are:\n"
 			+ "checking:" + customer.getChecking().getAccountBalance()
 			+ "saving:" + customer.getSaving().getAccountBalance()
 			+ "loan:" + customer.getLoan().getAccountBalance());
@@ -599,12 +727,20 @@ public class LoginController {
 		return jspToAccess;
 	}
 	
+	/**
+	 * HTTP GET handler for generating bank statements. Access all transactions for
+	 * the logged-in customer and separates them into lists by account type.
+	 * @param customer the current logged-in Customer object
+	 * @param map the ModelMap
+	 * @return the jsp to access (statements-bank if successful)
+	 */
 	@RequestMapping(value = "/statements-bank", method = RequestMethod.GET)
 	public String showStatementsScreen(@ModelAttribute("customer") Customer customer, ModelMap map) {
 		String jspToAccess = "statements-bank";
 		
 		//Verify there is a logged-in customer
 		if(customer.getCustId() != 0) {
+			System.out.println("\n/statements-bank GET: making transaction lists");
 			//Lists that will store transactions by type and posted to the transactions view
 			List<Transaction> transchk;
 			List<Transaction> transsav;
@@ -625,6 +761,7 @@ public class LoginController {
 				
 				//Update all dashboard parameters
 				updateDashboardModel(customer, map);
+				//Add the transaction lists to the ModelMap for the jsp page to process
 				map.addAttribute("transchk", transchk);
 				map.addAttribute("transsav", transsav);
 				map.addAttribute("transloan", transloan);
@@ -633,15 +770,27 @@ public class LoginController {
 		else {
 			jspToAccess = "login";
 		}
-		
+		System.out.println("/statements-bank GET: going to: " + jspToAccess + ".jsp");
 		return jspToAccess;
 	}
 	
+	/**
+	 * HTTP GET handler for the about page
+	 * @return the jsp to access
+	 */
 	@RequestMapping(value = "/about-bank", method = RequestMethod.GET)
 	public String showAboutScreen() {
 		return "about-bank";
 	}
 	
+	/********* UPDATE A CUSTOMER ******************/
+	/**
+	 * HTTP GET handler for customer settings screen that allows customers to make changes
+	 * to their accounts (email, phone, and password)
+	 * @param customer the current logged-in Customer object
+	 * @param map the ModelMap
+	 * @return the jsp to access
+	 */
 	@RequestMapping(value = "/customer-settings", method = RequestMethod.GET)
 	public String showCustomerSettingsScreen(
 		@ModelAttribute("customer") Customer customer, ModelMap map) {
@@ -657,11 +806,18 @@ public class LoginController {
 		else {
 			jspToAccess = "login";
 		}
-		System.out.println("/customer-settings GET: about to go to customer-updateinfo.jsp");
+		System.out.println("/customer-settings GET: about to go to " + jspToAccess + ".jsp");
 		return jspToAccess;
 	}
 	
 	//STEP 1: Have customer confirm password to get to the information updating screen
+	/**
+	 * HTTP GET handler for customer updating that calls the jsp
+	 * requiring customer to enter password to continue
+	 * @param customer the current logged-in Customer object
+	 * @param map the ModelMap
+	 * @return the jsp to access
+	 */
 	@RequestMapping(value = "/customer-update", method = RequestMethod.GET)
 	public String showUpdateCustomerScreen(@ModelAttribute("customer") Customer customer, ModelMap map) {
 		String jspToAccess = "customer-update-password";
@@ -679,7 +835,17 @@ public class LoginController {
 		return jspToAccess;
 	}
 	
-	//STEP 2: Validate the credentials the customer entered, then go the update information screen
+	//STEP 2A: Get the customer's password from the jsp
+	
+	//STEP 2B: Validate the credentials the customer entered, then go the update information screen
+	/**
+	 * HTTP POST handler for the customer's password to show the information update screen
+	 * @param customer the current logged-in Customer object
+	 * @param passwordform a PasswordForm object for validating the password entry
+	 * @param br the BindingResult object for the PasswordForm object
+	 * @param map the ModelMap
+	 * @return the jsp to access
+	 */
 	@RequestMapping(value = "/update-login", method = RequestMethod.POST)
 	public String processUpdateLogin(
 		@ModelAttribute("customer") Customer customer,
@@ -690,9 +856,9 @@ public class LoginController {
 		String username = customer.getUsername();
 		String password = passwordform.getPassword();
 		
-		String pageToReturn = "customer-updateinfo";
+		String jspToReturn = "customer-updateinfo";
 		int custId = 0;
-		System.out.println("/update-login POST: About to validate credentials with the database...");
+		System.out.println("\n/update-login POST: About to validate credentials with the database...");
 		custId = LoginService.validateCredentials(username, password);
 		System.out.println("/update-login POST: DONE validating credentials with the database...");
 		
@@ -714,13 +880,21 @@ public class LoginController {
 		else {
 			map.addAttribute("errorMessage", "Invalid login credentials, try again");
 			map.addAttribute("username", customer.getUsername());
-			pageToReturn = "customer-update-password";
+			jspToReturn = "customer-update-password";
 		}
-		return pageToReturn;
+		return jspToReturn;
 	}
 		
 	//STEP 3: Receive the now-updated Customer object, validate the new passwords match
 	//and go to the confirmation screen if they do; otherwise, go back to the update info screen
+	/**
+	 * HTTP POST handler for processing the customer's updated information. Validates that
+	 * passwords match then sends user to a confirmation page.
+	 * @param customer the current logged-in Customer object
+	 * @param result the BindingResult object for the Customer object
+	 * @param map the ModelMap
+	 * @return the jsp to access
+	 */
 	@RequestMapping(value="/updatecustomer", method = RequestMethod.POST)
 	public String processUpdateCustomer(
 		@Valid @ModelAttribute("customer") Customer customer,
@@ -730,21 +904,21 @@ public class LoginController {
 		String jspToReturn = "redirect:dashboard";
 		
 		if(result.hasErrors()) {
-			System.out.println("processNewCustomer: result has errors");
+			System.out.println("/updatecustomer POST: result has errors");
 			jspToReturn = "customer-updateinfo";
 		}
 		else {
 			//Put the UPDATED Customer object in the ModelMap
-			System.out.println("updatecustomer POST: customer =\n" + customer.toString());
+			System.out.println("/updatecustomer POST: customer =\n" + customer.toString());
 			map.addAttribute("customer", customer);
 			System.out.println("/updatecustomer POST: customer from map.get =\n"
 				+ map.get("customer").toString());
-			System.out.println("/updatecustomer POST: password =" + customer.getPassword());
-			System.out.println("/updatecustomer POST: passCompare =" + customer.getPassCompare());
+			System.out.println("/updatecustomer POST: password = " + customer.getPassword());
+			System.out.println("/updatecustomer POST: passCompare = " + customer.getPassCompare());
 			
 			//Validate the two NEW passwords match before proceeding
 			if(!CustomerService.validatePasswordsMatch(customer.getPassword(), customer.getPassCompare())) {
-				System.err.println("PASSWORDS DO NOT MATCH");
+				System.err.println("/updatecustomer POST: PASSWORDS DO NOT MATCH");
 				//Populate the model and return to the new customer form
 				map.addAttribute("passmatcherror", "Passwords do not match, please re-enter");
 				map.addAttribute("password", "");
@@ -776,17 +950,23 @@ public class LoginController {
 	}
 	
 	//STEP 4: Execute the update in the database
+	/**
+	 * HTTP POST handler for processing the return from the update customer confirmation
+	 * @param customer the current logged-in Customer object
+	 * @param map the ModelMap
+	 * @return the jsp to access
+	 */
 	@RequestMapping(value = "/update-customer", method = RequestMethod.POST)
 	public String updateCustomer(@ModelAttribute("customer") Customer customer, ModelMap map) {
 		String jspToReturn = "redirect:dashboard";
 		
-		System.out.println("\nBack from customer-update-confirm:");
-		System.out.println("/update-customer GET: customer =\n" + customer.toString());
+		System.out.println("\n/update-customer POST: Back from customer-update-confirm:");
+		System.out.println("/update-customer POST: customer =\n" + customer.toString());
 		
 		//UPDATE the existing customer object in the database
 		int numRec = CustomerService.updateExistingCustomer(customer);
 		if(numRec > 0) {
-			System.out.println("/update-customer GET: updated existing customer:\n" + customer.toString());
+			System.out.println("/update-customer POST: updated existing customer:\n" + customer.toString());
 			map.put("customer", customer);
 			jspToReturn = "customer-update-success";
 		}
@@ -794,8 +974,15 @@ public class LoginController {
 		return jspToReturn;
 	}
 	
+	/********** DELETE A CUSTOMER *****************/
 	
 	//STEP 1: Have customer confirm password to get to the delete confirmation screen
+	/**
+	 * HTTP GET handler for deleting a customer
+	 * @param customer the current logged-in Customer object
+	 * @param map the ModelMap
+	 * @return the jsp to access
+	 */
 	@RequestMapping(value = "/customer-delete", method = RequestMethod.GET)
 	public String showDeleteCustomerScreen(@ModelAttribute("customer") Customer customer, ModelMap map) {
 		String jspToAccess = "customer-delete-password";
@@ -814,6 +1001,14 @@ public class LoginController {
 	}
 	
 	//STEP 2: Validate the credentials the customer entered, then go to the confirmation page
+	/**
+	 * HTTP POST handler for processing the password the user entered to access the delete screen
+	 * @param customer the current Customer object
+	 * @param passwordform the PasswordForm object for validating the password entered correctly
+	 * @param br the BindingResult object for the PasswordForm object
+	 * @param map the ModelMap
+	 * @return the jsp to access
+	 */
 	@RequestMapping(value = "/delete-login", method = RequestMethod.POST)
 	public String processDeleteLogin(
 		@ModelAttribute("customer") Customer customer,
@@ -852,6 +1047,13 @@ public class LoginController {
 	}
 		
 	//STEP 3: Execute the delete operation in the database
+	/**
+	 * HTTP GET handler for performing the customer deletion after customer confirms
+	 * the intent to delete
+	 * @param customer the current logged-in Customer object
+	 * @param map the ModelMap
+	 * @return the jsp to access
+	 */
 	@RequestMapping(value = "/delete-customer", method = RequestMethod.GET)
 	public String deleteCustomer(@ModelAttribute("customer") Customer customer, ModelMap map) {
 		String jspToReturn = "redirect:logout";
