@@ -17,7 +17,7 @@ public interface iTrans {
 	
 	/**
 	 * Method to determine if a fee is required for the account based on account type
-	 * @return
+	 * @return true if a fee is required or false otherwise
 	 */
 	public boolean isFeeRequired();
 }

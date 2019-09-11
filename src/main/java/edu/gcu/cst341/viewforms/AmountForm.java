@@ -16,8 +16,8 @@ public class AmountForm {
 	public AmountForm() { }
 	
 	/**
-	 * @param id
-	 * @param amount
+	 * @param id the id of the form
+	 * @param amount the String representation of transaction amount
 	 */
 	public AmountForm(int id, String amount) {
 		super();

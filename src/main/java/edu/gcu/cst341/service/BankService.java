@@ -52,6 +52,7 @@ public class BankService {
 	 * @param accountType the type of account for the transaction ("chk, "sav", or "loan")
 	 * @param transType the type of transaction (+1 = deposit, -1 = withdrawal, 0 = transfer)
 	 * @param amount the dollar amount of the transaction
+	 * @return the number of records updated
 	 */
 	public int doTransaction(Customer cust, String accountType, int transType, double amount) {
 		//Get the account based on accountType (chk, sav, or loan)

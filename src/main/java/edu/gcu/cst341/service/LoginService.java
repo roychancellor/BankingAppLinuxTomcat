@@ -9,6 +9,9 @@ import org.springframework.stereotype.Service;
 public class LoginService {
 	/**
 	 * logs in a customer by checking user-entered credential against the database
+	 * @param username the username of the customer to validate
+	 * @param plainTextPassword the plain text password the customer entered that will be hashed
+	 * with salt before comparing to the password in the database
 	 * @return the customer id if successful, -1 if the passwords do not match, or 0 if username not found
 	 */
 	public int validateCredentials(String username, String plainTextPassword) {

@@ -29,9 +29,7 @@ public class DataService {
 	
 	//Constructor
 	/**
-	 * Constructor for class: Opens a MySQL database and creates a Statement object
-	 * @param verboseSQL when true will print all SQL commands to the console
-	 * @param productionDb when true will open the AWS-hosted bank db; false opens the local bank db for testing
+	 * No-argument constructor for class: Opens a MySQL database and creates a Statement object
 	 */
 	public DataService() {
 		this.verboseSQL = true;
@@ -315,8 +313,8 @@ public class DataService {
 	
 	/**
 	 * Retrieves the master password salt from the database
-	 * @param saltId the id of the salt record in the salt database
-	 * @return the password salt as a String
+	 * @param customerId the id of the Customer object
+	 * @return the credentials as a String array
 	 */
 	public String[] dbRetrieveCustomerHashedCredentials(int customerId) {
 		String[] keys = {null, null};

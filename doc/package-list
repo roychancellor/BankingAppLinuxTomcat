@@ -1,0 +1,10 @@
+edu.gcu.cst341.accounttransactions
+edu.gcu.cst341.controller
+edu.gcu.cst341.existingcustomer
+edu.gcu.cst341.formvalidation
+edu.gcu.cst341.interfaces
+edu.gcu.cst341.model
+edu.gcu.cst341.newcustomervalidation
+edu.gcu.cst341.reportstests
+edu.gcu.cst341.service
+edu.gcu.cst341.viewforms

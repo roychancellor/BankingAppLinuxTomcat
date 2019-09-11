@@ -208,7 +208,7 @@ public class CustomerService {
 	/**
 	 * Deletes an existing customer completely from the database
 	 * @param cust the existing customer object to delete
-	 * @return the number of records deleted (>0 if successful, 0 if not or if cust is null)
+	 * @return the number of records deleted (more than 0 if successful, 0 if not or if cust is null)
 	 */
 	public int deleteExistingCustomer(Customer cust) {
 		int numRec = 0;

@@ -6,7 +6,7 @@ package edu.gcu.cst341.interfaces;
 public interface iBankActions {
 	/**
 	 * These constants are provided as descriptors for transType in processTransaction
-	 * DEPOSIT & WITHDRAWAL should be different values from TRANSFER_D & TRANSFER_W
+	 * DEPOSIT and WITHDRAWAL should be different values from TRANSFER_D and TRANSFER_W
 	 */
 	public static final int DEPOSIT = 1;
 	public static final int WITHDRAWAL = -1;
