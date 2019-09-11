@@ -19,7 +19,7 @@
 		<%@ include file="common/header-common.jspf" %>
 		<section>
 			<h1>Loan PAYMENT EXCEEDS BALANCE Notice</h1>
-			<overdraftform:form action="/deposit-bank" method="GET">
+			<overdraftform:form action="${geturl}" method="GET">
 				<p>
  					A payment of
  					<money:formatNumber value="${reqamount}" type="currency" pattern="$#,##0.00;($#,##0.00)" minFractionDigits="2"/>

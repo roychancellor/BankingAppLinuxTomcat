@@ -53,6 +53,9 @@
 						<input type="radio" name="toaccount" value="sav" checked> Saving (${acctsav})
 							<br />
 						<input type="radio" name="toaccount" value="loan"> Cash Advance (${acctloan})
+							<strong>Outstanding balance:
+							<money:formatNumber value=" ${loanbal}" type="currency" pattern="$#,##0.00;($#,##0.00)" minFractionDigits="2"/>
+							</strong>
 							<br />
 					</p>
 				</div>

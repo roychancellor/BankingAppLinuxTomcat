@@ -330,6 +330,7 @@ public class LoginController {
 					&& !BankService.validateCashAdvancePayment(customer, amount)) {
 					//Populate the information needed for the error page
 					populatePaymentErrorModel(customer.getLoan().getAccountBalance(), amount, map);
+					map.addAttribute("geturl", "/deposit-bank");
 					jspToAccess = "loan-payment-bank-error";
 				}
 				else {
@@ -648,6 +649,7 @@ public class LoginController {
 					//The amount to transfer to the cash advance (loan) exceeds the outstanding balance
 					//Populate the information needed for the error page
 					populatePaymentErrorModel(customer.getLoan().getAccountBalance(), amount, map);
+					map.addAttribute("geturl", "/transfer-bank");
 					jspToAccess = "loan-payment-bank-error";
 				}
 			}
