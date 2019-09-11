@@ -4,21 +4,18 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import edu.gcu.cst341.controller.Bank;
-import edu.gcu.cst341.interfaces.iActions;
+import edu.gcu.cst341.interfaces.iBankActions;
 import edu.gcu.cst341.interfaces.iTrans;
-import edu.gcu.cst341.view.Menus;
 
 /**
  * Superclass for creating Checking, Saving, and Loan accounts
  * Future versions may declare this class abstract since it will not be instantiated
  */
-public abstract class Account implements iActions, iTrans {
+public abstract class Account implements iBankActions, iTrans {
 	
 	//Class data
 	private String accountNumber;
 	private double accountBalance;
-	public static final String AMOUNT_MESSAGE = "Enter dollar amount you would like to ";
 	private List<Transaction> transList = new ArrayList<Transaction>();
 	private Transaction lastTrans;
 
@@ -33,26 +30,45 @@ public abstract class Account implements iActions, iTrans {
 	}
 	
 	//Getters and setters
+
+	/**
+	 * @return the accountNumber
+	 */
 	public String getAccountNumber() {
 		return accountNumber;
 	}
 
+	/**
+	 * @param accountNumber the accountNumber to set
+	 */
 	public void setAccountNumber(String accountNumber) {
 		this.accountNumber = accountNumber;
 	}
 
+	/**
+	 * @return the accountBalance
+	 */
 	public double getAccountBalance() {
 		return accountBalance;
 	}
 
+	/**
+	 * @param accountBalance the accountBalance to set
+	 */
 	public void setAccountBalance(double accountBalance) {
 		this.accountBalance = accountBalance;
 	}
 
+	/**
+	 * @return the transList
+	 */
 	public List<Transaction> getTransList() {
 		return transList;
 	}
 
+	/**
+	 * @param transList the transList to set
+	 */
 	public void setTransList(List<Transaction> transList) {
 		this.transList = transList;
 	}
@@ -73,45 +89,10 @@ public abstract class Account implements iActions, iTrans {
 
 	@Override
 	public String toString() {
-		return accountNumber + "\t" + Bank.money.format(accountBalance);
+		return "Account [accountNumber=" + accountNumber + ", accountBalance=" + accountBalance + ", transList="
+				+ transList + ", lastTrans=" + lastTrans + "]";
 	}
 
-	/**
-	 * Implements iActions interface
-	 * This method will throw an exception for invalid input and call itself over and over and over until
-	 * the user gets it right, at which point it returns the user's value.
-	 * The method will also validate that input is positive or zero.
-	 * @param message is a string prompt for the user
-	 * @return double value representing a dollar amount
-	 */
-	public double getTransactionValue(String message) {
-		double value = 0;
-		boolean isValid;
-		String invalidMessage = "Invalid input: Enter a positive number such as 123.45\n";
-		do {
-			isValid = true;
-			try {
-				System.out.println(message);
-				value = Menus.scan.nextDouble();
-				if(value < 0) {
-					System.out.println(invalidMessage);
-					isValid = false;
-				}
-			}
-			catch(Exception e) {
-				System.out.println(invalidMessage);
-				isValid = false;
-			}
-			finally {
-				//value is now validated to be a double >= 0
-				//so, read the newline token that is remaining
-				Menus.scan.nextLine();				
-			}
-		} while(!isValid);
-
-		return value;
-	}
-	
 	/**
 	 * Leave abstract so the subclasses (Checking, Saving, Loan) can implement
 	 * unique to those account types
@@ -127,16 +108,5 @@ public abstract class Account implements iActions, iTrans {
 	public void addTransaction(double amount, String transType) {
 		this.transList.add(new Transaction(new Date(), this.accountNumber, amount, transType));
 		setLastTrans(new Transaction(new Date(), this.accountNumber, amount, transType));
-	}
-
-	/**
-	 * Implements the iTrans interface: displayTransaction method
-	 */
-	public void displayTransactions() {
-		for(Transaction t : transList) {
-			System.out.println(t.toString());
-		}
-		Menus.printHeaderLine(75);
-		System.out.println("\t\t\tEnd balance:\t" + String.format("$%(,12.2f", getAccountBalance()) + "\n");
 	}
 }

@@ -78,5 +78,4 @@ public class Checking extends Account {
 	public boolean isFeeRequired() {
 		return false;
 	}
-
 }

@@ -1,9 +1,7 @@
-package edu.gcu.cst341.application;
+package edu.gcu.cst341.service;
 
 import java.util.HashMap;
 import java.util.Map;
-
-import edu.gcu.cst341.controller.PasswordService;
 
 public class PasswordTester {
 

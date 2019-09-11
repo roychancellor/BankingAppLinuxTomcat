@@ -1,12 +1,15 @@
-package edu.gcu.cst341.model;
+package edu.gcu.cst341.viewforms;
 
 import javax.validation.constraints.NotNull;
 import org.hibernate.validator.constraints.NotBlank;
 
 /**
- * Simple bean for validating a password-only field
+ * Simple bean for validating the login form fields
  */
-public class PasswordForm {
+public class LoginForm {
+	@NotNull
+	@NotBlank(message="Username may not be blank")
+	private String username;
 	@NotNull
 	@NotBlank(message="Password may not be blank")
 	private String password;
@@ -14,19 +17,35 @@ public class PasswordForm {
 	/**
 	 * No-argument constructor
 	 */
-	public PasswordForm() { }
+	public LoginForm() { }
 	
 	/**
+	 * @param username the username field
 	 * @param password the password field
 	 */
-	public PasswordForm(String password) {
+	public LoginForm(String username, String password) {
 		super();
+		this.username = username;
 		this.password = password;
 	}
 
 	@Override
 	public String toString() {
-		return "LoginForm [password=" + password + "]";
+		return "LoginForm [username=" + username + ", password=" + password + "]";
+	}
+
+	/**
+	 * @return the username
+	 */
+	public String getUsername() {
+		return username;
+	}
+
+	/**
+	 * @param username the username to set
+	 */
+	public void setUsername(String username) {
+		this.username = username;
 	}
 
 	/**
@@ -48,6 +67,7 @@ public class PasswordForm {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + ((password == null) ? 0 : password.hashCode());
+		result = prime * result + ((username == null) ? 0 : username.hashCode());
 		return result;
 	}
 
@@ -59,13 +79,17 @@ public class PasswordForm {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		PasswordForm other = (PasswordForm) obj;
+		LoginForm other = (LoginForm) obj;
 		if (password == null) {
 			if (other.password != null)
 				return false;
 		} else if (!password.equals(other.password))
 			return false;
+		if (username == null) {
+			if (other.username != null)
+				return false;
+		} else if (!username.equals(other.username))
+			return false;
 		return true;
 	}
-
 }

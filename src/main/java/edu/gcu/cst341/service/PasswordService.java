@@ -1,4 +1,4 @@
-package edu.gcu.cst341.controller;
+package edu.gcu.cst341.service;
 
 import java.security.SecureRandom;
 import java.util.Base64;

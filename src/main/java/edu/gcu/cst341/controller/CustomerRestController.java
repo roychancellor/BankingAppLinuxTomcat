@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import edu.gcu.cst341.model.Customer;
+import edu.gcu.cst341.service.CustomerService;
 
 /**
  * REST controller to get customer information from the customers database table

@@ -1,4 +1,4 @@
-package edu.gcu.cst341.controller;
+package edu.gcu.cst341.service;
 
 import org.springframework.stereotype.Service;
 

@@ -11,9 +11,9 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import edu.gcu.cst341.controller.DataService;
-import edu.gcu.cst341.controller.LoginService;
 import edu.gcu.cst341.model.Customer;
+import edu.gcu.cst341.service.DataService;
+import edu.gcu.cst341.service.LoginService;
 
 public class ExistingCustomerTests {
 	private Customer testCust;

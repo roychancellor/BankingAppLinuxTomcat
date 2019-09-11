@@ -8,8 +8,6 @@ import javax.validation.constraints.Size;
 import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.NotBlank;
 
-import edu.gcu.cst341.controller.Bank;
-
 /**
  * Customer class used to create Customer objects which will create Checking, Saving, and Loan objects
  * NO LONGER NEEDS TO IMPLEMENT COMPARABLE BECAUSE THE APP WILL NO LONGER USE LISTS OF CUSTOMER OBJECTS
@@ -273,51 +271,6 @@ public class Customer implements Comparable<Customer> {
 		this.loan = loan;
 	}
 
-//	/**
-//	 *@return customer and account information
-//	 */
-//	@Override
-//	public String toString() {
-//		return "\n----------------------------------------------"
-//			+ "\nAccount details for " + this.firstName + " " + this.lastName
-//			//+ "\ncustomer ID " + this.custID.substring(this.custID.length() - 4, this.custID.length())
-//			+ "\ncustomer ID " + this.custId
-//			+ "\n----------------------------------------------"
-//			+ "\n* Customer since " + this.dateOpened
-//			+ balancesToString()
-//			+ "\n----------------------------------------------";
-//	}
-//	
-//	/**
-//	 * creates a string of all account balances formatted for printing
-//	 * @return string
-//	 */
-//	public String balancesToString() {
-//		return "\n* " + this.checking.getAccountNumber() + "\tBalance: " + Bank.money.format(this.checking.getAccountBalance())
-//		+ "\n* " + this.saving.getAccountNumber() + "\tBalance: " + Bank.money.format(this.saving.getAccountBalance())
-//		+ "\n* " + this.loan.getAccountNumber() + "\tBalance: " + Bank.money.format(this.loan.getAccountBalance());
-//	}
-//	
-	/**
-	 * overloaded toString to allow a boolean parameter for controlling whether loan details show or not
-	 * @param verbose boolean value to print details or not
-	 * @return message string
-	 */
-	public String toString(boolean verbose) {
-		String message = this.toString();
-		
-		//Concatenate the loan details when verbose is true
-		if(verbose) {
-			message += "\n   * principal borrowed:\t" + Bank.money.format(-this.loan.getCreditLimit())
-			+ "\n   * annual interest rate:\t" + this.loan.getMonthlyInterestRate() * 12 * 100 + "%"
-			+ "\n   * monthly payment:\t" + Bank.money.format(this.loan.getMonthlyPaymentAmount())
-			+ "\n   * term years:\t" + this.loan.getTermYears()
-			+ "\n----------------------------------------------";
-		}
-
-		return message;
-	}
-	
 	//Class methods
 
 	@Override
@@ -414,13 +367,5 @@ public class Customer implements Comparable<Customer> {
 		if (custId != other.custId)
 			return false;
 		return true;
-	}
-	
-	/**
-	 * Creates an account number from the first 9 characters of System.currentTimeMillis + random 1-100
-	 * @return string
-	 */
-//	private String createCustomerID() {
-//		return ((Long)(System.currentTimeMillis() + (long)(Math.random() * 100 + 1))).toString().substring(0, 9);
-//	}
+	}	
 }

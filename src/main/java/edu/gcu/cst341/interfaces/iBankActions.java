@@ -3,7 +3,7 @@ package edu.gcu.cst341.interfaces;
 /**
  * Interface containing methods for banking actions
  */
-public interface iActions {
+public interface iBankActions {
 	/**
 	 * These constants are provided as descriptors for transType in processTransaction
 	 * DEPOSIT & WITHDRAWAL should be different values from TRANSFER_D & TRANSFER_W
@@ -14,12 +14,6 @@ public interface iActions {
 	public static final int TRANSFER_W = -2;
 	public static final String TRANSFER_NOTE = " (transfer)";
 	
-	/**
-	 * interface method for getting a double value from a Scanner
-	 * @param message is a string prompt for the user
-	 * @return double value representing the transaction amount
-	 */
-	public abstract double getTransactionValue(String message);
 	/**
 	 * interface method for processing a transaction as a deposit (or loan payment) or withdrawal
 	 * @param transType multiplier so doTransaction can process deposits and withdrawals (-1 for withdrawal or +1 for deposit)

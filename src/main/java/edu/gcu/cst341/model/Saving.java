@@ -1,7 +1,5 @@
 package edu.gcu.cst341.model;
 
-import edu.gcu.cst341.controller.Bank;
-
 /**
  * Child class of Account that creates Saving account objects
  */
@@ -36,26 +34,50 @@ public class Saving extends Account {
 	}
 
 	//Getters and setters for fields unique to Saving class
+	/**
+	 * get the minimum balance
+	 * @return the minimum balance
+	 */
 	public double getMinBalance() {
 		return minBalance;
 	}
 
+	/**
+	 * set the minimum balance
+	 * @param minBalance the minimum balance to set
+	 */
 	public void setMinBalance(double minBalance) {
 		this.minBalance = minBalance;
 	}
 
+	/**
+	 * get the interest rate
+	 * @return the interest rate
+	 */
 	public double getInterestRate() {
 		return interestRate;
 	}
 
+	/**
+	 * set the interest rate (MONTHLY)
+	 * @param interestRate the monthly interest rate from the annual interest rate
+	 */
 	public void setInterestRate(double interestRate) {
 		this.interestRate = interestRate / 12;
 	}
 
+	/**
+	 * gets the service fee charged when the balance drops below the minimum
+	 * @return the service fee
+	 */
 	public double getServiceFee() {
 		return serviceFee;
 	}
 
+	/**
+	 * sets the service fee
+	 * @param serviceFee the service fee when the balance drops below the minimum
+	 */
 	public void setServiceFee(double serviceFee) {
 		this.serviceFee = serviceFee;
 	}
@@ -67,17 +89,6 @@ public class Saving extends Account {
 	 * @param amount the amount to withdraw or deposit
 	 */
 	public void doTransaction(final int transType, double amount) {
-		//WITHDRAWAL: Determine if the account will be overdrawn; if so, alert the user and try again
-//		while(transType == Account.WITHDRAWAL && amount > getAccountBalance()) {
-//			System.out.println(
-//				"\n\t"
-//				+ Bank.money.format(amount)
-//				+ " is greater than your balance of "
-//				+ Bank.money.format(getAccountBalance())
-//				+ ". Enter a new value or 0 to void transaction.\n"
-//			);			
-//			amount = getTransactionValue(Account.AMOUNT_MESSAGE + "withdraw: ");
-//		}
 		//Record the transaction
 		if(transType == Account.WITHDRAWAL || transType == Account.TRANSFER_W) {
 			//Withdrawals are negative, so change the sign of the amount
@@ -98,9 +109,9 @@ public class Saving extends Account {
 	public void doEndOfMonth() {
 		//Service fee (deduct before computing interest)
 		if(isFeeRequired()) {
-			System.out.println("* Service fee charged: "
-				+ Bank.money.format(getServiceFee())
-				+ "(savings below minimum balance)");
+//			System.out.println("* Service fee charged: "
+//				+ Bank.money.format(getServiceFee())
+//				+ "(savings below minimum balance)");
 
 			setAccountBalance(getAccountBalance() - getServiceFee());
 			this.addTransaction(-getServiceFee(), "Service fee");
@@ -110,7 +121,7 @@ public class Saving extends Account {
 			double interestEarned = getAccountBalance() * getInterestRate();
 			
 			setAccountBalance(getAccountBalance() + interestEarned);
-			System.out.println("* Savings interest earned: " + Bank.money.format(interestEarned));
+//			System.out.println("* Savings interest earned: " + Bank.money.format(interestEarned));
 			this.addTransaction(interestEarned, "Interest earned");
 		}
 	}
@@ -122,5 +133,4 @@ public class Saving extends Account {
 	public boolean isFeeRequired() {
 		return getAccountBalance() < getMinBalance();
 	}
-
 }

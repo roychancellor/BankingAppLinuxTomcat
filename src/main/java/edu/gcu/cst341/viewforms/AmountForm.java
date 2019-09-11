@@ -1,4 +1,4 @@
-package edu.gcu.cst341.model;
+package edu.gcu.cst341.viewforms;
 
 import org.hibernate.validator.constraints.NotBlank;
 /**

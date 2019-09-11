@@ -15,10 +15,10 @@ import javax.validation.ValidatorFactory;
 import org.junit.Before;
 import org.junit.Test;
 
-import edu.gcu.cst341.controller.CustomerService;
-import edu.gcu.cst341.model.AmountForm;
 import edu.gcu.cst341.model.Customer;
-import edu.gcu.cst341.model.LoginForm;
+import edu.gcu.cst341.service.CustomerService;
+import edu.gcu.cst341.viewforms.AmountForm;
+import edu.gcu.cst341.viewforms.LoginForm;
 
 /**
  * Tests the form field validation for creating a new customer,

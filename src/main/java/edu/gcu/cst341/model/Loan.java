@@ -1,8 +1,5 @@
 package edu.gcu.cst341.model;
 
-//import edu.gcu.cst341.controller.Bank;
-import edu.gcu.cst341.view.Menus;
-
 /**
  * Class that inherits Account fields and behaviors and creates Loan object data and behaviors
  *
@@ -111,21 +108,9 @@ public class Loan extends Account {
 		//DEPOSITS are payments TO the loan balance, so only allow a deposit when there is a balance
 		if(transType == Account.DEPOSIT && amount > Math.abs(getAccountBalance())) {
 			System.out.println("\nLOAN DEPOSIT: Paying more than outstanding balance");
-//			System.out.println(
-//				"\n\t"
-//				+ amount
-//				+ " is greater than your outstanding balance of "
-//				+ Bank.money.format(getAccountBalance())
-//				+ ". Enter a new value or 0 to void transaction.\n"
-//			);			
-//			amount = getTransactionValue(Account.AMOUNT_MESSAGE + "pay: ");
 		}
 		//WITHDRAWALS are cash advances FROM the loan balance, so only allow a withdrawal
 		//up to the difference between the current balance and the available credit (principal)
-//		if(transType == Account.WITHDRAWAL
-//			&& amount > (Math.abs(this.creditLimit) - Math.abs(getAccountBalance()))) {
-//			System.out.println("\nLOAN WITHDRAWAL: Taking more than available");
-//		}
 		//Process the transaction
 		String transMessage = "";
 		if(transType == Account.WITHDRAWAL || transType == Account.TRANSFER_W) {
@@ -143,15 +128,6 @@ public class Loan extends Account {
 		this.addTransaction(amount, transMessage);
 	}
 
-//	/**
-//	 * Overloads doTransaction to receive only the amount because the only allowable loan transactions are deposits
-//	 * @param amount dollar amount of payment on the loan
-//	 */
-//	public void doTransaction(double amount) {
-//			//Loan balances are negative amounts, so ADD the loan payment to make it less negative
-//			this.doTransaction(Account.DEPOSIT, amount);
-//	}
-//
 	/**
 	 * Computes the monthly payment of a loan based on principal, term, and annual interest rate
 	 * @return the monthly payment amount for compounded interest
@@ -175,14 +151,12 @@ public class Loan extends Account {
 		if (getAccountBalance() < 0) {
 			//Interest
 			double eomAdder = doEndOfMonthInterest();
-//			System.out.println("* Loan interest charged: " + Bank.money.format(Math.abs(eomAdder)));
 			this.addTransaction(eomAdder, "Interest charged");
 			
 			//Late fee
 			if(isFeeRequired()) {
 				eomAdder -= getLateFee();
 				System.out.println("* Late fee charged: "
-//					+ Bank.money.format(getLateFee())
 					+ " (failure to make the minimum payment)\n"
 				);
 				this.addTransaction(-getLateFee(), "Late fee");
@@ -218,7 +192,7 @@ public class Loan extends Account {
 		double totalPrincipalPaid = 0;
 		
 		System.out.println("\nNumber\tInterest\tPrincipal\tBalance");
-		Menus.printHeaderLine(55);
+//		Menus.printHeaderLine(55);
 		System.out.printf("0\t--------\t--------\t$%(,12.2f\n", this.creditLimit);
 		
 		while(balance < 0) {
@@ -230,9 +204,9 @@ public class Loan extends Account {
 			paymentNumber++;
 		}
 		
-		Menus.printHeaderLine(55);
+//		Menus.printHeaderLine(55);
 		System.out.printf("TOTALS:\t$%(,9.2f\t$%(,9.2f\n", totalInterestPaid, totalPrincipalPaid);
-		Menus.printHeaderLine(55);
+//		Menus.printHeaderLine(55);
 		System.out.println("\n");
 	}
 }

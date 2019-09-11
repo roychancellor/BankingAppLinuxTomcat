@@ -2,8 +2,6 @@ package edu.gcu.cst341.model;
 
 import java.util.Date;
 
-import edu.gcu.cst341.view.Menus;
-
 /**
  * Class for logging banking transactions
  *
@@ -14,8 +12,6 @@ public class Transaction {
 	private String accountNumber;
 	private double amount;
 	private String transactionType;
-	private static final String DELIM = "\t";
-	
 	//Constructors
 	public Transaction() {
 		
@@ -32,6 +28,12 @@ public class Transaction {
 		this.accountNumber = accountNumber;
 		this.amount = amount;
 		this.transactionType = transactionType;
+	}
+
+	@Override
+	public String toString() {
+		return "Transaction [transactionDate=" + transactionDate + ", accountNumber=" + accountNumber + ", amount="
+				+ amount + ", transactionType=" + transactionType + "]";
 	}
 
 	//Accessors and mutators
@@ -90,11 +92,4 @@ public class Transaction {
 	public void setTransactionType(String transactionType) {
 		this.transactionType = transactionType;
 	}
-
-	public String toString() {
-		return Menus.dateFormat.format(this.transactionDate)
-			+ DELIM + this.accountNumber
-			+ DELIM + String.format("$%(,12.2f", this.amount)
-			+ DELIM + this.transactionType; 
-	}	
 }

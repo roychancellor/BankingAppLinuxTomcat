@@ -554,3 +554,8 @@
 0:0:0:0:0:0:0:1 - - [10/Sep/2019:21:03:52 -0700] "GET /dashboard HTTP/1.1" 200 1613 http-bio-8787-exec-9 5
 0:0:0:0:0:0:0:1 - - [10/Sep/2019:21:03:56 -0700] "GET /logout HTTP/1.1" 302 - http-bio-8787-exec-9 5
 0:0:0:0:0:0:0:1 - - [10/Sep/2019:21:03:56 -0700] "GET /login?customerid=0 HTTP/1.1" 200 1666 http-bio-8787-exec-9 11
+0:0:0:0:0:0:0:1 - - [10/Sep/2019:21:08:35 -0700] "POST /login HTTP/1.1" 200 1613 http-bio-8787-exec-1 1292
+0:0:0:0:0:0:0:1 - - [10/Sep/2019:21:08:37 -0700] "GET /customer-settings HTTP/1.1" 200 1955 http-bio-8787-exec-2 947
+0:0:0:0:0:0:0:1 - - [10/Sep/2019:21:08:44 -0700] "GET /dashboard HTTP/1.1" 200 1613 http-bio-8787-exec-3 7
+0:0:0:0:0:0:0:1 - - [10/Sep/2019:21:08:48 -0700] "GET /logout HTTP/1.1" 302 - http-bio-8787-exec-4 9
+0:0:0:0:0:0:0:1 - - [10/Sep/2019:21:08:48 -0700] "GET /login?customerid=0 HTTP/1.1" 200 1666 http-bio-8787-exec-5 51

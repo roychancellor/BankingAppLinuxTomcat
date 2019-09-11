@@ -1,4 +1,4 @@
-package edu.gcu.cst341.controller;
+package edu.gcu.cst341.service;
 
 import org.springframework.stereotype.Service;
 
@@ -123,7 +123,7 @@ public class CustomerService {
 	 * @param custId the customerId to lookup in the database
 	 * @return a Customer object with populated data fields
 	 */
-	protected Customer getCustomerInfoAndBalances(int custId) {
+	public Customer getCustomerInfoAndBalances(int custId) {
 		Customer customer;
 		
 		//Open a connection to the database

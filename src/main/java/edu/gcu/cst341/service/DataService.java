@@ -1,4 +1,4 @@
-package edu.gcu.cst341.controller;
+package edu.gcu.cst341.service;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -9,7 +9,6 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
-import edu.gcu.cst341.database.DbConstants;
 import edu.gcu.cst341.model.Checking;
 import edu.gcu.cst341.model.Customer;
 import edu.gcu.cst341.model.Loan;

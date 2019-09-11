@@ -1,4 +1,4 @@
-package edu.gcu.cst341.database;
+package edu.gcu.cst341.service;
 
 /**
  * Class contains constants for use with SQL queries

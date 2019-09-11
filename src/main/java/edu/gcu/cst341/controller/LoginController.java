@@ -18,13 +18,17 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.SessionAttributes;
 
 import edu.gcu.cst341.model.Account;
-import edu.gcu.cst341.model.AmountForm;
 import edu.gcu.cst341.model.Checking;
 import edu.gcu.cst341.model.Customer;
 import edu.gcu.cst341.model.Loan;
-import edu.gcu.cst341.model.LoginForm;
-import edu.gcu.cst341.model.PasswordForm;
 import edu.gcu.cst341.model.Transaction;
+import edu.gcu.cst341.service.BankService;
+import edu.gcu.cst341.service.CustomerService;
+import edu.gcu.cst341.service.DataService;
+import edu.gcu.cst341.service.LoginService;
+import edu.gcu.cst341.viewforms.AmountForm;
+import edu.gcu.cst341.viewforms.LoginForm;
+import edu.gcu.cst341.viewforms.PasswordForm;
 
 @Controller
 @Scope("session")
