@@ -644,7 +644,7 @@ public class LoginController {
 	public String showCustomerSettingsScreen(
 		@ModelAttribute("customer") Customer customer, ModelMap map) {
 		
-		String jspToAccess = "customer-settings";
+		String jspToAccess = "customer-updateinfo";
 		
 		System.out.println("\n/customer-settings GET: customer =\n" + customer.toString());
 		//Verify there is a logged-in customer
@@ -655,8 +655,134 @@ public class LoginController {
 		else {
 			jspToAccess = "login";
 		}
-		System.out.println("/customer-settings GET: about to go to customer-settings.jsp");
+		System.out.println("/customer-settings GET: about to go to customer-updateinfo.jsp");
 		return jspToAccess;
+	}
+	
+	//STEP 2: Have customer confirm password to get to the information updating screen
+	@RequestMapping(value = "/customer-update", method = RequestMethod.GET)
+	public String showUpdateCustomerScreen(@ModelAttribute("customer") Customer customer, ModelMap map) {
+		String jspToAccess = "customer-update-password";
+
+		//Verify there is a logged-in customer
+		if(customer.getCustId() != 0) {
+			//Update all dashboard parameters
+			updateDashboardModel(customer, map);			
+			map.addAttribute("username", customer.getUsername());			
+		}
+		else {
+			jspToAccess = "login";
+		}
+		System.out.println("/customer-update GET: about to go to customer-update-password.jsp");
+		return jspToAccess;
+	}
+	
+	//STEP 3: Validate the credentials the customer entered
+	@RequestMapping(value = "/update-login", method = RequestMethod.POST)
+	public String processUpdateLogin(
+		@ModelAttribute("customer") Customer customer,
+		@Valid @ModelAttribute("passwordform") PasswordForm passwordform,
+		BindingResult br,
+		ModelMap map) {
+		
+		String username = customer.getUsername();
+		String password = passwordform.getPassword();
+		
+		String pageToReturn = "customer-updateinfo";
+		int custId = 0;
+		System.out.println("/update-login POST: About to validate credentials with the database...");
+		custId = LoginService.validateCredentials(username, password);
+		System.out.println("/update-login POST: DONE validating credentials with the database...");
+		
+		//If the credentials matched the database, custId should be > 0
+		if(custId > 0) {
+			System.out.println("/update-login POST: About to get the customer information from the database...");
+			
+			//Get the customer object data from the database
+			customer = CustomerService.getCustomerInfoAndBalances(custId);
+			
+			System.out.println("/update-login POST: After hitting the DB, the customer object is:\n"
+				+ customer.toString());
+				
+			//Update all dashboard parameters
+			updateDashboardModel(customer, map);
+			populateUpdateCustomerModel(customer, map);
+
+		}
+		else {
+			map.addAttribute("errorMessage", "Invalid login credentials, try again");
+			map.addAttribute("username", customer.getUsername());
+			pageToReturn = "customer-update-password";
+		}
+		return pageToReturn;
+	}
+		
+	@RequestMapping(value="/updatecustomer", method = RequestMethod.POST)
+	public String processUpdateCustomer(
+		@Valid @ModelAttribute("customer") Customer customer,
+		BindingResult result,
+		ModelMap map) {
+		
+		String jspToReturn = "redirect:dashboard";
+		
+		if(result.hasErrors()) {
+			System.out.println("processNewCustomer: result has errors");
+			jspToReturn = "customer-updateinfo";
+		}
+		else {
+			//Put the Customer object in the ModelMap
+			System.out.println("updatecustomer POST: customer =\n" + customer.toString());
+			map.addAttribute("customer", customer);
+			System.out.println("/updatecustomer POST: customer from map.get =\n"
+				+ map.get("customer").toString());
+			System.out.println("/updatecustomer POST: password =" + customer.getPassword());
+			System.out.println("/updatecustomer POST: passCompare =" + customer.getPassCompare());
+			
+			//Validate the two NEW passwords match before proceeding
+			if(!CustomerService.validatePasswordsMatch(customer.getPassword(), customer.getPassCompare())) {
+				System.err.println("PASSWORDS DO NOT MATCH");
+				//Populate the model and return to the new customer form
+				map.addAttribute("passmatcherror", "Passwords do not match, please re-enter");
+				map.addAttribute("password", "");
+				map.addAttribute("passCompare", "");
+				populateUpdateCustomerModel(customer, map);
+				jspToReturn = "customer-updateinfo";
+			}
+			else {
+				//Show the information to the customer for confirmation
+				jspToReturn = "customer-confirm";
+			}
+		}
+		System.out.println("\nRedirecting to " + jspToReturn);
+		return jspToReturn;
+	}
+	
+	private void populateUpdateCustomerModel(Customer customer, ModelMap map) {
+		//UPDATE ALL FIELDS FOR THE MODEL MAP
+		map.addAttribute("firstname", customer.getFirstName());
+		map.addAttribute("lastname", customer.getLastName());
+		map.addAttribute("username", customer.getUsername());
+		map.addAttribute("curEmail", customer.getEmailAddress());
+		map.addAttribute("curPhone", customer.getPhoneNumber());
+	}
+	
+	//STEP 5: Execute the update in the database
+	@RequestMapping(value = "/update-customer", method = RequestMethod.POST)
+	public String updateCustomer(@ModelAttribute("customer") Customer customer, ModelMap map) {
+		String jspToReturn = "redirect:dashboard";
+		
+		System.out.println("\nBack from customer-update-confirm:");
+		System.out.println("/update-customer GET: customer =\n" + customer.toString());
+		
+		//UPDATE the existing customer object in the database
+//		int numRec = CustomerService.updateExistingCustomer(customer);
+		int numRec = 1;
+		if(numRec > 0) {
+			System.out.println("/update-customer GET: updated existing customer:\n" + customer.toString());
+			jspToReturn = "customer-update-success";
+		}
+		
+		return jspToReturn;
 	}
 	
 	@RequestMapping(value = "/customer-delete", method = RequestMethod.GET)
@@ -718,7 +844,7 @@ public class LoginController {
 		String jspToReturn = "redirect:logout";
 		
 		System.out.println("\nBack from customer-delete-confirm:");
-		System.out.println("/delete-customer POST: customer =\n" + customer.toString());
+		System.out.println("/delete-customer GET: customer =\n" + customer.toString());
 		
 		//DELETE the existing customer object in the database
 		int numRec = CustomerService.deleteExistingCustomer(customer);
