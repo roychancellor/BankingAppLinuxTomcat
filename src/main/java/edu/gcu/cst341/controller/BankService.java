@@ -1,6 +1,7 @@
 package edu.gcu.cst341.controller;
 
 import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -22,6 +23,7 @@ public class BankService {
 	//Format for dates and money outputs in all classes
 	private DecimalFormat money = new DecimalFormat();
 	private static final String MONEY_FORMAT = "$#,##0.00;($#,##0.00)";
+	public final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("MM-dd-yyyy");
 
 	//Constructor
 	public BankService() {

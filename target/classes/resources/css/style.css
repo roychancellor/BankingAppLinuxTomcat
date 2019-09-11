@@ -43,16 +43,17 @@ footer a{
 }
 
 table {
-	width:100%;
+	width:auto;
 }
 
 td {
 	border-bottom:1px solid black;
-	font-size:1.25em;
+	font-size:1.15em;
 }
 
 th {
 	text-align:left;
+	font-size:1.25em;
 }
 
 nav {

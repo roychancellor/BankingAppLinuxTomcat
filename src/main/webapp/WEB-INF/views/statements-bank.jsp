@@ -18,12 +18,20 @@
 	<div class="container">
 		<%@ include file="common/header-common.jspf" %>
 		<section>
-			<h1>Transactions for ${fullname}</h1>
 			<!-- Date transactionDate, String accountNumber, double amount, String transactionType -->
 			<money:setLocale value="en_US"/>
-			<table class="table table-striped table-condensed table-hover">
-				<tr class="info"><td><b>CHECKING</b> (current balance = <money:formatNumber value="${chkbal}" type="currency" pattern="$#,##0.00;($#,##0.00)" minFractionDigits="2"/>)</td><td></td><td></td></tr>
-				<tr><th>Date</th><th>Amount</th><th>Description</th></tr>
+			<table class="table table-condensed table-striped table-hover">
+				<tr class="active">
+					<td><h1 style="vertical-align:middle">Transactions for</h1></td>
+					<td><h1 style="vertical-align:middle"><strong style="color:#522398">${fullname}</strong></h1></td>
+					<td></td>
+				</tr>
+				<tr class="info">
+					<td><b>CHECKING</b></td>
+					<td>Balance: <b><money:formatNumber value="${chkbal}" type="currency" pattern="$#,##0.00;($#,##0.00)" minFractionDigits="2"/></b></td>
+					<td>Dates: <b>${fromdate}</b> to <b>${todate}</b></td>
+				</tr>
+				<tr><th class="col-md-3">Date-Time</th><th class="col-md-3">Amount</th><th class="col-md-6">Description</th></tr>
 				<format:forEach items="${transchk}" var="tran">
 					<tr>
 						<td>${tran.transactionDate}</td>
@@ -32,8 +40,12 @@
 						<td>${tran.transactionType}</td>
 					</tr>
 				</format:forEach>
-				<tr class="info"><td><b>SAVINGS</b> (current balance = <money:formatNumber value="${savbal}" type="currency" pattern="$#,##0.00;($#,##0.00)" minFractionDigits="2"/>)</td><td></td><td></td></tr>
-				<tr><th>Date</th><th>Amount</th><th>Description</th></tr>
+				<tr class="info">
+					<td><b>SAVINGS</b></td>
+					<td>Balance: <b><money:formatNumber value="${savbal}" type="currency" pattern="$#,##0.00;($#,##0.00)" minFractionDigits="2"/></b></td>
+					<td>Dates: <b>${fromdate}</b> to <b>${todate}</b></td>
+				</tr>
+				<tr><th class="col-md-3">Date-Time</th><th class="col-md-3">Amount</th><th class="col-md-6">Description</th></tr>
 				<format:forEach items="${transsav}" var="tran">
 					<tr>
 						<td>${tran.transactionDate}</td>
@@ -42,8 +54,12 @@
 						<td>${tran.transactionType}</td>
 					</tr>
 				</format:forEach>
-				<tr class="info"><td><b>CASH ADVANCE</b> (current balance = <money:formatNumber value="${loanbal}" type="currency" pattern="$#,##0.00;($#,##0.00)" minFractionDigits="2"/>)</td><td></td><td></td></tr>
-				<tr><th>Date</th><th>Amount</th><th>Description</th></tr>
+				<tr class="info">
+					<td><b>CASH ADVANCE</b></td>
+					<td>Balance: <b><money:formatNumber value="${loanbal}" type="currency" pattern="$#,##0.00;($#,##0.00)" minFractionDigits="2"/></b></td>
+					<td>Dates: <b>${fromdate}</b> to <b>${todate}</b></td>
+				</tr>
+				<tr><th class="col-md-3">Date-Time</th><th class="col-md-3">Amount</th><th class="col-md-6">Description</th></tr>
 				<format:forEach items="${transloan}" var="tran">
 					<tr>
 						<td>${tran.transactionDate}</td>

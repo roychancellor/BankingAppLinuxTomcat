@@ -34,7 +34,7 @@
 				</tr>
 			</table>
 			</div>
-			<p><a style="font-size:1.5em" class="btn btn-success" href="/statements-bank">Reports</a></p>
+			<p><a style="font-size:1.5em" class="btn btn-success" href="/statements-bank">Transactions</a></p>
 		</section>
 		<%@ include file="common/footer-common.jspf" %>
 	</div>

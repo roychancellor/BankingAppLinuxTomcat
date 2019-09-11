@@ -1,5 +1,6 @@
 package edu.gcu.cst341.controller;
 
+import java.util.Date;
 //MAKE SURE THE POM IS NOT IN TEST MODE
 import java.util.List;
 
@@ -1086,5 +1087,7 @@ public class LoginController {
 		map.put("acctsav", "S..." + customer.getSaving().getAccountNumber().substring(8));
 		map.put("acctloan", "L..." + customer.getLoan().getAccountNumber().substring(8));
 		map.put("customer", customer);
+		map.put("fromdate", BankService.DATE_FORMAT.format(new Date()));
+		map.put("todate", BankService.DATE_FORMAT.format(new Date()));
 	}	
 }
