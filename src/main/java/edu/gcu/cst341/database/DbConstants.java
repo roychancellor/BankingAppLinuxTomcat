@@ -157,9 +157,9 @@ public class DbConstants {
 	
 	//SQL command to UPDATE customer login credentials by customer id
 	public static final String UPDATE_CREDENTIALS_BY_ID =
-		"UPDATE " + DB_NAME + "." + CREDENTIALS_TABLE + " "
-		+ "SET " + CUSTOMER_USER_NAME + "=?," + CUSTOMER_PASSWORD_SALT + "=? " + CUSTOMER_PASSWORD_HASH + "=? "
-		+ "WHERE " + CUSTOMER_ID + "=?";
+		"UPDATE " + DB_NAME + "." + CREDENTIALS_TABLE
+		+ " SET " + CUSTOMER_USER_NAME + "=?," + CUSTOMER_PASSWORD_SALT + "=?," + CUSTOMER_PASSWORD_HASH + "=?"
+		+ " WHERE " + CUSTOMER_ID + "=?";
 	
 	//SQL command to UPDATE the customer_transactions table with a single transaction
 	public static final String UPDATE_TRANSACTION = 

@@ -709,7 +709,7 @@ public class DataService {
 		try {
 			//UPDATE THE CUSTOMERS TABLE
 			//Prepare the SQL statement to UPDATE a customer record by customerId
-			sql = conn.prepareStatement(DbConstants.UPDATE_CUSTOMER_NAMES_BY_ID);
+			sql = conn.prepareStatement(DbConstants.UPDATE_CUSTOMER_CONTACT_BY_ID);
 			sql.setString(1, cust.getEmailAddress());
 			sql.setString(2, cust.getPhoneNumber());
 			sql.setInt(3, cust.getCustId());

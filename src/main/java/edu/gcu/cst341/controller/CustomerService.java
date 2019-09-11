@@ -172,7 +172,7 @@ public class CustomerService {
 	 * @param cust the updated Customer object
 	 * @return the number of records written to the database
 	 */
-	public int updateCustomer(Customer cust) {
+	public int updateExistingCustomer(Customer cust) {
 		int dbCustId = 0;
 		
 		//Open a connection to the database

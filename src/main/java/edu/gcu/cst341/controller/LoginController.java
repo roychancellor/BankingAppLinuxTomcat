@@ -1,6 +1,5 @@
 package edu.gcu.cst341.controller;
 
-import java.util.ArrayList;
 import java.util.List;
 
 //MAKE SURE THE POM IS NOT IN TEST MODE
@@ -659,7 +658,7 @@ public class LoginController {
 		return jspToAccess;
 	}
 	
-	//STEP 2: Have customer confirm password to get to the information updating screen
+	//STEP 1: Have customer confirm password to get to the information updating screen
 	@RequestMapping(value = "/customer-update", method = RequestMethod.GET)
 	public String showUpdateCustomerScreen(@ModelAttribute("customer") Customer customer, ModelMap map) {
 		String jspToAccess = "customer-update-password";
@@ -677,7 +676,7 @@ public class LoginController {
 		return jspToAccess;
 	}
 	
-	//STEP 3: Validate the credentials the customer entered
+	//STEP 2: Validate the credentials the customer entered, then go the update information screen
 	@RequestMapping(value = "/update-login", method = RequestMethod.POST)
 	public String processUpdateLogin(
 		@ModelAttribute("customer") Customer customer,
@@ -717,8 +716,8 @@ public class LoginController {
 		return pageToReturn;
 	}
 		
-	//STEP 4: Receive the updated Customer object, validate the new passwords match
-	//and go to the confirmation screen if they do
+	//STEP 3: Receive the now-updated Customer object, validate the new passwords match
+	//and go to the confirmation screen if they do; otherwise, go back to the update info screen
 	@RequestMapping(value="/updatecustomer", method = RequestMethod.POST)
 	public String processUpdateCustomer(
 		@Valid @ModelAttribute("customer") Customer customer,
@@ -759,6 +758,11 @@ public class LoginController {
 		return jspToReturn;
 	}
 	
+	/**
+	 * Helper method for setting fields for updating customer information
+	 * @param customer the current Customer object
+	 * @param map the current ModelMap
+	 */
 	private void populateUpdateCustomerModel(Customer customer, ModelMap map) {
 		//UPDATE ALL FIELDS FOR THE MODEL MAP
 		map.addAttribute("firstname", customer.getFirstName());
@@ -768,7 +772,7 @@ public class LoginController {
 		map.addAttribute("curPhone", customer.getPhoneNumber());
 	}
 	
-	//STEP 5: Execute the update in the database
+	//STEP 4: Execute the update in the database
 	@RequestMapping(value = "/update-customer", method = RequestMethod.POST)
 	public String updateCustomer(@ModelAttribute("customer") Customer customer, ModelMap map) {
 		String jspToReturn = "redirect:dashboard";
@@ -777,8 +781,7 @@ public class LoginController {
 		System.out.println("/update-customer GET: customer =\n" + customer.toString());
 		
 		//UPDATE the existing customer object in the database
-//		int numRec = CustomerService.updateExistingCustomer(customer);
-		int numRec = 1;
+		int numRec = CustomerService.updateExistingCustomer(customer);
 		if(numRec > 0) {
 			System.out.println("/update-customer GET: updated existing customer:\n" + customer.toString());
 			map.put("customer", customer);
@@ -788,6 +791,8 @@ public class LoginController {
 		return jspToReturn;
 	}
 	
+	
+	//STEP 1: Have customer confirm password to get to the delete confirmation screen
 	@RequestMapping(value = "/customer-delete", method = RequestMethod.GET)
 	public String showDeleteCustomerScreen(@ModelAttribute("customer") Customer customer, ModelMap map) {
 		String jspToAccess = "customer-delete-password";
@@ -805,6 +810,7 @@ public class LoginController {
 		return jspToAccess;
 	}
 	
+	//STEP 2: Validate the credentials the customer entered, then go to the confirmation page
 	@RequestMapping(value = "/delete-login", method = RequestMethod.POST)
 	public String processDeleteLogin(
 		@ModelAttribute("customer") Customer customer,
@@ -842,6 +848,7 @@ public class LoginController {
 		return pageToReturn;
 	}
 		
+	//STEP 3: Execute the delete operation in the database
 	@RequestMapping(value = "/delete-customer", method = RequestMethod.GET)
 	public String deleteCustomer(@ModelAttribute("customer") Customer customer, ModelMap map) {
 		String jspToReturn = "redirect:logout";
