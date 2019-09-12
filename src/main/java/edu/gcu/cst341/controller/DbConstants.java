@@ -141,7 +141,8 @@ public class DbConstants {
 		"SELECT accountNumber, transTimestamp, transAmount, transDescription"
 		+ " FROM " + DB_NAME + "." + CUSTOMER_TRANSACTIONS_TABLE
 		+ " WHERE customerId=?"
-		+ " ORDER BY accountNumber, transTimestamp";
+//		+ " ORDER BY accountNumber, transTimestamp";
+		+ " ORDER BY transTimestamp";
 	
 	//SQL command to UPDATE customer names by id
 	public static final String UPDATE_CUSTOMER_NAMES_BY_ID =

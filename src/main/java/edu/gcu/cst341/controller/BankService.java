@@ -211,6 +211,66 @@ public class BankService {
 		return Math.abs(loan.getCreditLimit()) - Math.abs(loan.getAccountBalance());
 	}
 	
+	public int doEndOfMonth(Customer cust) {
+		int numRec = 0;
+		DataService ds = new DataService();
+		
+		//Get current balances from the database
+		if(ds.dbRetrieveCustomerBalancesById(cust)) {
+			//Savings end of month: service fee and interest earned, then updates balance
+			cust.getSaving().doEndOfMonth();
+			
+			//Update the balance in the database
+			ds.dbUpdateAccountBalances(cust.getCustId(), cust.getSaving());
+			
+			//Write the transactions to the database
+			//SERVICE FEE
+			if(cust.getSaving().isFeeRequired()) {
+				numRec = ds.dbAddTransaction(cust.getCustId(),
+					new Transaction(new Date(),
+					cust.getSaving().getAccountNumber(),
+					-cust.getSaving().getServiceFee(),
+					"Service fee (balance < minimum)"));
+			}
+			//INTEREST EARNED
+			numRec += ds.dbAddTransaction(cust.getCustId(),
+				new Transaction(new Date(),
+				cust.getSaving().getAccountNumber(),
+				cust.getSaving().getInterestEarned(),
+				"Interest earned"));
+				System.err.println("doEndOfMonth: Unable to write to database!!!");
+			
+			//Loan end of month: late fee and interest paid
+			cust.getLoan().doEndOfMonth();
+			
+			//Update the balance in the database
+			ds.dbUpdateAccountBalances(cust.getCustId(), cust.getLoan());
+			
+			//Write the transactions to the database
+			//LATE FEE
+			if(cust.getLoan().isFeeRequired()) {
+				numRec += ds.dbAddTransaction(cust.getCustId(),
+					new Transaction(new Date(),
+					cust.getLoan().getAccountNumber(),
+					-cust.getLoan().getLateFee(),
+					"Late fee (paid < minimum)"));
+			}
+			//INTEREST PAID
+			numRec += ds.dbAddTransaction(cust.getCustId(),
+				new Transaction(new Date(),
+				cust.getLoan().getAccountNumber(),
+				cust.getLoan().getInterestPaidThisMonth(),
+				"Interest paid"));
+
+			//Reset the amount paid for the month to zero
+			cust.getLoan().setAmountPaidThisMonth(0);
+		}
+		
+		//Close the database connection
+		ds.close();
+		
+		return numRec;
+	}
 	/**
 	 * Helper method that separates the complete transaction list for a customer Id
 	 * into lists by account type

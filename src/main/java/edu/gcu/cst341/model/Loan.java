@@ -13,6 +13,7 @@ public class Loan extends Account {
 	private double monthlyPaymentAmount;
 	private double creditLimit;
 	private double amountPaidThisMonth;
+	private double interestPaidThisMonth;
 	public static final double LATE_FEE = 25.0;
 	public static final double ANNUAL_INTEREST_RATE = 0.08;
 	public static final double DEFAULT_CREDIT_LIMIT = -5000.00;
@@ -97,6 +98,20 @@ public class Loan extends Account {
 		this.amountPaidThisMonth = amountPaidThisMonth;
 	}
 
+	/**
+	 * @return the interestPaidThisMonth
+	 */
+	public double getInterestPaidThisMonth() {
+		return interestPaidThisMonth;
+	}
+
+	/**
+	 * @param interestPaidThisMonth the interestPaidThisMonth to set
+	 */
+	public void setInterestPaidThisMonth(double interestPaidThisMonth) {
+		this.interestPaidThisMonth = interestPaidThisMonth;
+	}
+
 	@Override
 	/**
 	 * Implements doTransaction that was left abstract in the superclass
@@ -148,9 +163,10 @@ public class Loan extends Account {
 	 * Implements the method in the iTrans interface
 	 */
 	public void doEndOfMonth() {
-		if (getAccountBalance() < 0) {
+		if(getAccountBalance() < 0) {
 			//Interest
 			double eomAdder = doEndOfMonthInterest();
+			this.setInterestPaidThisMonth(eomAdder);
 			this.addTransaction(eomAdder, "Interest charged");
 			
 			//Late fee
@@ -165,8 +181,7 @@ public class Loan extends Account {
 			//New balance
 			setAccountBalance(getAccountBalance() + eomAdder);
 			
-			//Reset the amount paid for the month to zero
-			setAmountPaidThisMonth(0);
+			//The calling method needs to set the amount paid this month to zero
 		}
 		else {
 			System.out.println("\nCongratulations, your loan is now paid off!");
@@ -178,6 +193,9 @@ public class Loan extends Account {
 	 * @return true if fee is required or false if not
 	 */
 	public boolean isFeeRequired() {
+		if(Math.abs(this.getAccountBalance()) < 0.01) {
+			return false;
+		}
 		return amountPaidThisMonth < monthlyPaymentAmount;
 	}
 	

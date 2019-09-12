@@ -1,6 +1,5 @@
 package edu.gcu.cst341.controller;
 
-import java.util.Date;
 //MAKE SURE THE POM IS NOT IN TEST MODE
 import java.util.List;
 
@@ -764,6 +763,10 @@ public class LoginController {
 				map.addAttribute("transchk", transchk);
 				map.addAttribute("transsav", transsav);
 				map.addAttribute("transloan", transloan);
+				map.addAttribute("fromdate",
+					BankService.DATE_FORMAT.format(transList.get(0).getTransactionDate()));
+				map.addAttribute("todate",
+					BankService.DATE_FORMAT.format(transList.get(transList.size() - 1).getTransactionDate()));
 			}
 		}
 		else {
@@ -1071,6 +1074,48 @@ public class LoginController {
 	}
 	
 	/**
+	 * Method that wouldn't exist in a real customer-facing application, but would
+	 * occur at the actual end of the month. Regardless, it does the end of month
+	 * transactions which is to compute the savings interest earned, service fee if applicable,
+	 * and loan interest paid and service fee if minimum payment not made
+	 * @param customer the current Customer object
+	 * @param map the ModelMap
+	 * @return the jsp to access
+	 */
+	@RequestMapping(value = "/endmonth", method = RequestMethod.GET)
+	public String showEndOfMonthScreen(@ModelAttribute("customer") Customer customer, ModelMap map) {
+		String jspToAccess = "endofmonth-bank";
+		
+		//Verify there is a logged-in customer
+		System.out.println("/endmonth GET: about to check custId != 0:\n" + customer.toString());
+		if(customer.getCustId() != 0) {
+			System.out.println("/endmonth GET: AFTER check custId != 0:\n" + customer.toString());
+			//Update all dashboard parameters
+			updateDashboardModel(customer, map);
+			
+			//Do the end of month and populate the parameters needed for the results screen
+			int numRec = BankService.doEndOfMonth(customer);
+			if(numRec > 0) {
+				//Populate the end of month parameters
+				double savFee = customer.getSaving().isFeeRequired() ? customer.getSaving().getServiceFee() : 0.00;
+				double loanFee = customer.getLoan().isFeeRequired() ? customer.getLoan().getLateFee() : 0.00;
+				map.addAttribute("savfee", savFee);
+				map.addAttribute("savinterest", customer.getSaving().getInterestEarned());
+				map.addAttribute("loanfee", loanFee);
+				map.addAttribute("loaninterest", customer.getLoan().getInterestPaidThisMonth());
+			}
+			else {
+				System.out.println("/endmonth GET: The end of month transactions failed!");
+			}
+		}
+		else {
+			jspToAccess = "login";
+		}
+		
+		return jspToAccess;
+	}
+	
+	/**
 	 * Updates the ModelMap parameters for the customer dashboard
 	 * @param customer the current Customer object
 	 * @param map the ModelMap for the LoginController
@@ -1087,7 +1132,5 @@ public class LoginController {
 		map.put("acctsav", "S..." + customer.getSaving().getAccountNumber().substring(8));
 		map.put("acctloan", "L..." + customer.getLoan().getAccountNumber().substring(8));
 		map.put("customer", customer);
-		map.put("fromdate", BankService.DATE_FORMAT.format(new Date()));
-		map.put("todate", BankService.DATE_FORMAT.format(new Date()));
 	}	
 }

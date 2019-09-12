@@ -9,6 +9,7 @@ public class Saving extends Account {
 	private double minBalance;
 	private double interestRate;
 	private double serviceFee;
+	private double interestEarned;
 	public static final double MINIMUM_BALANCE = 200.0;
 	public static final double ANNUAL_INTEREST_RATE = 0.06;
 	public static final double BELOW_MIN_BALANCE_FEE = 40.0;
@@ -83,6 +84,20 @@ public class Saving extends Account {
 	}
 
 	/**
+	 * @return the interestEarned
+	 */
+	public double getInterestEarned() {
+		return interestEarned;
+	}
+
+	/**
+	 * @param interestEarned the interestEarned to set
+	 */
+	public void setInterestEarned(double interestEarned) {
+		this.interestEarned = interestEarned;
+	}
+
+	/**
 	 * Implements processTransaction that was left abstract in the superclass
 	 * unique to Saving accounts (logic for withdraw greater than available balance)
 	 * @param transType a multiplier for withdrawals (-1) or deposits (+1)
@@ -109,19 +124,23 @@ public class Saving extends Account {
 	public void doEndOfMonth() {
 		//Service fee (deduct before computing interest)
 		if(isFeeRequired()) {
-//			System.out.println("* Service fee charged: "
-//				+ Bank.money.format(getServiceFee())
-//				+ "(savings below minimum balance)");
+			System.out.println("doEndOfMonth: Service fee charged: " + getServiceFee()
+				+ "(savings below minimum balance)");
 
+			//Update the balance
 			setAccountBalance(getAccountBalance() - getServiceFee());
+			System.out.println("doEndOfMonth: Service fee charged: " + getServiceFee());
+			//Write the transaction
 			this.addTransaction(-getServiceFee(), "Service fee");
 		}
 		//Interest on any positive balance (interest compounded monthly)
-		if (getAccountBalance() > 0) {
-			double interestEarned = getAccountBalance() * getInterestRate();
+		if(getAccountBalance() > 0) {
+			this.setInterestEarned(getAccountBalance() * getInterestRate());
 			
+			//Update the balance
 			setAccountBalance(getAccountBalance() + interestEarned);
-//			System.out.println("* Savings interest earned: " + Bank.money.format(interestEarned));
+			System.out.println("doEndOfMonth: Savings interest earned: " + interestEarned);
+			//Write the transaction
 			this.addTransaction(interestEarned, "Interest earned");
 		}
 	}
