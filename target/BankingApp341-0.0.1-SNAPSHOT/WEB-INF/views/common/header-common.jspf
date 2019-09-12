@@ -1,0 +1,12 @@
+<header>
+	<h2>GCU Online Bank<img src="/resources/images/gculogo.png"/></h2>
+</header>
+<nav>
+	<div><a href="/deposit-bank">Deposit</a></div>
+	<div><a href="/withdraw-bank">Withdraw</a></div>
+	<div><a href="/transfer-bank">Transfer</a></div>
+	<div><a href="/statements-bank">Transactions</a></div>
+	<div><a href="/dashboard">Dashboard</a></div>
+	<div><a href="/customer-settings">Settings</a></div>
+	<div><a href="/logout">Logout</a></div>
+</nav>

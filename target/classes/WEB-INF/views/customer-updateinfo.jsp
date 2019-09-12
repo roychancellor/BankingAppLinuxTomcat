@@ -69,9 +69,9 @@
 					<label>CURRENT Phone Number:<br>${curPhone}</label><br />
 					</div>
 					<div class="form-group col-sm-6">
-					<updatecust:label path="phoneNumber">NEW Phone Number (xxx-xxx-xxxx):</updatecust:label><br />
+					<updatecust:label path="phoneNumber">NEW Phone Number (10 digits):</updatecust:label><br />
 					<updatecust:input type="tel" class="form-control"
-						placeholder="Enter NEW phone number (123-456-7890)" path="phoneNumber" />
+						placeholder="Enter NEW phone number (1234567890)" path="phoneNumber" />
  					<updatecust:errors path="phoneNumber" cssClass="error" />
 					</div>
 				</div>

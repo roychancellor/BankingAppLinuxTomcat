@@ -12,6 +12,7 @@
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <maven.test.skip>true</maven.test.skip>
   </properties>
 
   <dependencies>
@@ -117,7 +118,7 @@
                <version>2.2</version>
                <configuration>
                    <path>/</path>
-                   <port>8787</port>
+                   <port>5000</port>
                    <contextReloadable>true</contextReloadable>
                </configuration>
            </plugin>

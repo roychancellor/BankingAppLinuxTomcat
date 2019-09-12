@@ -31,7 +31,7 @@ public class Customer {
 	private String passCompare;
 	@NotBlank
 	@Size(max=12, message="Phone number must be xxx-xxx-xxxx")
-	@Pattern(regexp="[0-9]{3}-[0-9]{3}-[0-9]{4}", message="Phone number must be xxx-xxx-xxxx")
+	@Pattern(regexp="[0-9]{3}[0-9]{3}[0-9]{4}", message="Phone number must be 10 digits")
 	private String phoneNumber;
 	@NotBlank
 	@Email(message = "Must be a valid e-mail format: email@example.com")
