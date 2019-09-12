@@ -238,7 +238,6 @@ public class BankService {
 				cust.getSaving().getAccountNumber(),
 				cust.getSaving().getInterestEarned(),
 				"Interest earned"));
-				System.err.println("doEndOfMonth: Unable to write to database!!!");
 			
 			//Loan end of month: late fee and interest paid
 			cust.getLoan().doEndOfMonth();
@@ -264,6 +263,9 @@ public class BankService {
 
 			//Reset the amount paid for the month to zero
 			cust.getLoan().setAmountPaidThisMonth(0);
+		}
+		else {
+			System.err.println("doEndOfMonth: Unable to write to database!!!");
 		}
 		
 		//Close the database connection

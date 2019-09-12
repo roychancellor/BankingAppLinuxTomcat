@@ -1094,11 +1094,11 @@ public class LoginController {
 			updateDashboardModel(customer, map);
 			
 			//Do the end of month and populate the parameters needed for the results screen
+			double savFee = customer.getSaving().isFeeRequired() ? customer.getSaving().getServiceFee() : 0.00;
+			double loanFee = customer.getLoan().isFeeRequired() ? customer.getLoan().getLateFee() : 0.00;
 			int numRec = BankService.doEndOfMonth(customer);
 			if(numRec > 0) {
 				//Populate the end of month parameters
-				double savFee = customer.getSaving().isFeeRequired() ? customer.getSaving().getServiceFee() : 0.00;
-				double loanFee = customer.getLoan().isFeeRequired() ? customer.getLoan().getLateFee() : 0.00;
 				map.addAttribute("savfee", savFee);
 				map.addAttribute("savinterest", customer.getSaving().getInterestEarned());
 				map.addAttribute("loanfee", loanFee);
@@ -1106,6 +1106,7 @@ public class LoginController {
 			}
 			else {
 				System.out.println("/endmonth GET: The end of month transactions failed!");
+				jspToAccess = "redirect:dashboard";
 			}
 		}
 		else {

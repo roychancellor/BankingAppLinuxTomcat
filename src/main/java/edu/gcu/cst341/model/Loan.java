@@ -136,6 +136,7 @@ public class Loan extends Account {
 		if(transType == Account.DEPOSIT || transType == Account.TRANSFER_D) {
 			transMessage = "Loan payment" + (transType == Account.TRANSFER_D ? Account.TRANSFER_NOTE : "");
 			setAmountPaidThisMonth(getAmountPaidThisMonth() + amount);
+			System.out.println("Loan.doTransaction: paid this month = " + getAmountPaidThisMonth());
 		}
 		//Update the account balance
 		setAccountBalance(getAccountBalance() + amount);

@@ -19,7 +19,7 @@
 		<%@ include file="common/header-common.jspf" %>
 		<section>
 			<h1>Dashboard for <strong style="color:#522398">${fullname}</strong></h1>
-			<h2 style="text-align:center"><strong>Current Account Balances</strong></h2>
+			<h2 style="text-align:left"><strong>Current Account Balances</strong></h2>
 			<div class="dashboard">
 			<table class="table table-striped">
 				<tr><th>Checking</th><th>Saving</th><th>Cash Advance</th></tr>
