@@ -69,9 +69,9 @@
 					<addcustomer:errors path="emailAddress" cssClass="error" />
 					</div>
 					<div class="form-group col-sm-6">
-					<addcustomer:label path="phoneNumber">Phone Number (xxx-xxx-xxxx):</addcustomer:label><br />
+					<addcustomer:label path="phoneNumber">Phone Number (10 digits):</addcustomer:label><br />
 					<addcustomer:input type="tel" class="form-control"
-						placeholder="Enter phone number (123-456-7890)" path="phoneNumber" />
+						placeholder="Enter phone number (1234567890)" path="phoneNumber" />
 
  					<addcustomer:errors path="phoneNumber" cssClass="error" />
 					</div>
