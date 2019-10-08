@@ -1,2 +1,2 @@
-# Banking App 4.0
-This version will be a Spring MVC web-based version of the banking app with full CRUD functionality for all features of the bank.
+# Banking App 5.0
+This version begins with version 4.0 and refactors to be deployed on a Tomcat server running on a local Linux Ubuntu distribution that will eventually be exposed to the internet for public consumption.
