@@ -15,7 +15,7 @@ public class DbConstants {
 	public static final String DB_URL_AWSDB = "jdbc:mysql://gcujava.czz73jkkcnrj.us-east-2.rds.amazonaws.com:3306";
 	public static final String USER_NAME_LOCAL = "root";  //I KNOW THIS IS NOT OK...FOR DEMO ONLY
 	public static final String USER_NAME_AWS = "root";  //I KNOW THIS IS NOT OK...FOR DEMO ONLY
-	public static final String PASSWORD_LOCAL = "root";  //I KNOW THIS IS NOT OK...FOR DEMO ONLY
+	public static final String PASSWORD_LOCAL = "sqlsqlmysql";  //I KNOW THIS IS NOT OK...FOR DEMO ONLY
 	public static final String PASSWORD_AWS = "sqlsqlmysql";  //I KNOW THIS IS NOT OK...FOR DEMO ONLY
 	public static final String DB_NAME = "bank";
 	public static final String CUSTOMERS_TABLE = "customers";
