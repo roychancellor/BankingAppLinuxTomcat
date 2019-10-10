@@ -23,7 +23,8 @@
 				Please confirm your updated information. If correct, click <strong>Submit Information</strong><br>
 				If anything is incorrect, click <strong>Cancel and Fix</strong>
 			</h5>
-			<confirmcustomer:form modelAttribute="customer" action="/update-customer" method="POST">
+			<confirmcustomer:form modelAttribute="customer"
+				action="${pageContext.request.contextPath}/update-customer" method="POST">
 				<div class="form-row">
 					<div class="form-group col-md-6">
 					First name: ${customer.firstName}
@@ -49,7 +50,7 @@
 					</div>
 				</div>
 				<input class="btn btn-success" type="submit" name="SubmitBtn" value="Submit Information">
-				<a class="btn btn-primary" href="/customer-update">Cancel and Fix</a>
+				<a class="btn btn-primary" href="${pageContext.request.contextPath}/customer-update">Cancel and Fix</a>
 			</confirmcustomer:form>
 		</section>
 		<%@ include file="common/footer-common.jspf" %>

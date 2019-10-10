@@ -1,5 +1,7 @@
 package edu.gcu.cst341.model;
 
+import org.apache.commons.math3.util.Precision;
+
 /**
  * Class that inherits Account fields and behaviors and creates Loan object data and behaviors
  *
@@ -139,7 +141,7 @@ public class Loan extends Account {
 			System.out.println("Loan.doTransaction: paid this month = " + getAmountPaidThisMonth());
 		}
 		//Update the account balance
-		setAccountBalance(getAccountBalance() + amount);
+		setAccountBalance(Precision.round(getAccountBalance() + amount, 2));
 		//Record the transaction
 		this.addTransaction(amount, transMessage);
 	}

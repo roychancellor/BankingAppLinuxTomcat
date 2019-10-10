@@ -19,7 +19,8 @@
 		<%@ include file="common/header-common.jspf" %>
 		<section>
 			<h1>Checking OVERDRAFT Notice</h1>
-			<overdraftform:form action="/withdraw-bank-error-checking?amount=${reqamount}" method="POST">
+			<overdraftform:form
+				action="${urlwithdrawal}?amount=${reqamount}" method="POST">
 				<p>
  					A withdrawal of
  					<money:formatNumber value="${reqamount}" type="currency" pattern="$#,##0.00;($#,##0.00)" minFractionDigits="2"/>
@@ -30,7 +31,7 @@
  					Click <strong>Proceed</strong> to proceed with the withdrawal and receive the charge.<br>
  					Click <strong>Cancel</strong> to cancel the transaction and return to the withdrawal page.<br>
 					<input class="btn btn-success" type="submit" name="reqamount" value="Proceed">
-					<a class="btn btn-primary" href="/withdraw-bank">Cancel</a>
+					<a class="btn btn-primary" href="${pageContext.request.contextPath}/withdraw-bank">Cancel</a>
 				</p>
 			</overdraftform:form>
 		</section>

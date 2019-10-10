@@ -14,7 +14,10 @@ section {
 }
 
 header {
-	background-image:url(/resources/images/header.jpg);
+	/* the url reference is relative to the stylesheet location, which is /resources/css/style.css
+	the images are in /resources/images/..., therefore need to go up one level using .. to get back to
+	/resources/, then go down into /images/ in order to work as a relative reference */
+	background-image:url(../images/header.jpg);
 	padding-top:20px;
 	padding-bottom:20px;
 }
@@ -30,7 +33,10 @@ header h2 {
 }
 
 footer {
-	background-image:url(/resources/images/header.jpg);
+	/* the url reference is relative to the stylesheet location, which is /resources/css/style.css
+	the images are in /resources/images/..., therefore need to go up one level using .. to get back to
+	/resources/, then go down into /images/ in order to work as a relative reference */
+	background-image:url(../images/header.jpg);
 	padding-top:20px;
 	padding-bottom:20px;
 	font-size:0.9em;

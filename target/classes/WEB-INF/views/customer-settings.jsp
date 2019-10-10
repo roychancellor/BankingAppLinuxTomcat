@@ -28,21 +28,25 @@
 			  </thead>
 			  <tbody>
 			    <tr class="info">
-			      <td><a class="btn btn-info btn-lg" href="/customer-update">Update Your Information</a></td>
+			      <td><a class="btn btn-info btn-lg"
+			      		href="${pageContext.request.contextPath}/customer-update">Update Your Information</a></td>
 			      <td>Click this button to update e-mail address, phone number, and/or password.
 			      You will have the option to cancel at any time. Requires password to proceed.</td>
 			    </tr>
 			    <tr class="danger">
-			      <td><a class="btn btn-danger btn-lg" href="/customer-delete">Close Your Account</a></td>
+			      <td><a class="btn btn-danger btn-lg"
+			      		href="${pageContext.request.contextPath}/customer-delete">Close Your Account</a></td>
 			      <td>Click this button to close your account and delete your information from the bank. 
 			      You will have the option to cancel at any time. Requires password to proceed.</td>
 			    </tr>
 			    <tr class="primary">
-			      <td><a class="btn btn-primary btn-lg" href="/dashboard">Cancel</a></td>
+			      <td><a class="btn btn-primary btn-lg"
+			      		href="${pageContext.request.contextPath}/dashboard">Cancel</a></td>
 			      <td>Click this button to cancel and return to the dashboard.</td>
 			    </tr>
 			    <tr class="warning">
-			      <td><a class="btn btn-warning btn-lg" href="/logout">Logout</a></td>
+			      <td><a class="btn btn-warning btn-lg"
+			      		href="${pageContext.request.contextPath}/logout">Logout</a></td>
 			      <td>Click this button to log out of your account</td>
 			    </tr>
 			  </tbody>

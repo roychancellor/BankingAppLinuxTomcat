@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.math3.util.Precision;
 import org.springframework.stereotype.Service;
 
 import edu.gcu.cst341.model.Account;
@@ -195,7 +196,7 @@ public class BankService {
 		
 		//Validate the business rule that cash advance payments (deposits)
 		//must be less than the outstanding balance
-		if(amount <= Math.abs(cust.getLoan().getAccountBalance())) {
+		if(amount <= Math.abs(Precision.round(cust.getLoan().getAccountBalance(), 2))) {
 			validAmount = true;
 		}
 		return validAmount;
@@ -208,7 +209,7 @@ public class BankService {
 	 */
 	public double computeLoanAvailable(Loan loan) {
 		System.out.println("Credit limit: " + loan.getCreditLimit() + ", balance: " + loan.getAccountBalance());
-		return Math.abs(loan.getCreditLimit()) - Math.abs(loan.getAccountBalance());
+		return Precision.round(Math.abs(loan.getCreditLimit()) - Math.abs(loan.getAccountBalance()), 2);
 	}
 	
 	public int doEndOfMonth(Customer cust) {
