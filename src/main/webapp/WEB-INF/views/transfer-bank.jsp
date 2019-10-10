@@ -20,7 +20,7 @@
 		<section>
 			<h1>Welcome ${fullname}!</h1>
 			<h2><strong>TRANSFER Between Accounts</strong></h2>
-			<transform:form modelAttribute="amount" action="/transfer-bank" method="POST">
+			<transform:form modelAttribute="amount" action="${pageContext.request.contextPath}/transfer-bank" method="POST">
 				<div class="radioform">
 					<p><strong>FROM Account:</strong><br />
 						<input type="radio" name="fromaccount" value="chk" checked> Checking (${acctchk})
@@ -61,7 +61,7 @@
 				</div>
 				<p>
 					<input class="btn btn-success" type="submit" value="Submit Transfer">
-					<a class="btn btn-primary" href="/dashboard">Cancel and Return to Dashboard</a>
+					<a class="btn btn-primary" href="${pageContext.request.contextPath}/dashboard">Cancel and Return to Dashboard</a>
 				</p>
 			</transform:form>
 		</section>

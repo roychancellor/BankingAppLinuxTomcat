@@ -20,7 +20,7 @@
 		<section>
 			<h1>Enter Your Password to Begin Deletion Process</h1>
 			<p class="error">${errorMessage}</p>
-			<login:form modelAttribute="passwordform" action="/delete-login" method="POST">
+			<login:form modelAttribute="passwordform" action="${pageContext.request.contextPath}/delete-login" method="POST">
 				<div class="form-group row">
 					<label class="col-lg-1 col-form-label">Username:</label>
 					<div class="col-lg-3">
@@ -41,7 +41,8 @@
 				</div>
 				<div class="form-group row">
 					<div class="col-sm-4">
-						<a class="btn btn-success btn-lg" href="/customer-settings">Cancel Without Deleting</a>
+						<a class="btn btn-success btn-lg"
+							href="${pageContext.request.contextPath}/customer-settings">Cancel Without Deleting</a>
 					</div>
 				</div>
 			</login:form>

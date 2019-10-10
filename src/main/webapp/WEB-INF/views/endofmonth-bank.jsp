@@ -72,8 +72,10 @@
 				</tr>
 			</table>
 			<p>
-				<a style="font-size:1.5em" class="btn btn-success" href="/statements-bank">Transactions</a>
-				<a style="font-size:1.5em" class="btn btn-primary" href="/dashboard">Dashboard</a>
+				<a style="font-size:1.5em" class="btn btn-success"
+					href="${pageContext.request.contextPath}/statements-bank">Transactions</a>
+				<a style="font-size:1.5em" class="btn btn-primary"
+					href="${pageContext.request.contextPath}/dashboard">Dashboard</a>
 			</p>
 		</section>
 		<%@ include file="common/footer-common.jspf" %>

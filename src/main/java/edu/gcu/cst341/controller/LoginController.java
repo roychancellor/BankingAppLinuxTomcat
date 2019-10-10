@@ -184,7 +184,7 @@ public class LoginController {
 		BindingResult br,
 		ModelMap map) {
 		
-		//Get hte user name and oassword from the LoginForm object
+		//Get the user name and password from the LoginForm object
 		String username = loginform.getUsername();
 		String password = loginform.getPassword();
 		
@@ -219,7 +219,7 @@ public class LoginController {
 	 * @param customer the Customer object currently in session
 	 * @param session the current HTTP session
 	 * @param map the ModelMap
-	 * @return a redirecrt to the login page
+	 * @return a redirect to the login page
 	 */
 	@RequestMapping(value = "/logout", method = RequestMethod.GET)
 	public String showLogoutScreen(
@@ -236,7 +236,7 @@ public class LoginController {
 		//Remove session attributes from the session
 		session.removeAttribute("customer");
 		
-		return "redirect:login";
+		return "redirect:/login";
 	}
 	
 	/**
@@ -330,7 +330,7 @@ public class LoginController {
 					&& !BankService.validateCashAdvancePayment(customer, amount)) {
 					//Populate the information needed for the error page
 					populatePaymentErrorModel(customer.getLoan().getAccountBalance(), amount, map);
-					map.addAttribute("geturl", "/deposit-bank");
+					map.addAttribute("geturl", "deposit-bank");
 					jspToAccess = "loan-payment-bank-error";
 				}
 				else {
@@ -342,7 +342,7 @@ public class LoginController {
 				updateDashboardModel(customer, map);
 			}
 			else {
-				jspToAccess = "redirect:login";
+				jspToAccess = "redirect:/login";
 			}
 		}
 		return jspToAccess;
@@ -462,7 +462,7 @@ public class LoginController {
 				}
 			}
 			else {
-				jspToAccess = "redirect:login";
+				jspToAccess = "redirect:/login";
 			}
 		}
 		return jspToAccess;
@@ -476,8 +476,6 @@ public class LoginController {
 	 * @param map the ModelMap for the current session
 	 */
 	private void populateWithdrawalErrorModel(Account account, double amount, ModelMap map) {
-		//URL to return to after error
-		map.addAttribute("urlwithdrawal", "/withdraw-bank");
 		//Requested withdrawal amount
 		map.addAttribute("reqamount", amount);
 		//Current account balance
@@ -486,10 +484,19 @@ public class LoginController {
 		//Other model parameters based on account type
 		//(note: Saving accounts only need the above three)
 		if(account instanceof Checking) {
+			//URL to return to after error
+			map.addAttribute("urlwithdrawal", "withdraw-bank-error-checking");
 			map.addAttribute("overdraft", ((Checking)account).getOverdraftFee());
 		}
-		if(account instanceof Loan) {
+		else if(account instanceof Loan) {
+			//URL to return to after error
+			map.addAttribute("urlwithdrawal", "withdraw-bank");
+			//Available credit
 			map.addAttribute("balance", BankService.computeLoanAvailable((Loan)account));
+		}
+		else {
+			//URL to return to after error
+			map.addAttribute("urlwithdrawal", "withdraw-bank");
 		}
 	}
 	
@@ -649,12 +656,12 @@ public class LoginController {
 					//The amount to transfer to the cash advance (loan) exceeds the outstanding balance
 					//Populate the information needed for the error page
 					populatePaymentErrorModel(customer.getLoan().getAccountBalance(), amount, map);
-					map.addAttribute("geturl", "/transfer-bank");
+					map.addAttribute("geturl", "transfer-bank");
 					jspToAccess = "loan-payment-bank-error";
 				}
 			}
 			else {
-				jspToAccess = "redirect:login";
+				jspToAccess = "redirect:/login";
 			}
 		}
 		return jspToAccess;
@@ -669,8 +676,6 @@ public class LoginController {
 	 * @param map the ModelMap for the current session
 	 */
 	private void populateTransferErrorModel(Account account, double amount, String toAccount, ModelMap map) {
-		//URL to return to after error
-		map.addAttribute("urlwithdrawal", "/transfer-bank");
 		//Requested withdrawal amount
 		map.addAttribute("reqamount", amount);
 		//Account to transfer into
@@ -678,9 +683,14 @@ public class LoginController {
 		//Current account balance
 		map.addAttribute("balance", account.getAccountBalance());
 		if(account instanceof Loan) {
+			//URI
+			map.addAttribute("urlwithdrawal", "transfer-bank");
+			//Available balance
 			map.addAttribute("balance", BankService.computeLoanAvailable((Loan)account));
 		}
 		if(account instanceof Checking) {
+			//URI
+			map.addAttribute("urlwithdrawal", "transfer-bank-error-checking");
 			//Overdraft fee
 			map.addAttribute("overdraft", ((Checking)account).getOverdraftFee());
 		}
@@ -903,7 +913,7 @@ public class LoginController {
 		BindingResult result,
 		ModelMap map) {
 		
-		String jspToReturn = "redirect:dashboard";
+		String jspToReturn = "redirect:/dashboard";
 		
 		if(result.hasErrors()) {
 			System.out.println("/updatecustomer POST: result has errors");
@@ -960,7 +970,7 @@ public class LoginController {
 	 */
 	@RequestMapping(value = "/update-customer", method = RequestMethod.POST)
 	public String updateCustomer(@ModelAttribute("customer") Customer customer, ModelMap map) {
-		String jspToReturn = "redirect:dashboard";
+		String jspToReturn = "redirect:/dashboard";
 		
 		System.out.println("\n/update-customer POST: Back from customer-update-confirm:");
 		System.out.println("/update-customer POST: customer =\n" + customer.toString());
@@ -1058,7 +1068,7 @@ public class LoginController {
 	 */
 	@RequestMapping(value = "/delete-customer", method = RequestMethod.GET)
 	public String deleteCustomer(@ModelAttribute("customer") Customer customer, ModelMap map) {
-		String jspToReturn = "redirect:logout";
+		String jspToReturn = "redirect:/logout";
 		
 		System.out.println("\nBack from customer-delete-confirm:");
 		System.out.println("/delete-customer GET: customer =\n" + customer.toString());
@@ -1106,7 +1116,7 @@ public class LoginController {
 			}
 			else {
 				System.out.println("/endmonth GET: The end of month transactions failed!");
-				jspToAccess = "redirect:dashboard";
+				jspToAccess = "redirect:/dashboard";
 			}
 		}
 		else {

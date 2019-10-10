@@ -22,7 +22,7 @@
 			<hr>
 			Technology stack: HTML, CSS, Bootstrap, Spring, Java, JDBC, MySQL</p>
 			<hr>
-			<p><a class="btn btn-success" href="/dashboard">Return to Dashboard</a></p>
+			<p><a class="btn btn-success" href="${pageContext.request.contextPath}/dashboard">Return to Dashboard</a></p>
 		</section>
 		<%@ include file="common/footer-common.jspf" %>
 	</div>

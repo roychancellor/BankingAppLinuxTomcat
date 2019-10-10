@@ -77,7 +77,7 @@
 					</div>
 				</div>
 				<button class="btn btn-success" type="submit">Submit Information</button>
-				<a class="btn btn-primary" href="/login">Cancel and Return to Login</a>
+				<a class="btn btn-primary" href="${pageContext.request.contextPath}/login">Cancel and Return to Login</a>
 			</addcustomer:form>
 		</section>
 		<%@ include file="common/footer-common.jspf" %>

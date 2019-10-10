@@ -75,7 +75,7 @@
 					</tr>
 				</format:forEach>
 			</table>
-			<p><a class="btn btn-success" href="/dashboard">Dashboard</a></p>
+			<p><a class="btn btn-success" href="${pageContext.request.contextPath}/dashboard">Dashboard</a></p>
 		</section>
 		<%@ include file="common/footer-common.jspf" %>
 	</div>

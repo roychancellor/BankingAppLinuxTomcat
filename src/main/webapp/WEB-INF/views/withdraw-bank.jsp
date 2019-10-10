@@ -20,7 +20,7 @@
 		<section>
 			<h1>Welcome ${fullname}!</h1>
 			<h2><strong>WITHDRAW From Account</strong></h2>
-			<depform:form modelAttribute="amount" action="/withdraw-bank" method="POST">
+			<depform:form modelAttribute="amount" action="${pageContext.request.contextPath}/withdraw-bank" method="POST">
 				<div class="radioform">
 					<p><strong>Select Account:</strong><br />
 						<input type="radio" name="account" value="chk" checked> Checking (${acctchk})
@@ -51,7 +51,8 @@
 				</div>			
 				<p>
 					<input class="btn btn-success" type="submit" value="Submit Withdrawal">
-					<a class="btn btn-primary" href="/dashboard">Cancel and Return to Dashboard</a>
+					<a class="btn btn-primary"
+						href="${pageContext.request.contextPath}/dashboard">Cancel and Return to Dashboard</a>
 				</p>
 			</depform:form>
 		</section>

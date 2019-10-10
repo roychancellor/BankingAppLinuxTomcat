@@ -20,7 +20,7 @@
 		<section>
 			<h1>Existing Customer Login</h1>
 			<p class="error">${errorMessage}</p>
-			<login:form modelAttribute="loginform" action="/login" method="POST">
+			<login:form modelAttribute="loginform" action="${pageContext.request.contextPath}/login" method="POST">
 				<div class="form-group row">
 					<login:label path="username" class="col-lg-1 col-form-label">Username:</login:label>
 					<div class="col-lg-3">
@@ -42,7 +42,8 @@
 				</div>
 				<div class="form-group row">
 					<div class="col-sm-4">
-						<a class="btn btn-success" style="font-size:1.5em" href="/newcustomer">Become a Customer</a>
+						<a class="btn btn-success" style="font-size:1.5em"
+							href="${pageContext.request.contextPath}/newcustomer">Become a Customer</a>
 					</div>
 				</div>
 			</login:form>
