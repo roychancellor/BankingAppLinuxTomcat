@@ -33,7 +33,7 @@ public class DataService {
 	 */
 	public DataService() {
 		this.verboseSQL = true;
-		this.productionDb = false;
+		this.productionDb = true;
 		if(connectToDatabase()) {
 			System.out.println("\nDataService CONNECTED TO DB...");
 		}

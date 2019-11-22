@@ -3,11 +3,11 @@
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>edu.gcu.cst341</groupId>
-  <artifactId>BankingApp341</artifactId>
+  <artifactId>BankingAppLinuxTomcat</artifactId>
   <version>0.0.1-SNAPSHOT</version>
   <packaging>war</packaging>
 
-  <name>BakingApp341</name>
+  <name>BakingAppLinuxTomcat</name>
   <url>http://maven.apache.org</url>
 
   <properties>
