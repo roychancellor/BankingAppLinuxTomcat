@@ -13,13 +13,13 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import edu.gcu.cst341.controller.BankService;
-import edu.gcu.cst341.controller.CustomerService;
-import edu.gcu.cst341.controller.DataService;
 import edu.gcu.cst341.model.Account;
 import edu.gcu.cst341.model.Customer;
 import edu.gcu.cst341.model.Loan;
 import edu.gcu.cst341.model.Transaction;
+import edu.gcu.cst341.services.BankService;
+import edu.gcu.cst341.services.CustomerService;
+import edu.gcu.cst341.services.DataService;
 
 public class TransactionTests {
 	private CustomerService cs;

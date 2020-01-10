@@ -11,9 +11,9 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import edu.gcu.cst341.controller.CustomerService;
-import edu.gcu.cst341.controller.DataService;
 import edu.gcu.cst341.model.Customer;
+import edu.gcu.cst341.services.CustomerService;
+import edu.gcu.cst341.services.DataService;
 
 public class NewCustomerValidation {
 	private CustomerService cs;

@@ -1,4 +1,4 @@
-package edu.gcu.cst341.controller;
+package edu.gcu.cst341.services;
 
 /**
  * Class contains constants for use with SQL queries

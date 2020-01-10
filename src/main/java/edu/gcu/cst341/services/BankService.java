@@ -1,4 +1,4 @@
-package edu.gcu.cst341.controller;
+package edu.gcu.cst341.services;
 
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;

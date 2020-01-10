@@ -3,7 +3,7 @@ package edu.gcu.cst341.passwordtester;
 import java.util.HashMap;
 import java.util.Map;
 
-import edu.gcu.cst341.controller.PasswordService;
+import edu.gcu.cst341.services.PasswordService;
 
 /**
  * A class for testing the methods of PasswordService. NOT used anywhere else.
