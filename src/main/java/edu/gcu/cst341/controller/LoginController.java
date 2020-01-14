@@ -1,6 +1,6 @@
 package edu.gcu.cst341.controller;
 
-//MAKE SURE THE POM IS NOT IN TEST MODE
+//MAKE SURE THE POM IS NOT IN TEST MODE (SEE POM FOR DETAILS)
 import java.util.List;
 
 import javax.servlet.http.HttpSession;
