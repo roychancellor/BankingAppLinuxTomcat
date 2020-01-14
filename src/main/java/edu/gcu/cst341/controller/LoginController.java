@@ -753,30 +753,17 @@ public class LoginController {
 		//Verify there is a logged-in customer
 		if(customer.getCustId() != 0) {
 			System.out.println("\n/statements-bank GET: making transaction lists");
-			//Lists that will store transactions by type and posted to the transactions view
-			List<Transaction> transchk;
-			List<Transaction> transsav;
-			List<Transaction> transloan;
 			
 			//Get the transaction lists from the database
-			DataService ds = new DataService();
-			List<Transaction> transList = ds.dbRetrieveTransactionsById(customer.getCustId());
-			ds.close();
-			
-			//Separate transactions by account type and put in their respective lists
-			//The query returns transactions sorted by account and transaction date
+			List<Transaction> transList = BankService.retrieveCustomerTransactions(customer.getCustId());
+
 			if(transList != null) {
-				//Separate all transactions into lists by account type
-				transchk = BankService.transListByAccount(transList, 'C');
-				transsav = BankService.transListByAccount(transList, 'S');
-				transloan = BankService.transListByAccount(transList, 'L');
-				
 				//Update all dashboard parameters
 				updateDashboardModel(customer, map);
-				//Add the transaction lists to the ModelMap for the jsp page to process
-				map.addAttribute("transchk", transchk);
-				map.addAttribute("transsav", transsav);
-				map.addAttribute("transloan", transloan);
+				//Add the transaction lists to the ModelMap for the jsp page to process, separated by type of account
+				map.addAttribute("transchk", BankService.transListByAccount(transList, 'C'));
+				map.addAttribute("transsav", BankService.transListByAccount(transList, 'S'));
+				map.addAttribute("transloan", BankService.transListByAccount(transList, 'L'));
 				map.addAttribute("fromdate",
 					BankService.DATE_FORMAT.format(transList.get(0).getTransactionDate()));
 				map.addAttribute("todate",

@@ -274,6 +274,20 @@ public class BankService {
 		
 		return numRec;
 	}
+	
+	/**
+	 * Method that retrieves all transactions for a customer with ID custId
+	 * @param custId the integer customer ID for the customer
+	 * @return a list of transaction objects
+	 */
+	public List<Transaction> retrieveCustomerTransactions(int custId) {
+		DataService ds = new DataService();
+		List<Transaction> transList = ds.dbRetrieveTransactionsById(custId);
+		ds.close();
+
+		return transList;
+	}
+	
 	/**
 	 * Helper method that separates the complete transaction list for a customer Id
 	 * into lists by account type
