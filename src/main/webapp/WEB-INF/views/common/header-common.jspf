@@ -1,5 +1,5 @@
 <header>
-	<h2>GCU Online Bank<img src="${pageContext.request.contextPath}/resources/images/gculogo.png"/></h2>
+	<h2>World Online Bank<img src="${pageContext.request.contextPath}/resources/images/world-icon.png"/></h2>
 </header>
 <nav>
 	<div><a href="${pageContext.request.contextPath}/deposit-bank">Deposit</a></div>

@@ -22,11 +22,11 @@ header {
 	padding-bottom:20px;
 }
 header h2 {
-	color:#522398;
+	color:#232f98;
 	font-size:3.0em;
-	padding:10px;
+	padding:6px;
 	background:#ffffff;
-	border:6px solid #522398;
+	border:6px solid #232f98;
 	width:47%;
 	margin:auto;
 	text-align:center;
@@ -86,7 +86,7 @@ nav div a {
 }
 
 nav div a:hover {
-	background-color:#522398;
+	background-color:#232f98;
 	color:#ffffff;
 }
 
