@@ -21,7 +21,7 @@
 		<section>
 		<div class="alert alert-success" role="alert">
   			<h2 class="alert-heading">Success!</h2>
-  			<h3>You are now a GCU Bank customer. Welcome!</h3>
+  			<h3>You are now a World Online Bank customer. Welcome!</h3>
   			<hr>
   			<h4 class="mb=0">Redirecting to the Login page...</h4>
 		</div>

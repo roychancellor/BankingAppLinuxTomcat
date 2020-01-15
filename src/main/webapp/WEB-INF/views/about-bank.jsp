@@ -17,7 +17,7 @@
 		<%@ include file="common/header-common.jspf" %>
 		<section>
 			<h1>About</h1>
-			<h3>GCU Banking Application built for CST-341 in the Java Certificate Program.</h3>
+			<h3>Banking Application built for CST-341 in the Java Certificate Program.</h3>
 			<p>
 			<hr>
 			Technology stack: HTML, CSS, Bootstrap, Spring, Java, JDBC, MySQL</p>
